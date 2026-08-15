@@ -4,9 +4,11 @@ import { axe } from "vitest-axe"
 import { HomePage } from "./home-page"
 
 describe("HomePage", () => {
-  it("renders the placeholder content", () => {
+  it("renders the scroll-test section blocks", () => {
     render(<HomePage />)
-    expect(screen.getByText(/scaffold placeholder/i)).toBeInTheDocument()
+    expect(screen.getByText("Hero")).toBeInTheDocument()
+    expect(screen.getByText("Work")).toBeInTheDocument()
+    expect(screen.getByText("Contact")).toBeInTheDocument()
   })
 
   it("has no accessibility violations", async () => {

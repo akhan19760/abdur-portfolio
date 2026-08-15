@@ -1,1 +1,71 @@
 @import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Design Tokens — Tailwind v4 @theme
+   All --color-* and --font-* values here are automatically exposed as
+   Tailwind utilities: bg-base, text-accent, font-display, etc.
+   Use Tailwind's opacity modifier for dimmed variants: text-text/35, bg-accent/20
+───────────────────────────────────────────────────────────────────────────── */
+@theme {
+  /* Colors */
+  --color-base:         #0a0a0a; /* near-black page background — cursor glow canvas */
+  --color-surface:      #141414; /* slightly lifted — cards, panels, overlays       */
+  --color-text:         #f0ede8; /* primary text — warm off-white, not pure #fff     */
+  --color-accent:       #9900fa; /* neon purple — Abdur's brand accent               */
+  --color-accent-muted: #9900fa4d; /* accent at ~30% opacity — glows, halos, rings  */
+  --color-border:       #2a2a2a; /* subtle dividers and borders                      */
+
+  /* Font families */
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-sans:    "DM Sans", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", "Fira Code", monospace;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Base Layer — reset, body, and reduced-motion baseline
+───────────────────────────────────────────────────────────────────────────── */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-base);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    min-height: 100dvh;
+    /*
+      cursor: none is intentionally commented out.
+      It will be uncommented when the custom cursor component is built,
+      so the OS cursor remains usable during development until then.
+    */
+  }
+
+  /* ── prefers-reduced-motion — required per accessibility skill (WCAG 2.2) ── */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
