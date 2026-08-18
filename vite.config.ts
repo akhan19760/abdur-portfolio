@@ -1,4 +1,3 @@
-/// <reference types="vitest/config" />
 import path from "path"
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
@@ -11,6 +10,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // @ts-expect-error vitest properties on vite config
   test: {
     globals: true,
     environment: "jsdom",

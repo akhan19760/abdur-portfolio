@@ -24,3 +24,6 @@ coverage
 
 #Static Items
 references/
+dist
+tsconfig.app.tsbuildinfo
+tsconfig.node.tsbuildinfo
