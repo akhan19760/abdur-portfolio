@@ -7,7 +7,8 @@ describe("cn", () => {
   })
 
   it("drops falsy values", () => {
-    expect(cn("a", false && "b", undefined, "c")).toBe("a c")
+    const isVisible = false;
+    expect(cn("a", isVisible && "b", undefined, "c")).toBe("a c")
   })
 
   it("resolves conflicting Tailwind classes, keeping the last one", () => {
