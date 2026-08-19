@@ -23,7 +23,11 @@ const { MockLenis } = vi.hoisted(() => ({
 }))
 
 vi.mock("lenis", () => ({
-  default: vi.fn().mockImplementation(MockLenis as unknown as (...args: unknown[]) => InstanceType<typeof MockLenis>),
+  default: vi
+    .fn()
+    .mockImplementation(
+      MockLenis as unknown as (...args: unknown[]) => InstanceType<typeof MockLenis>
+    ),
 }))
 
 // vi.hoisted lifts these declarations so they're in scope when vi.mock
