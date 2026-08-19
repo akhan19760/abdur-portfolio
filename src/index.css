@@ -11,7 +11,7 @@
   --color-base: #0a0a0a; /* near-black page background — cursor glow canvas */
   --color-surface: #141414; /* slightly lifted — cards, panels, overlays       */
   --color-text: #f0ede8; /* primary text — warm off-white, not pure #fff     */
-  --color-accent: #ff851b; /* orange — Abdur's brand accent                    */
+  --color-accent: #9900fa; /* orange — Abdur's brand accent                    */
   --color-accent-muted: #ff851b4d; /* accent at ~30% opacity — glows, halos, rings  */
   --color-border: #2a2a2a; /* subtle dividers and borders                      */
 

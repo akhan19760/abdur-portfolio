@@ -28,6 +28,10 @@ Next.js and TanStack Start were considered and explicitly ruled out. The site is
 - Custom mouse cursor that trails behind the real cursor with a small lag, and visibly reacts to hover/focus/click states.
 - **Cursor as light source (core concept):** The site should feel exploratory — the cursor acts as a literal light source (e.g. spotlight/glow) that illuminates or reveals content (sections, text, images) as the user moves over/near them. When the cursor moves away from an item, the light naturally follows the cursor rather than staying fixed — so unlit/unexplored areas recede or dim again. This is a bigger structural idea than a decorative cursor trail: content visibility/emphasis itself is tied to proximity to the light, so it likely affects how sections are designed (some content may be intentionally dim/hidden until "found") as well as how the custom cursor component is built (it's not just a follower, it's a light-casting element — think radial gradient/mask/glow that moves with lag, with soft falloff at the edges).
 - Explicit risk flagged and accepted: this combination (smooth scroll + 3D + custom cursor + stacking) can easily tip into "laggy/disorienting" if overdone. Agreed approach: build structure first with plain scroll, then layer in animation techniques one at a time, testing performance at each step.
+- **Brand accent colour:** `#9900fa` (orange) — defined as `--color-accent` in `src/index.css`. Use `var(--color-accent)` / `text-accent` / `bg-accent` etc. throughout. Do **not** use purple (`#9900fa` or similar) as a design colour — that was a prior value, now superseded. The muted variant is `--color-accent-muted: #ff851b4d` (accent at ~30% opacity, for glows, halos, rings).
+
+## Project Structure
+`src/hooks/` and `src/types/` are organized into domain subfolders that mirror `src/components/<domain>/` (e.g. `hero`, `about`, `contact`, `process`, `projects`, `loading-screen`, `cursor`, plus a `shared` domain for cross-cutting hooks/types not tied to one component domain). A hook or type that supports a given component domain lives in the matching `hooks/<domain>/` or `types/<domain>/` folder, not flat under `src/hooks/` or `src/types/` directly. Each domain folder has its own barrel `index.ts` re-exporting its members, and those domain barrels are re-exported from the top-level `src/hooks/index.ts` and `src/types/index.ts`. Follow this pattern when adding new hooks/types — place them in the domain folder matching the component they support (creating that domain folder if it doesn't exist yet), not flat at the top level.
 
 ## Code Quality Skills
 This project uses three project-level Claude Code skills (in `.claude/skills/`) that define binding conventions. They are loaded automatically when relevant — do not restate their content here, refer to them by name:
@@ -79,4 +83,10 @@ If the user is not satisfied at the verification step:
 This applies to every layer of the build — structural scaffolding, individual components, each scroll animation, the loading screen, the cursor, 3D elements, styling passes, everything. No batching multiple unconfirmed pieces together to "save time."
 
 ## Status
-Planning complete. Stack decided. Implementation has not yet started. Next step is scaffolding the initial Vite + React project structure — to be proposed and confirmed before creating any files.
+Scaffolding complete. Core infrastructure built. Units completed so far:
+- **Unit 001–003:** Vite + React scaffold, Tailwind v4 config, shared utilities (`cn`, `LenisProvider`, `useLenis`)
+- **Unit 004:** `LoadingScreen` component — CRT TV aesthetic, EKG wave, radar, film grain, counter, split-curtain exit
+- **Unit 005:** `useCursorPosition` hook — lerp-based trailing position, `prefers-reduced-motion` support
+- **Unit 006:** `useCursorState` hook — hover (interactive selector), pressed, and viewport-visibility states
+
+**Next:** Unit 007 — `CustomCursor` component (`src/components/cursor/custom-cursor.tsx`)
