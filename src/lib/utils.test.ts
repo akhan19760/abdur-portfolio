@@ -7,7 +7,7 @@ describe("cn", () => {
   })
 
   it("drops falsy values", () => {
-    const isVisible = false;
+    const isVisible = false
     expect(cn("a", isVisible && "b", undefined, "c")).toBe("a c")
   })
 

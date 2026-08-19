@@ -14,7 +14,7 @@ export function drawRadarFrame(
   ctx.clearRect(0, 0, size, size)
   const cx = size / 2
   const cy = size / 2
-  const R  = size * 0.43
+  const R = size * 0.43
 
   // Background fill
   ctx.save()
@@ -40,16 +40,18 @@ export function drawRadarFrame(
   ctx.strokeStyle = "rgba(255, 133, 27, 0.1)"
   ctx.lineWidth = 0.5
   ctx.beginPath()
-  ctx.moveTo(cx - R, cy); ctx.lineTo(cx + R, cy)
-  ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R)
+  ctx.moveTo(cx - R, cy)
+  ctx.lineTo(cx + R, cy)
+  ctx.moveTo(cx, cy - R)
+  ctx.lineTo(cx, cy + R)
   ctx.stroke()
   ctx.restore()
 
   // Sweep trail: 14 lines at decreasing opacity behind current angle
   const TRAIL_STEPS = 14
-  const TRAIL_SPAN  = Math.PI * 0.5
+  const TRAIL_SPAN = Math.PI * 0.5
   for (let i = TRAIL_STEPS; i > 0; i--) {
-    const a     = angle - (TRAIL_SPAN * (TRAIL_STEPS - i + 1) / TRAIL_STEPS)
+    const a = angle - (TRAIL_SPAN * (TRAIL_STEPS - i + 1)) / TRAIL_STEPS
     const alpha = (i / TRAIL_STEPS) * 0.32
     ctx.save()
     ctx.beginPath()
@@ -86,7 +88,10 @@ export function drawRadarFrame(
   for (let i = blips.length - 1; i >= 0; i--) {
     const blip = blips[i]
     blip.alpha -= 0.006
-    if (blip.alpha <= 0) { blips.splice(i, 1); continue }
+    if (blip.alpha <= 0) {
+      blips.splice(i, 1)
+      continue
+    }
     const bx = cx + Math.cos(blip.a) * blip.d * R
     const by = cy + Math.sin(blip.a) * blip.d * R
     ctx.save()

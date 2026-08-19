@@ -1,6 +1,10 @@
 import { gsap } from "gsap"
 import { useGSAP } from "@gsap/react"
-import { GHOST_TEXT, GLITCH_CHARS, LOG_LINES } from "@/components/loading-screen/constants"
+import {
+  GHOST_TEXT,
+  GLITCH_CHARS,
+  LOG_LINES,
+} from "@/components/loading-screen/constants"
 import type { EntryAnimationParams } from "@/types/loading-screen"
 
 export function useLoadingEntryAnimations({
@@ -15,12 +19,10 @@ export function useLoadingEntryAnimations({
 }: EntryAnimationParams): void {
   useGSAP(
     () => {
-      const logLines =
-        containerRef.current?.querySelectorAll<HTMLElement>(".js-log-line")
+      const logLines = containerRef.current?.querySelectorAll<HTMLElement>(".js-log-line")
       const glitchBars =
         containerRef.current?.querySelectorAll<HTMLElement>(".js-glitch-bar")
-      const eqBars =
-        containerRef.current?.querySelectorAll<HTMLElement>(".js-eq-bar")
+      const eqBars = containerRef.current?.querySelectorAll<HTMLElement>(".js-eq-bar")
       const statusBars =
         containerRef.current?.querySelectorAll<HTMLElement>(".js-status-bar")
       if (!logLines?.length) return
@@ -67,8 +69,9 @@ export function useLoadingEntryAnimations({
       const glitchGhost = (delay: number) => {
         gsap.delayedCall(delay, () => {
           if (!ghostTextRef.current) return
-          ghostTextRef.current.textContent = Array.from(GHOST_TEXT, () =>
-            GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]
+          ghostTextRef.current.textContent = Array.from(
+            GHOST_TEXT,
+            () => GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]
           ).join("")
           gsap.delayedCall(0.1, () => {
             if (ghostTextRef.current) ghostTextRef.current.textContent = GHOST_TEXT
@@ -108,9 +111,10 @@ export function useLoadingEntryAnimations({
         delay: 0.2,
         onUpdate() {
           if (counterRef.current) {
-            counterRef.current.textContent = String(
-              Math.round(counter.value)
-            ).padStart(3, "0")
+            counterRef.current.textContent = String(Math.round(counter.value)).padStart(
+              3,
+              "0"
+            )
           }
         },
         onComplete() {
@@ -134,7 +138,12 @@ export function useLoadingEntryAnimations({
       gsap.fromTo(
         Array.from(logLines),
         { opacity: 0 },
-        { opacity: 1, duration: 0.001, stagger: { amount: staggerAmount, ease: "none" }, delay: 0.4 }
+        {
+          opacity: 1,
+          duration: 0.001,
+          stagger: { amount: staggerAmount, ease: "none" },
+          delay: 0.4,
+        }
       )
 
       // Corruption trigger — when ERROR line (index 4) appears

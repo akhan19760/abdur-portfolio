@@ -12,11 +12,11 @@ export function useRadarCanvas(
     if (!canvas) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-    const SIZE    = 130
-    canvas.width  = SIZE
+    const SIZE = 130
+    canvas.width = SIZE
     canvas.height = SIZE
-    const blips   = radarBlipsRef.current
-    let rafId     = 0
+    const blips = radarBlipsRef.current
+    let rafId = 0
 
     const tick = () => {
       radarAngleRef.current = (radarAngleRef.current + 0.022) % (Math.PI * 2)

@@ -1,9 +1,5 @@
 import { useRef } from "react"
-import type {
-  LoadingScreenProps,
-  RadarBlip,
-  WaveState,
-} from "@/types/loading-screen"
+import type { LoadingScreenProps, RadarBlip, WaveState } from "@/types/loading-screen"
 import {
   useGrainCanvas,
   useLoadingEntryAnimations,
@@ -62,21 +58,21 @@ export function LoadingScreen({
 }: LoadingScreenProps) {
   const state = useLoadingState({ holdDuration, exitDuration })
 
-  const containerRef     = useRef<HTMLDivElement>(null)
-  const canvasRef        = useRef<HTMLCanvasElement>(null)
-  const grainCanvasRef   = useRef<HTMLCanvasElement>(null)
-  const radarCanvasRef   = useRef<HTMLCanvasElement>(null)
-  const ghostTextRef     = useRef<HTMLSpanElement>(null)
-  const binaryStripRef   = useRef<HTMLDivElement>(null)
-  const counterRef       = useRef<HTMLSpanElement>(null)
-  const labelRef         = useRef<HTMLSpanElement>(null)
-  const clockRef         = useRef<HTMLSpanElement>(null)
-  const errFlashRef      = useRef<HTMLDivElement>(null)
-  const topCurtainRef    = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const grainCanvasRef = useRef<HTMLCanvasElement>(null)
+  const radarCanvasRef = useRef<HTMLCanvasElement>(null)
+  const ghostTextRef = useRef<HTMLSpanElement>(null)
+  const binaryStripRef = useRef<HTMLDivElement>(null)
+  const counterRef = useRef<HTMLSpanElement>(null)
+  const labelRef = useRef<HTMLSpanElement>(null)
+  const clockRef = useRef<HTMLSpanElement>(null)
+  const errFlashRef = useRef<HTMLDivElement>(null)
+  const topCurtainRef = useRef<HTMLDivElement>(null)
   const bottomCurtainRef = useRef<HTMLDivElement>(null)
 
   // Mutable wave / radar state — avoids React re-renders each tick
-  const waveRef       = useRef<WaveState>({ offset: 0, amplitude: 1, corrupted: false })
+  const waveRef = useRef<WaveState>({ offset: 0, amplitude: 1, corrupted: false })
   const radarAngleRef = useRef<number>(0)
   const radarBlipsRef = useRef<RadarBlip[]>([])
 
@@ -132,11 +128,7 @@ export function LoadingScreen({
       <SignalStatus />
       <TargetingReticle />
       <BinaryTicker binaryStripRef={binaryStripRef} />
-      <WaveDisplay
-        canvasRef={canvasRef}
-        labelRef={labelRef}
-        counterRef={counterRef}
-      />
+      <WaveDisplay canvasRef={canvasRef} labelRef={labelRef} counterRef={counterRef} />
       <TerminalLog />
       <HexAddresses />
       <RadarSweep radarCanvasRef={radarCanvasRef} />
@@ -148,10 +140,7 @@ export function LoadingScreen({
       <CorruptionOverlay errFlashRef={errFlashRef} />
 
       {/* z-[75]: Split curtain exit panels */}
-      <SplitCurtain
-        topCurtainRef={topCurtainRef}
-        bottomCurtainRef={bottomCurtainRef}
-      />
+      <SplitCurtain topCurtainRef={topCurtainRef} bottomCurtainRef={bottomCurtainRef} />
     </div>
   )
 }

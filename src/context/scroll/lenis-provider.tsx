@@ -19,9 +19,7 @@ const LenisContext = createContext<Lenis | null | undefined>(undefined)
 export function useLenis(): Lenis | null {
   const ctx = useContext(LenisContext)
   if (ctx === undefined) {
-    throw new Error(
-      "[LenisProvider] useLenis must be called inside <LenisProvider>."
-    )
+    throw new Error("[LenisProvider] useLenis must be called inside <LenisProvider>.")
   }
   return ctx
 }
@@ -75,7 +73,5 @@ export function LenisProvider({ children }: LenisProviderProps) {
     }
   }, [])
 
-  return (
-    <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>
-  )
+  return <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>
 }

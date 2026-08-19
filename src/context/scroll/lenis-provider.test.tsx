@@ -17,13 +17,11 @@ vi.mock("lenis", () => ({
 
 // vi.hoisted lifts these declarations so they're in scope when vi.mock
 // factories are evaluated (vi.mock is hoisted to the top of the file).
-const { mockTickerAdd, mockTickerRemove, mockTickerLagSmoothing } = vi.hoisted(
-  () => ({
-    mockTickerAdd: vi.fn(),
-    mockTickerRemove: vi.fn(),
-    mockTickerLagSmoothing: vi.fn(),
-  })
-)
+const { mockTickerAdd, mockTickerRemove, mockTickerLagSmoothing } = vi.hoisted(() => ({
+  mockTickerAdd: vi.fn(),
+  mockTickerRemove: vi.fn(),
+  mockTickerLagSmoothing: vi.fn(),
+}))
 
 vi.mock("gsap", () => ({
   gsap: {

@@ -8,17 +8,17 @@
 ───────────────────────────────────────────────────────────────────────────── */
 @theme {
   /* Colors */
-  --color-base:         #0a0a0a; /* near-black page background — cursor glow canvas */
-  --color-surface:      #141414; /* slightly lifted — cards, panels, overlays       */
-  --color-text:         #f0ede8; /* primary text — warm off-white, not pure #fff     */
-  --color-accent:       #ff851b; /* orange — Abdur's brand accent                    */
+  --color-base: #0a0a0a; /* near-black page background — cursor glow canvas */
+  --color-surface: #141414; /* slightly lifted — cards, panels, overlays       */
+  --color-text: #f0ede8; /* primary text — warm off-white, not pure #fff     */
+  --color-accent: #ff851b; /* orange — Abdur's brand accent                    */
   --color-accent-muted: #ff851b4d; /* accent at ~30% opacity — glows, halos, rings  */
-  --color-border:       #2a2a2a; /* subtle dividers and borders                      */
+  --color-border: #2a2a2a; /* subtle dividers and borders                      */
 
   /* Font families */
   --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-sans:    "DM Sans", system-ui, sans-serif;
-  --font-mono:    "JetBrains Mono", "Fira Code", monospace;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
