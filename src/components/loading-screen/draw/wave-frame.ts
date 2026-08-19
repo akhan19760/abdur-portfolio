@@ -38,9 +38,9 @@ export function drawWaveFrame(
     const t = time * 0.14
     return (
       cy +
-      (Math.sin(pos + t) * 22 +              // fundamental — rightward
+      (Math.sin(pos + t) * 22 + // fundamental — rightward
         Math.sin(pos * 2.9 - t * 2.3) * 14 + // near-3rd harmonic — leftward
-        Math.sin(pos * 5.1 + t * 3.9) * 8 +  // near-5th harmonic — rightward
+        Math.sin(pos * 5.1 + t * 3.9) * 8 + // near-5th harmonic — rightward
         Math.sin(pos * 7.2 - t * 5.7) * 5) * // near-7th harmonic — leftward
         amplitude
     )

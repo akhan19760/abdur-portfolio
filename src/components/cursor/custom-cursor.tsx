@@ -79,13 +79,14 @@ export function CustomCursor({ lerpFactor = 0.3 }: CustomCursorProps) {
         aria-hidden="true"
         className={cn(
           "pointer-events-none fixed z-[9999] -translate-x-1/2 -translate-y-1/2 mix-blend-difference",
-          !prefersReducedMotion && "transition-[width,height,opacity] duration-150 ease-out",
+          !prefersReducedMotion &&
+            "transition-[width,height,opacity] duration-150 ease-out",
           isVisible ? "opacity-100" : "opacity-0",
           isPressed
             ? "h-2 w-2 bg-[#9900fa]"
             : isHovering
               ? "h-6 w-6 border-2 border-[#9900fa] bg-transparent"
-              : "h-3 w-3 bg-[#9900fa]",
+              : "h-3 w-3 bg-[#9900fa]"
         )}
         style={{
           // Lerp position — runtime values, cannot be Tailwind classes
@@ -102,7 +103,7 @@ export function CustomCursor({ lerpFactor = 0.3 }: CustomCursorProps) {
         data-testid="cursor-coords"
         className={cn(
           "pointer-events-none fixed z-[9999] font-mono text-[9px] leading-none tracking-tight whitespace-nowrap text-[#9900fa] mix-blend-difference",
-          isVisible ? "opacity-100" : "opacity-0",
+          isVisible ? "opacity-100" : "opacity-0"
         )}
         style={{
           // Offset bottom-right from lerp position — runtime values

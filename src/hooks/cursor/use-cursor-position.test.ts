@@ -16,9 +16,7 @@ function flushRaf(time = 16) {
 
 function moveMouseTo(x: number, y: number) {
   act(() => {
-    window.dispatchEvent(
-      new MouseEvent("mousemove", { clientX: x, clientY: y })
-    )
+    window.dispatchEvent(new MouseEvent("mousemove", { clientX: x, clientY: y }))
   })
 }
 
@@ -96,10 +94,7 @@ describe("useCursorPosition", () => {
 
     unmount()
 
-    expect(removeEventListenerSpy).toHaveBeenCalledWith(
-      "mousemove",
-      expect.any(Function)
-    )
+    expect(removeEventListenerSpy).toHaveBeenCalledWith("mousemove", expect.any(Function))
     expect(window.cancelAnimationFrame).toHaveBeenCalled()
     removeEventListenerSpy.mockRestore()
   })

@@ -52,19 +52,14 @@ export function drawRadarFrame(
   const TRAIL_SPAN = Math.PI * 0.5
 
   for (let i = TRAIL_STEPS; i > 0; i--) {
-    const a =
-      angle -
-      (TRAIL_SPAN * (TRAIL_STEPS - i + 1)) / TRAIL_STEPS
+    const a = angle - (TRAIL_SPAN * (TRAIL_STEPS - i + 1)) / TRAIL_STEPS
 
     const alpha = (i / TRAIL_STEPS) * 0.32
 
     ctx.save()
     ctx.beginPath()
     ctx.moveTo(cx, cy)
-    ctx.lineTo(
-      cx + Math.cos(a) * R,
-      cy + Math.sin(a) * R
-    )
+    ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R)
     ctx.strokeStyle = `rgba(153, 0, 250, ${alpha})`
     ctx.lineWidth = 0.7
     ctx.stroke()
@@ -75,10 +70,7 @@ export function drawRadarFrame(
   ctx.save()
   ctx.beginPath()
   ctx.moveTo(cx, cy)
-  ctx.lineTo(
-    cx + Math.cos(angle) * R,
-    cy + Math.sin(angle) * R
-  )
+  ctx.lineTo(cx + Math.cos(angle) * R, cy + Math.sin(angle) * R)
   ctx.strokeStyle = "rgba(153, 0, 250, 0.9)"
   ctx.shadowColor = "#9900fa"
   ctx.shadowBlur = 5

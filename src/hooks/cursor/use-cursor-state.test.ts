@@ -5,11 +5,7 @@ import { useCursorState } from "./use-cursor-state"
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 /** Fire a MouseEvent on a target, bubbling through the document. */
-function fire(
-  target: EventTarget,
-  type: string,
-  init: MouseEventInit = {}
-): void {
+function fire(target: EventTarget, type: string, init: MouseEventInit = {}): void {
   target.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, ...init }))
 }
 
@@ -201,7 +197,9 @@ describe("useCursorState — isVisible", () => {
     const { result } = renderHook(() => useCursorState())
 
     act(() => {
-      document.documentElement.dispatchEvent(new MouseEvent("mouseenter", { bubbles: false }))
+      document.documentElement.dispatchEvent(
+        new MouseEvent("mouseenter", { bubbles: false })
+      )
       fire(btn, "mouseover", { relatedTarget: document.body })
       fire(document, "mousedown")
     })
@@ -211,7 +209,9 @@ describe("useCursorState — isVisible", () => {
     expect(result.current.isPressed).toBe(true)
 
     act(() => {
-      document.documentElement.dispatchEvent(new MouseEvent("mouseleave", { bubbles: false }))
+      document.documentElement.dispatchEvent(
+        new MouseEvent("mouseleave", { bubbles: false })
+      )
     })
 
     expect(result.current.isVisible).toBe(false)

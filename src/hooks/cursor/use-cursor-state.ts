@@ -46,9 +46,7 @@ export function useCursorState(): CursorState {
       const related = event.relatedTarget as Element | null
       const stillHovering = !!related?.closest(INTERACTIVE_SELECTOR)
       setState((prev) =>
-        prev.isHovering === stillHovering
-          ? prev
-          : { ...prev, isHovering: stillHovering }
+        prev.isHovering === stillHovering ? prev : { ...prev, isHovering: stillHovering }
       )
     }
 
@@ -66,7 +64,9 @@ export function useCursorState(): CursorState {
 
     function onMouseLeave() {
       setState((prev) =>
-        prev.isVisible ? { ...prev, isVisible: false, isHovering: false, isPressed: false } : prev
+        prev.isVisible
+          ? { ...prev, isVisible: false, isHovering: false, isPressed: false }
+          : prev
       )
     }
 

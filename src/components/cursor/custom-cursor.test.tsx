@@ -20,7 +20,7 @@ function pos(x = 100, y = 200) {
 }
 
 function cursorState(
-  overrides: Partial<{ isHovering: boolean; isPressed: boolean; isVisible: boolean }> = {},
+  overrides: Partial<{ isHovering: boolean; isPressed: boolean; isVisible: boolean }> = {}
 ) {
   return { isHovering: false, isPressed: false, isVisible: true, ...overrides }
 }
@@ -104,7 +104,9 @@ describe("CustomCursor", () => {
     mockUseCursorState.mockReturnValue(cursorState())
 
     const { container } = render(<CustomCursor />)
-    const dot = container.querySelector(".mix-blend-difference:not([data-testid])") as HTMLElement
+    const dot = container.querySelector(
+      ".mix-blend-difference:not([data-testid])"
+    ) as HTMLElement
     expect(dot.style.left).toBe("150px")
     expect(dot.style.top).toBe("250px")
   })
@@ -217,7 +219,10 @@ describe("CustomCursor", () => {
   })
 
   it("displays raw coordinates in [x, y] format", () => {
-    mockUseCursorPosition.mockReturnValue({ raw: { x: 312, y: 748 }, lerp: { x: 310, y: 745 } })
+    mockUseCursorPosition.mockReturnValue({
+      raw: { x: 312, y: 748 },
+      lerp: { x: 310, y: 745 },
+    })
     mockUseCursorState.mockReturnValue(cursorState())
 
     const { getByTestId } = render(<CustomCursor />)
@@ -225,7 +230,10 @@ describe("CustomCursor", () => {
   })
 
   it("rounds fractional raw coordinates to integers", () => {
-    mockUseCursorPosition.mockReturnValue({ raw: { x: 100.7, y: 200.3 }, lerp: { x: 100, y: 200 } })
+    mockUseCursorPosition.mockReturnValue({
+      raw: { x: 100.7, y: 200.3 },
+      lerp: { x: 100, y: 200 },
+    })
     mockUseCursorState.mockReturnValue(cursorState())
 
     const { getByTestId } = render(<CustomCursor />)
