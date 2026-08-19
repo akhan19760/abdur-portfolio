@@ -9,10 +9,12 @@ import { LenisProvider, useLenis } from "./lenis-provider"
 // behaviour in jsdom. We mock them to verify wiring, not animation outcomes.
 
 vi.mock("lenis", () => ({
-  default: vi.fn().mockReturnValue({
-    raf: vi.fn(),
-    destroy: vi.fn(),
-  }),
+  default: vi.fn().mockImplementation(
+    class {
+      raf = vi.fn()
+      destroy = vi.fn()
+    }
+  ),
 }))
 
 // vi.hoisted lifts these declarations so they're in scope when vi.mock
