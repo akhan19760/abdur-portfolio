@@ -8,13 +8,22 @@ import { LenisProvider, useLenis } from "./lenis-provider"
 // Lenis and GSAP are animation-runtime dependencies — they have no meaningful
 // behaviour in jsdom. We mock them to verify wiring, not animation outcomes.
 
+// Cast through `unknown`: at runtime this is a class, which is what Vitest
+// requires to back a mock invoked with `new` (see `new Lenis(...)` in
+// lenis-provider.tsx). But `mockImplementation` is typed to accept a plain
+// callable `(...args) => any`, and a class only has a construct signature —
+// so TypeScript rejects it unless we assert the callable shape it expects.
+// Declared via vi.hoisted since vi.mock factories are hoisted above normal
+// top-level variables.
+const { MockLenis } = vi.hoisted(() => ({
+  MockLenis: class {
+    raf = vi.fn()
+    destroy = vi.fn()
+  },
+}))
+
 vi.mock("lenis", () => ({
-  default: vi.fn().mockImplementation(
-    class {
-      raf = vi.fn()
-      destroy = vi.fn()
-    }
-  ),
+  default: vi.fn().mockImplementation(MockLenis as unknown as (...args: unknown[]) => InstanceType<typeof MockLenis>),
 }))
 
 // vi.hoisted lifts these declarations so they're in scope when vi.mock
