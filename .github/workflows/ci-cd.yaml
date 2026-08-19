@@ -114,7 +114,7 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         timeout-minutes: 5
 
-    auto-merge:
+  auto-merge:
     name: Auto-merge PR
     needs: [quality, dependency-review, build, deploy]
     if: github.event_name == 'pull_request'
