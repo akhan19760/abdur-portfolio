@@ -11,7 +11,7 @@ export function useGrainCanvas(
     if (!canvas) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-    canvas.width  = 300
+    canvas.width = 300
     canvas.height = 200
     let rafId = 0
     const tick = () => {

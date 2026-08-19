@@ -11,7 +11,7 @@ export function useWaveCanvas(
     if (!canvas) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-    canvas.width  = canvas.offsetWidth  || window.innerWidth
+    canvas.width = canvas.offsetWidth || window.innerWidth
     canvas.height = canvas.offsetHeight || 140
     let rafId = 0
     const tick = () => {

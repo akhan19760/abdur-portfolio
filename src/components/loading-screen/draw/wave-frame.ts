@@ -34,14 +34,15 @@ export function drawWaveFrame(
   if (corrupted) {
     const NUM_BANDS = 14
     const bandH = height / NUM_BANDS
-    const bandOffsets = Array.from({ length: NUM_BANDS }, () =>
-      (Math.random() - 0.5) * 200
+    const bandOffsets = Array.from(
+      { length: NUM_BANDS },
+      () => (Math.random() - 0.5) * 200
     )
 
     const channels = [
       { color: "#ff1111", xShift: -16, alpha: 0.65 },
-      { color: "#33ff33", xShift: 0,   alpha: 0.18 },
-      { color: "#1133ff", xShift: 16,  alpha: 0.65 },
+      { color: "#33ff33", xShift: 0, alpha: 0.18 },
+      { color: "#1133ff", xShift: 16, alpha: 0.65 },
     ]
 
     for (const ch of channels) {

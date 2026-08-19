@@ -2,3 +2,6 @@ dist
 node_modules
 coverage
 pnpm-lock.yaml
+.claude/skills/**/*.md
+CLAUDE.md
+README.md
