@@ -1,27 +1,38 @@
-// Temporary scroll-test content — replaced when real sections are built
-const SCROLL_BLOCKS = [
-  { label: "Hero", hint: "Loading screen → hero transition" },
-  { label: "About", hint: "Identity / brief bio" },
-  { label: "Work", hint: "Project showcase — scroll-driven reveals" },
+import { SocialLinks } from "@/components/layout"
+import { useClickPing } from "@/hooks/cursor"
+import { HeroSection } from "@/sections/hero/hero-section"
+import { AboutSection } from "@/sections/about/about-section"
+import { ProjectsSection } from "@/sections/projects/projects-section"
+
+// Remaining sections are placeholders until their units are built
+const PLACEHOLDER_SECTIONS = [
   { label: "Process", hint: "How I build things" },
   { label: "Contact", hint: "Get in touch" },
 ] as const
 
 export function HomePage() {
+  // Every click anywhere sends a ping through the page's light system
+  useClickPing()
+
   return (
-    <main className="mx-auto max-w-2xl px-6 py-24 space-y-[40vh]">
-      <p className="text-xs tracking-widest text-text/40 font-mono uppercase">
-        Scroll test — Lenis smooth scroll verification
-      </p>
+    <main>
+      <HeroSection />
+      <AboutSection />
+      <ProjectsSection />
 
-      {SCROLL_BLOCKS.map(({ label, hint }) => (
-        <section key={label} className="border border-border rounded-lg p-10 space-y-3">
-          <h2 className="font-display text-5xl text-text">{label}</h2>
-          <p className="text-text/50 text-sm font-mono">{hint}</p>
-        </section>
-      ))}
+      {/* Floating social links — fixed to the viewport across all sections */}
+      <SocialLinks />
 
-      <p className="text-xs text-text/30 font-mono pb-24">— end of scroll test —</p>
+      {/* ── Placeholder sections (replaced as each unit is built) ────────────── */}
+      <div className="mx-auto max-w-2xl space-y-[40vh] px-6 py-24">
+        {PLACEHOLDER_SECTIONS.map(({ label, hint }) => (
+          <section key={label} className="space-y-3 rounded-lg border border-border p-10">
+            <h2 className="font-display text-5xl text-text">{label}</h2>
+            <p className="font-mono text-sm text-text/50">{hint}</p>
+          </section>
+        ))}
+        <p className="pb-24 font-mono text-xs text-text/30">— placeholder sections —</p>
+      </div>
     </main>
   )
 }

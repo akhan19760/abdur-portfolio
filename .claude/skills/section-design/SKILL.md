@@ -13,30 +13,35 @@ Full route-level pages that exist outside the single-page scroll (e.g. an indivi
 ## 2. What Belongs in a Section
 A section is a self-contained visual/narrative block of the home page.
 
-**Rule:** if a component or hook is only ever used by one section, it lives inside that section's folder. If used by 2+ sections, it MUST move to `src/components/` (UI) or `src/lib/` (logic/utilities) — same escalation rule as before, just sections instead of features.
+**Rule:** `src/sections/<name>/` holds only the section's entry component (and section-root-only helpers, e.g. static copy/constants used solely by that entry file). A component or hook that supports a section — even one only ever used by that single section — does NOT live inside `src/sections/<name>/`. Per CLAUDE.md's project-structure convention, it lives in the matching domain folder that mirrors the section: sub-components go in `src/components/<domain>/`, hooks go in `src/hooks/<domain>/`, and any dedicated types go in `src/types/<domain>/` — creating the domain folder if it doesn't exist yet. This holds regardless of whether the piece is used by one section or several; the domain folder IS the section-scoped home, so there is no separate "used by 2+ sections" escalation step for components/hooks. `src/lib/` remains for logic/utilities that aren't React components or hooks at all (e.g. pure functions, formatters) and are shared across domains.
 
 ## 3. Standard Section Structure
 
 ```
 src/sections/
 └── projects/
-    ├── projects-section.tsx        # The section entry component
-    ├── components/                 # Sub-components used only within this section
-    │   └── project-card.tsx
-    ├── hooks/                      # Section-scoped hooks (e.g. scroll-triggered state)
-    │   └── use-project-scroll-stack.ts
-    └── projects-section-utils.ts   # Section-scoped helpers
+    └── projects-section.tsx        # The section entry component only
+
+src/components/projects/            # Sub-components used by the Projects section
+└── project-card.tsx
+
+src/hooks/projects/                 # Hooks orchestrating the Projects section's scroll/animation state
+└── use-project-scroll-stack.ts
+
+src/types/projects/                 # Types dedicated to the Projects section
+└── project.types.ts
 ```
 
-Simple sections may be a single flat file (e.g. `src/sections/hero/hero-section.tsx`) without subfolders — don't create empty scaffolding folders for a section that doesn't need them yet. Propose the flat version first; expand only when the section actually grows sub-components or hooks.
+Simple sections may be a single flat file (e.g. `src/sections/hero/hero-section.tsx`) with no supporting domain folders yet — don't create empty scaffolding folders for a section that doesn't need them. Propose the flat version first; add to `src/components/<domain>/` / `src/hooks/<domain>/` only once the section actually grows sub-components or hooks.
 
 ### Directory Responsibilities
 
-| Directory     | Contains                                              | MUST NOT contain          |
-|---------------|--------------------------------------------------------|----------------------------|
-| (section root)| The section's entry component, composed into the page  | Logic belonging to another section |
-| `components/` | Sub-components used only within this section            | Cross-section UI (→ `src/components/`) |
-| `hooks/`      | Hooks orchestrating this section's scroll/animation state | JSX, direct DOM mutation beyond refs |
+| Directory                | Contains                                              | MUST NOT contain          |
+|---------------------------|--------------------------------------------------------|----------------------------|
+| `src/sections/<name>/`    | The section's entry component, composed into the page  | Sub-components, hooks, or logic belonging to another section |
+| `src/components/<domain>/`| Sub-components used by that section's domain            | Cross-domain UI (→ `src/components/ui/` or `src/components/shared/`) |
+| `src/hooks/<domain>/`     | Hooks orchestrating that section's scroll/animation state | JSX, direct DOM mutation beyond refs |
+| `src/types/<domain>/`     | Types dedicated to that section's domain                 | Types shared across domains (→ `src/types/shared/`) |
 
 ## 4. Naming Conventions
 
@@ -49,7 +54,7 @@ Simple sections may be a single flat file (e.g. `src/sections/hero/hero-section.
 
 ## 5. Import Pattern
 
-The home page composes sections directly, in scroll order:
+The home page composes sections directly, in scroll order. A section entry component imports its own domain's sub-components/hooks from `src/components/<domain>/` and `src/hooks/<domain>/`:
 
 ```tsx
 // src/pages/home-page.tsx
@@ -68,16 +73,22 @@ export function HomePage() {
 }
 ```
 
-- No cross-section imports (one section reaching into another section's internals).
-- No mandatory barrel `index.ts` per section.
+```tsx
+// src/sections/projects/projects-section.tsx
+import { ProjectCard } from "@/components/projects"
+import { useProjectScrollStack } from "@/hooks/projects"
+```
+
+- No cross-section imports (one section reaching into another section's internals, or into another domain's `src/components/<domain>/`/`src/hooks/<domain>/`).
+- No mandatory barrel `index.ts` per section, but each domain folder under `src/components/`, `src/hooks/`, and `src/types/` has its own barrel `index.ts` per CLAUDE.md's project-structure convention.
 - All exports are named exports.
 
 ## 6. Section Hook Pattern
 
-Section hooks encapsulate scroll/animation orchestration for that section and MUST return a plain object.
+Section-domain hooks (in `src/hooks/<domain>/`) encapsulate scroll/animation orchestration for that section and MUST return a plain object.
 
 ```ts
-// src/sections/projects/hooks/use-project-scroll-stack.ts
+// src/hooks/projects/use-project-scroll-stack.ts
 import { useRef } from "react"
 import { useGSAP } from "@gsap/react"
 
@@ -103,8 +114,8 @@ export function useProjectScrollStack() {
 | Global primitive UI                  | `src/components/ui/`       |
 
 ## 8. Checklist
-- [ ] Section directory is `kebab-case` under `src/sections/`
-- [ ] Started flat; only split into `components/`/`hooks/` once actually needed
-- [ ] Nothing imported across sections
-- [ ] Logic used by 2+ sections promoted to `src/components/` or `src/lib/`
+- [ ] Section directory is `kebab-case` under `src/sections/`, holding only the entry component
+- [ ] Section-supporting components/hooks/types placed in the matching `src/components/<domain>/`, `src/hooks/<domain>/`, `src/types/<domain>/` folders — never inside `src/sections/<name>/`
+- [ ] Started flat (no domain folders) until the section actually needs sub-components or hooks
+- [ ] Nothing imported across sections or across domains
 - [ ] Named exports only

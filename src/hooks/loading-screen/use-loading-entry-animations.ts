@@ -123,7 +123,7 @@ export function useLoadingEntryAnimations({
           gsap.to(waveRef.current, { amplitude: 0, duration: 0.35, ease: "power2.out" })
           // Status label box fills with accent purple, text becomes white
           gsap.to(labelRef.current, {
-            backgroundColor: "#ff851b",
+            backgroundColor: "#9900fa",
             color: "#ffffff",
             borderColor: "rgba(255, 255, 255, 0.4)",
             duration: 0.5,

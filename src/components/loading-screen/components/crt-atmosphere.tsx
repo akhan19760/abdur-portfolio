@@ -7,12 +7,11 @@ export function CrtAtmosphere() {
         style={{
           background: [
             "radial-gradient(ellipse 55% 48% at 50% 50%,",
-            "  rgba(255, 133, 27, 0.18) 0%,",
-            "  rgba(180, 75, 10, 0.12) 30%,",
+            "  rgba(153, 0, 250, 0.20) 0%,",
+            "  rgba(120, 0, 200, 0.12) 30%,",
             "  transparent 48%,",
             "  rgba(0, 0, 0, 0.68) 70%,",
             "  rgba(0, 0, 0, 0.96) 100%",
-            ")",
           ].join(""),
         }}
       />

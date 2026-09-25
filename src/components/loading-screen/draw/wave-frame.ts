@@ -1,6 +1,13 @@
 /**
  * Normal mode — two-pass neon rendering (diffuse glow + sharp core).
  *
+ * Wave shape:
+ *   `computeY` combines four frequency components where BOTH position (x) and
+ *   time (frame counter) feed into the phase of each term. Each component drifts
+ *   at a different speed and direction, so the wave's shape changes continuously
+ *   rather than scrolling a static pattern. The total max excursion from centre
+ *   is ±42 px (amplitude=1), well within the 140 px canvas height.
+ *
  * Corrupted mode (heap_fragmentation event):
  *   VHS band displacement: canvas sliced into NUM_BANDS horizontal bands, each
  *   translated by a different random X offset this frame ("tape-head tear").
@@ -12,21 +19,29 @@ export function drawWaveFrame(
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number,
-  offset: number,
+  time: number,
   amplitude: number,
   corrupted: boolean
 ): void {
   ctx.clearRect(0, 0, width, height)
   const cy = height / 2
 
+  // pos: maps canvas width to 12π → ~6 visible cycles → angular, high-density look.
+  // t:   time multiplier 0.14 → violent, fast shape evolution at 60 fps.
+  //
+  // Near-harmonic frequencies (2.9, 5.1, 7.2 instead of exact 3, 5, 7) with
+  // alternating drift directions prevent the components from locking together.
+  // Their interaction produces ECG-like sharp spikes that appear and collapse
+  // continuously. Max excursion: ±49 px — safely inside the 70 px half-height.
   const computeY = (x: number): number => {
-    const t = (x + offset) * 0.018
+    const pos = (x / width) * Math.PI * 12
+    const t = time * 0.14
     return (
       cy +
-      (Math.sin(t) * 22 +
-        Math.sin(t * 2.5) * 9 +
-        Math.sin(t * 5.3) * 3 +
-        Math.cos(t * 3.8) * 5) *
+      (Math.sin(pos + t) * 22 + // fundamental — rightward
+        Math.sin(pos * 2.9 - t * 2.3) * 14 + // near-3rd harmonic — leftward
+        Math.sin(pos * 5.1 + t * 3.9) * 8 + // near-5th harmonic — rightward
+        Math.sin(pos * 7.2 - t * 5.7) * 5) * // near-7th harmonic — leftward
         amplitude
     )
   }
@@ -90,8 +105,8 @@ export function drawWaveFrame(
   ctx.save()
   ctx.beginPath()
   ctx.shadowBlur = 28
-  ctx.shadowColor = "#ff851b"
-  ctx.strokeStyle = "#ff851b"
+  ctx.shadowColor = "#9900fa"
+  ctx.strokeStyle = "#9900fa"
   ctx.globalAlpha = 0.4
   ctx.lineWidth = 3
   for (let x = 0; x < width; x++) {
@@ -109,8 +124,8 @@ export function drawWaveFrame(
   ctx.save()
   ctx.beginPath()
   ctx.shadowBlur = 8
-  ctx.shadowColor = "#ff851b"
-  ctx.strokeStyle = "#ff851b"
+  ctx.shadowColor = "#9900fa"
+  ctx.strokeStyle = "#9900fa"
   ctx.globalAlpha = 0.9
   ctx.lineWidth = 1.5
   for (let x = 0; x < width; x++) {

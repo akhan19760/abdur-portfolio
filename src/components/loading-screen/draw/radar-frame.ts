@@ -29,7 +29,7 @@ export function drawRadarFrame(
     ctx.save()
     ctx.beginPath()
     ctx.arc(cx, cy, R * (i / 3), 0, Math.PI * 2)
-    ctx.strokeStyle = "rgba(255, 133, 27, 0.12)"
+    ctx.strokeStyle = "rgba(153, 0, 250, 0.12)"
     ctx.lineWidth = 0.8
     ctx.stroke()
     ctx.restore()
@@ -37,7 +37,7 @@ export function drawRadarFrame(
 
   // Crosshair lines
   ctx.save()
-  ctx.strokeStyle = "rgba(255, 133, 27, 0.1)"
+  ctx.strokeStyle = "rgba(153, 0, 250, 0.1)"
   ctx.lineWidth = 0.5
   ctx.beginPath()
   ctx.moveTo(cx - R, cy)
@@ -50,14 +50,17 @@ export function drawRadarFrame(
   // Sweep trail: 14 lines at decreasing opacity behind current angle
   const TRAIL_STEPS = 14
   const TRAIL_SPAN = Math.PI * 0.5
+
   for (let i = TRAIL_STEPS; i > 0; i--) {
     const a = angle - (TRAIL_SPAN * (TRAIL_STEPS - i + 1)) / TRAIL_STEPS
+
     const alpha = (i / TRAIL_STEPS) * 0.32
+
     ctx.save()
     ctx.beginPath()
     ctx.moveTo(cx, cy)
     ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R)
-    ctx.strokeStyle = `rgba(255, 133, 27, ${alpha})`
+    ctx.strokeStyle = `rgba(153, 0, 250, ${alpha})`
     ctx.lineWidth = 0.7
     ctx.stroke()
     ctx.restore()
@@ -68,8 +71,8 @@ export function drawRadarFrame(
   ctx.beginPath()
   ctx.moveTo(cx, cy)
   ctx.lineTo(cx + Math.cos(angle) * R, cy + Math.sin(angle) * R)
-  ctx.strokeStyle = "rgba(255, 133, 27, 0.9)"
-  ctx.shadowColor = "#ff851b"
+  ctx.strokeStyle = "rgba(153, 0, 250, 0.9)"
+  ctx.shadowColor = "#9900fa"
   ctx.shadowBlur = 5
   ctx.lineWidth = 1.5
   ctx.stroke()
@@ -79,7 +82,7 @@ export function drawRadarFrame(
   ctx.save()
   ctx.beginPath()
   ctx.arc(cx, cy, R, 0, Math.PI * 2)
-  ctx.strokeStyle = "rgba(255, 133, 27, 0.35)"
+  ctx.strokeStyle = "rgba(153, 0, 250, 0.35)"
   ctx.lineWidth = 1
   ctx.stroke()
   ctx.restore()
@@ -87,18 +90,22 @@ export function drawRadarFrame(
   // Blips
   for (let i = blips.length - 1; i >= 0; i--) {
     const blip = blips[i]
+
     blip.alpha -= 0.006
+
     if (blip.alpha <= 0) {
       blips.splice(i, 1)
       continue
     }
+
     const bx = cx + Math.cos(blip.a) * blip.d * R
     const by = cy + Math.sin(blip.a) * blip.d * R
+
     ctx.save()
     ctx.beginPath()
     ctx.arc(bx, by, 2.5, 0, Math.PI * 2)
-    ctx.fillStyle = `rgba(255, 150, 80, ${blip.alpha})`
-    ctx.shadowColor = "#ff851b"
+    ctx.fillStyle = `rgba(153, 0, 250, ${blip.alpha})`
+    ctx.shadowColor = "#9900fa"
     ctx.shadowBlur = 8
     ctx.fill()
     ctx.restore()

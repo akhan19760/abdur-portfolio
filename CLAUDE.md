@@ -8,7 +8,7 @@ A personal portfolio website designed to immediately capture visitor attention a
 - **Framework:** React
 - **Smooth scroll:** Lenis
 - **Scroll-driven animation / card-stacking / x-z axis movement:** GSAP + ScrollTrigger
-- **3D elements:** React Three Fiber + Drei — used sparingly (e.g. one hero object or subtle background), NOT full 3D scenes throughout
+- **3D elements:** React Three Fiber (the installed Drei 9.x doesn't support R3F v9, so it isn't used). Full-viewport 3D scenes are in scope where a section calls for them — the user asked for bold 3D in About and Work — as long as each scene is lazy-loaded into its own chunk, stops rendering off screen, and keeps draw calls low
 - **Custom cursor:** Custom component with lag/easing (lerp-based), reacts to hover/focus/click states
 - **Routing:** React Router (`react-router`) — chosen over TanStack Router since routing needs are light (mostly one scrolling home page + project detail routes); explicit central route config, not file-based routing
 - **Styling:** Tailwind CSS, with `class-variance-authority` (CVA) for multi-variant `ui/` primitives and a `cn()` utility (`clsx` + `tailwind-merge`) for conditional class composition
@@ -24,10 +24,14 @@ Next.js and TanStack Start were considered and explicitly ruled out. The site is
 - Scroll-driven animations: items appearing/disappearing on scroll.
 - Non-default scroll axes in places — motion that moves in x or z axis, not just y. Card-stacking was given only as ONE example of this during planning — it is not the only scroll-driven animation wanted, and should not be treated as a fixed spec. Other scroll-driven animation types (parallax, pinning, staggered reveals, horizontal scroll sections, masked/clipped transitions, etc.) are all in scope and should be proposed and explored, not assumed off the table.
 - Engaging, custom loading/intro screen — not a generic spinner.
-- Light-touch 3D — accents, not heavy/distracting scenes. Keep poly count and draw calls low.
+- 3D where it serves the section (About's particle world, Work's mirror sea), never at the cost of performance or readability: keep poly count and draw calls low, and never put bright glows or dense effects behind text.
 - Custom mouse cursor that trails behind the real cursor with a small lag, and visibly reacts to hover/focus/click states.
 - **Cursor as light source (core concept):** The site should feel exploratory — the cursor acts as a literal light source (e.g. spotlight/glow) that illuminates or reveals content (sections, text, images) as the user moves over/near them. When the cursor moves away from an item, the light naturally follows the cursor rather than staying fixed — so unlit/unexplored areas recede or dim again. This is a bigger structural idea than a decorative cursor trail: content visibility/emphasis itself is tied to proximity to the light, so it likely affects how sections are designed (some content may be intentionally dim/hidden until "found") as well as how the custom cursor component is built (it's not just a follower, it's a light-casting element — think radial gradient/mask/glow that moves with lag, with soft falloff at the edges).
 - Explicit risk flagged and accepted: this combination (smooth scroll + 3D + custom cursor + stacking) can easily tip into "laggy/disorienting" if overdone. Agreed approach: build structure first with plain scroll, then layer in animation techniques one at a time, testing performance at each step.
+- **Brand accent colour:** `#9900fa` (purple) — defined as `--color-accent` in `src/index.css`. Use `var(--color-accent)` / `text-accent` / `bg-accent` etc. throughout. Orange was a prior value and is now superseded — do **not** reintroduce it. The muted variant is `--color-accent-muted: #9900fa4d` (accent at ~30% opacity, for glows, halos, rings).
+
+## Project Structure
+`src/hooks/` and `src/types/` are organized into domain subfolders that mirror `src/components/<domain>/` (e.g. `hero`, `about`, `contact`, `process`, `projects`, `loading-screen`, `cursor`, plus a `shared` domain for cross-cutting hooks/types not tied to one component domain). A hook or type that supports a given component domain lives in the matching `hooks/<domain>/` or `types/<domain>/` folder, not flat under `src/hooks/` or `src/types/` directly. Each domain folder has its own barrel `index.ts` re-exporting its members, and those domain barrels are re-exported from the top-level `src/hooks/index.ts` and `src/types/index.ts`. Follow this pattern when adding new hooks/types — place them in the domain folder matching the component they support (creating that domain folder if it doesn't exist yet), not flat at the top level.
 
 ## Code Quality Skills
 This project uses three project-level Claude Code skills (in `.claude/skills/`) that define binding conventions. They are loaded automatically when relevant — do not restate their content here, refer to them by name:
@@ -79,4 +83,15 @@ If the user is not satisfied at the verification step:
 This applies to every layer of the build — structural scaffolding, individual components, each scroll animation, the loading screen, the cursor, 3D elements, styling passes, everything. No batching multiple unconfirmed pieces together to "save time."
 
 ## Status
-Planning complete. Stack decided. Implementation has not yet started. Next step is scaffolding the initial Vite + React project structure — to be proposed and confirmed before creating any files.
+Core infrastructure, the cursor system, and the Hero, About and Work sections are built. Units so far:
+- **Unit 001–003:** Vite + React scaffold, Tailwind v4 config, shared utilities (`cn`, `LenisProvider`, `useLenis`)
+- **Unit 004:** `LoadingScreen` component — CRT TV aesthetic, EKG wave, radar, film grain, counter, split-curtain exit
+- **Unit 005:** `useCursorPosition` hook — lerp-based trailing position, `prefers-reduced-motion` support
+- **Unit 006:** `useCursorState` hook — hover (interactive selector), pressed, and viewport-visibility states
+- **Unit 007:** `CustomCursor` component — purple dot with `mix-blend-mode: difference`, coordinate readout, publishes `--cursor-x`/`--cursor-y` on `:root` for section overlays
+- **Unit 008:** `HeroSection` — canvas-based particle assembly of "ABDUR KHAN", magnetic letter groups, constellation connections, floating tech-logo perimeter, cursor-light mask
+- **Unit 009:** `CursorLight` — shared cursor-light overlay in `src/components/cursor/` (no longer used by Hero or About; kept pending a decision)
+- **Units 010–017:** About section ("Depth Scan") — a z-axis dive through four layers (lit statement, star story, case files, orbiting satellites) over a lazy R3F particle world that ends on a dawn horizon; light proximity / charge / tilt / lens hooks, ping and spark buses, discovery tracking. Approved.
+- **Units 018–025:** Work section — a lazy R3F full-screen shader of dark water under a night sky. The camera comes down from About's dawn horizon (locked to it as About scrolls away); each project's screen rises out of the water, reflected in the waves, beside its details in plain type; scroll glides sideways between projects and a project list jumps to any. Clicks ripple the water (shared `useClickPing`). Rebuilt once after review (the first "mirror tile" version was confusing and washed the screen purple). Project content is placeholders. Awaiting review.
+
+**Open:** `SignalField` (a particle backdrop built for About) was never mounted — keep or delete. **Next:** Process section, after Work is approved.

@@ -1,5 +1,10 @@
 import { useRef } from "react"
-import type { LoadingScreenProps, RadarBlip, WaveState } from "@/types/loading-screen"
+import type {
+  LoadingScreenProps,
+  LoadingState,
+  RadarBlip,
+  WaveState,
+} from "@/types/loading-screen"
 import {
   useGrainCanvas,
   useLoadingEntryAnimations,
@@ -58,6 +63,25 @@ export function LoadingScreen({
 }: LoadingScreenProps) {
   const state = useLoadingState({ holdDuration, exitDuration })
 
+  // Once done, unmount the whole screen, not just its markup: every canvas
+  // loop, interval and tween it started lives in LoadingStage and is cleaned
+  // up with it. (Returning null from a component that stays mounted left them
+  // all running for the rest of the visit.)
+  if (state === "done") return null
+
+  return (
+    <LoadingStage state={state} holdDuration={holdDuration} exitDuration={exitDuration} />
+  )
+}
+
+type LoadingStageProps = {
+  state: Exclude<LoadingState, "done">
+  holdDuration: number
+  exitDuration: number
+}
+
+/** The loading screen itself, mounted only while it's on screen. */
+function LoadingStage({ state, holdDuration, exitDuration }: LoadingStageProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const grainCanvasRef = useRef<HTMLCanvasElement>(null)
@@ -101,8 +125,6 @@ export function LoadingScreen({
     topCurtainRef,
     bottomCurtainRef,
   })
-
-  if (state === "done") return null
 
   return (
     <div

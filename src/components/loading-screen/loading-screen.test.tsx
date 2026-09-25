@@ -38,6 +38,18 @@ describe("LoadingScreen", () => {
     expect(container.firstChild).not.toBeNull()
   })
 
+  it("stops everything it started once it's done", () => {
+    // The clock's interval stands in for all its loops: they all live in the
+    // part that unmounts, so they're all cleaned up together.
+    const clearInterval = vi.spyOn(window, "clearInterval")
+    const { container, rerender } = render(<LoadingScreen />)
+    vi.mocked(useLoadingState).mockReturnValue("done")
+    rerender(<LoadingScreen />)
+    expect(container.firstChild).toBeNull()
+    expect(clearInterval).toHaveBeenCalled()
+    clearInterval.mockRestore()
+  })
+
   it("renders all eight terminal log lines", () => {
     render(<LoadingScreen />)
     expect(document.querySelectorAll(".js-log-line")).toHaveLength(8)

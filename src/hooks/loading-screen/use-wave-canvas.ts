@@ -14,13 +14,17 @@ export function useWaveCanvas(
     canvas.width = canvas.offsetWidth || window.innerWidth
     canvas.height = canvas.offsetHeight || 140
     let rafId = 0
+    let frame = 0
     const tick = () => {
-      waveRef.current.offset += 1.5
+      frame++
+      // Pass the raw frame counter as `time` so drawWaveFrame can evolve the
+      // wave shape over time — each frequency component drifts independently,
+      // producing a constantly changing waveform that stays within canvas bounds.
       drawWaveFrame(
         ctx,
         canvas.width,
         canvas.height,
-        waveRef.current.offset,
+        frame,
         waveRef.current.amplitude,
         waveRef.current.corrupted
       )
