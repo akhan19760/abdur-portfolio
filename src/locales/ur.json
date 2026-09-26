@@ -1,0 +1,292 @@
+{
+  "hero": {
+    "role": "Frontend Developer",
+    "tagline": "Jahaan saleeka aur niyyat milte hain, wahaan interfaces bante hain.",
+    "cta": "Kaam Dekhein"
+  },
+  "languageSwitcher": {
+    "label": "Zabaan"
+  },
+  "about": {
+    "heading": "Taaruf",
+    "file": "FILE_02 // SUBJECT",
+    "depth": "GEHRAI",
+    "depthUnit": "m",
+    "hintPointer": "Aap ka cursor ek roshni hai. Isay andhere mein ghumaayein, cheezon par rokein, click karke pulse bhejein. Ya Tab se aage barhein.",
+    "hintTouch": "Har layer ko khojne ke liye sitaron, case files, satellites aur fragments par tap karein.",
+    "fragments": {
+      "label": "FRAGMENTS",
+      "srCount": "{{total}} mein se {{found}} fragments mil gaye",
+      "complete": "SAB MIL GAYE",
+      "items": [
+        {
+          "id": "first-line",
+          "code": "FRAG_01",
+          "text": "Code ki pehli line: [YEAR], [LANGUAGE] mein."
+        },
+        {
+          "id": "setup",
+          "code": "FRAG_02",
+          "text": "Editor theme: [THEME]. Font: [FONT]."
+        },
+        {
+          "id": "fuel",
+          "code": "FRAG_03",
+          "text": "Chai ya coffee: [ANSWER]."
+        },
+        {
+          "id": "bug",
+          "code": "FRAG_04",
+          "text": "Sab se pasandeeda bug jo main ne theek kiya: [ONE LINE]."
+        },
+        {
+          "id": "learning",
+          "code": "FRAG_05",
+          "text": "Aaj kal seekh raha hoon: [THING]."
+        },
+        {
+          "id": "offline",
+          "code": "FRAG_06",
+          "text": "Screen se door: [HOBBY]."
+        }
+      ]
+    },
+    "layers": {
+      "signal": {
+        "index": "01",
+        "title": "Signal"
+      },
+      "origin": {
+        "index": "02",
+        "title": "Aaghaaz"
+      },
+      "log": {
+        "index": "03",
+        "title": "Field log"
+      },
+      "status": {
+        "index": "04",
+        "title": "Status"
+      }
+    },
+    "statement": [
+      {
+        "text": "Main aise interfaces banata hoon jo clever lagne se pehle "
+      },
+      {
+        "text": "durust",
+        "accent": true
+      },
+      {
+        "text": " mehsoos hon, aur har us shakhs ko "
+      },
+      {
+        "text": "inaam",
+        "accent": true
+      },
+      {
+        "text": " dein jo unhein "
+      },
+      {
+        "text": "khojne",
+        "accent": true
+      },
+      {
+        "text": " ka shauq rakhta ho."
+      }
+    ],
+    "origin": {
+      "transcript": "TRANSCRIPT",
+      "traced": "TRACED",
+      "complete": "AAGHAAZ TRACED",
+      "star": "{{total}} mein se sitara {{n}}: {{mark}}",
+      "beats": [
+        {
+          "mark": "[YEAR]",
+          "text": "Shuruaat [THE FIRST THING YOU BUILT] se hui."
+        },
+        {
+          "mark": "CURIOSITY",
+          "text": "Main jaanna chahta tha ke meri screen par cheezein asal mein kaise kaam karti hain."
+        },
+        {
+          "mark": "FIRST_SHIP",
+          "text": "[FIRST PROJECT OR JOB]: pehli baar anjaan logon ne meri banayi hui cheez istemaal ki."
+        },
+        {
+          "mark": "REACT",
+          "text": "React samajh mein aaya, aur interfaces woh cheez ban gaye jin ke baare mein main sochna band nahi kar saka."
+        },
+        {
+          "mark": "MOBILE",
+          "text": "Flutter ne wohi tawajjoh phones tak pohanchayi."
+        },
+        {
+          "mark": "[N]+",
+          "text": "Tab se main web aur mobile par [N]+ projects ship kar chuka hoon."
+        },
+        {
+          "mark": "CRAFT",
+          "text": "Main design file aur us cheez ke darmiyan rehta hoon jise log chhoote hain: motion, states, edge cases, accessibility."
+        },
+        {
+          "mark": "NOW",
+          "text": "Jab koi cheez chal jaaye, to main jaanna chahta hoon kyun. Jab na chale, to aur bhi jaldi."
+        }
+      ],
+      "prompt": "Kisi sitare ko chhooiye. Har ek mein kahani ka ek hissa hai."
+    },
+    "log": {
+      "experienceTitle": "Tajurba",
+      "educationTitle": "Taleem",
+      "experience": [
+        {
+          "org": "[COMPANY]",
+          "period": "20XX – AB TAK",
+          "role": "Frontend Developer"
+        },
+        {
+          "org": "[COMPANY]",
+          "period": "20XX – 20XX",
+          "role": "[ROLE]"
+        }
+      ],
+      "education": [
+        {
+          "org": "[INSTITUTION]",
+          "period": "20XX – 20XX",
+          "role": "[DEGREE]"
+        }
+      ],
+      "decryptAll": "Sab decrypt karein",
+      "file": "CASE FILE",
+      "classified": "KHUFIYA",
+      "decryptedStamp": "DECRYPTED",
+      "hold": "Decrypt karne ke liye roshni rokein",
+      "count": "DECRYPTED {{done}}/{{total}}",
+      "complete": "FIELD LOG DECRYPTED"
+    },
+    "status": {
+      "items": [
+        {
+          "label": "MAQAAM",
+          "value": "[CITY, COUNTRY]"
+        },
+        {
+          "label": "ZABAANEIN",
+          "value": "English · Urdu"
+        },
+        {
+          "label": "FOCUS",
+          "value": "Frontend · Mobile"
+        }
+      ],
+      "availability": {
+        "alert": "SIGNAL_OPEN",
+        "title": "Kaam ke liye dastiyaab",
+        "detail": "[FULL-TIME / CONTRACT] · [REMOTE / ON-SITE]"
+      },
+      "caught": "CAUGHT",
+      "locked": "SIGNAL LOCKED",
+      "availabilityLabel": "DASTIYAABI",
+      "hint": "Satellite pakarne ke liye us par roshni rokein"
+    },
+    "decoded": "FILE_02 // SUBJECT DECODED"
+  },
+  "work": {
+    "label": "CHUNEEDA KAAM",
+    "heading": "Kaam",
+    "hint": "Projects ke darmiyan jaane ke liye scroll karein. Aap ka cursor roshni hai.",
+    "navLabel": "Projects",
+    "placeholder": "SCREENSHOT PLACEHOLDER",
+    "screenshotAlt": "{{name}} ka screenshot",
+    "panel": {
+      "stack": "Stack",
+      "highlights": "Khaas baatein",
+      "open": "Project dekhein",
+      "newTab": "naye tab mein khulta hai"
+    },
+    "projects": [
+      {
+        "id": "project-1",
+        "name": "[PROJECT ONE]",
+        "role": "[ROLE]",
+        "year": "[YEAR]",
+        "summary": "[Ek line: ye kya hai, kis ke liye hai, aur aap ne kya kiya.]",
+        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "highlights": [
+          {
+            "id": "project-1-result",
+            "text": "[Ahem nateeja: koi number, launch ya award]"
+          },
+          {
+            "id": "project-1-owned",
+            "text": "[Aap ne kya banaya ya sambhala]"
+          }
+        ],
+        "href": "",
+        "image": ""
+      },
+      {
+        "id": "project-2",
+        "name": "[PROJECT TWO]",
+        "role": "[ROLE]",
+        "year": "[YEAR]",
+        "summary": "[Ek line: ye kya hai, kis ke liye hai, aur aap ne kya kiya.]",
+        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "highlights": [
+          {
+            "id": "project-2-result",
+            "text": "[Ahem nateeja: koi number, launch ya award]"
+          },
+          {
+            "id": "project-2-owned",
+            "text": "[Aap ne kya banaya ya sambhala]"
+          }
+        ],
+        "href": "",
+        "image": ""
+      },
+      {
+        "id": "project-3",
+        "name": "[PROJECT THREE]",
+        "role": "[ROLE]",
+        "year": "[YEAR]",
+        "summary": "[Ek line: ye kya hai, kis ke liye hai, aur aap ne kya kiya.]",
+        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "highlights": [
+          {
+            "id": "project-3-result",
+            "text": "[Ahem nateeja: koi number, launch ya award]"
+          },
+          {
+            "id": "project-3-owned",
+            "text": "[Aap ne kya banaya ya sambhala]"
+          }
+        ],
+        "href": "",
+        "image": ""
+      },
+      {
+        "id": "project-4",
+        "name": "[PROJECT FOUR]",
+        "role": "[ROLE]",
+        "year": "[YEAR]",
+        "summary": "[Ek line: ye kya hai, kis ke liye hai, aur aap ne kya kiya.]",
+        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "highlights": [
+          {
+            "id": "project-4-result",
+            "text": "[Ahem nateeja: koi number, launch ya award]"
+          },
+          {
+            "id": "project-4-owned",
+            "text": "[Aap ne kya banaya ya sambhala]"
+          }
+        ],
+        "href": "",
+        "image": ""
+      }
+    ]
+  }
+}

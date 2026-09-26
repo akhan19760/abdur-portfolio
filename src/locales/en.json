@@ -1,0 +1,292 @@
+{
+  "hero": {
+    "role": "Frontend Developer",
+    "tagline": "Building interfaces where precision meets intent.",
+    "cta": "View Work"
+  },
+  "languageSwitcher": {
+    "label": "Language"
+  },
+  "about": {
+    "heading": "About",
+    "file": "FILE_02 // SUBJECT",
+    "depth": "DEPTH",
+    "depthUnit": "m",
+    "hintPointer": "Your cursor is a light. Sweep it through the dark, hold it on things, click to send a pulse. Or Tab through.",
+    "hintTouch": "Tap the stars, case files, satellites and fragments to explore each layer.",
+    "fragments": {
+      "label": "FRAGMENTS",
+      "srCount": "Fragments found: {{found}} of {{total}}",
+      "complete": "ALL RECOVERED",
+      "items": [
+        {
+          "id": "first-line",
+          "code": "FRAG_01",
+          "text": "First line of code: [YEAR], in [LANGUAGE]."
+        },
+        {
+          "id": "setup",
+          "code": "FRAG_02",
+          "text": "Editor theme: [THEME]. Font: [FONT]."
+        },
+        {
+          "id": "fuel",
+          "code": "FRAG_03",
+          "text": "Tea or coffee: [ANSWER]."
+        },
+        {
+          "id": "bug",
+          "code": "FRAG_04",
+          "text": "Favourite bug I've ever fixed: [ONE LINE]."
+        },
+        {
+          "id": "learning",
+          "code": "FRAG_05",
+          "text": "Currently learning: [THING]."
+        },
+        {
+          "id": "offline",
+          "code": "FRAG_06",
+          "text": "Off-screen: [HOBBY]."
+        }
+      ]
+    },
+    "layers": {
+      "signal": {
+        "index": "01",
+        "title": "Signal"
+      },
+      "origin": {
+        "index": "02",
+        "title": "Origin"
+      },
+      "log": {
+        "index": "03",
+        "title": "Field log"
+      },
+      "status": {
+        "index": "04",
+        "title": "Status"
+      }
+    },
+    "statement": [
+      {
+        "text": "I build interfaces that feel "
+      },
+      {
+        "text": "precise",
+        "accent": true
+      },
+      {
+        "text": " before they feel "
+      },
+      {
+        "text": "clever",
+        "accent": true
+      },
+      {
+        "text": ", and that reward anyone curious enough to "
+      },
+      {
+        "text": "explore",
+        "accent": true
+      },
+      {
+        "text": " them."
+      }
+    ],
+    "origin": {
+      "transcript": "TRANSCRIPT",
+      "traced": "TRACED",
+      "complete": "ORIGIN TRACED",
+      "star": "Star {{n}} of {{total}}: {{mark}}",
+      "beats": [
+        {
+          "mark": "[YEAR]",
+          "text": "It started with [THE FIRST THING YOU BUILT]."
+        },
+        {
+          "mark": "CURIOSITY",
+          "text": "I wanted to know how the things on my screen actually worked."
+        },
+        {
+          "mark": "FIRST_SHIP",
+          "text": "[FIRST PROJECT OR JOB]: the first time strangers used something I made."
+        },
+        {
+          "mark": "REACT",
+          "text": "React clicked, and interfaces became the thing I couldn't stop thinking about."
+        },
+        {
+          "mark": "MOBILE",
+          "text": "Flutter took the same care onto phones."
+        },
+        {
+          "mark": "[N]+",
+          "text": "Since then I've shipped [N]+ projects across web and mobile."
+        },
+        {
+          "mark": "CRAFT",
+          "text": "I live in the gap between a design file and what people touch: motion, states, edge cases, accessibility."
+        },
+        {
+          "mark": "NOW",
+          "text": "When something works, I want to know why. When it doesn't, I want to know why faster."
+        }
+      ],
+      "prompt": "Touch a star. Each one holds a piece of the story."
+    },
+    "log": {
+      "experienceTitle": "Experience",
+      "educationTitle": "Education",
+      "experience": [
+        {
+          "org": "[COMPANY]",
+          "period": "20XX – NOW",
+          "role": "Frontend Developer"
+        },
+        {
+          "org": "[COMPANY]",
+          "period": "20XX – 20XX",
+          "role": "[ROLE]"
+        }
+      ],
+      "education": [
+        {
+          "org": "[INSTITUTION]",
+          "period": "20XX – 20XX",
+          "role": "[DEGREE]"
+        }
+      ],
+      "decryptAll": "Decrypt all",
+      "file": "CASE FILE",
+      "classified": "CLASSIFIED",
+      "decryptedStamp": "DECRYPTED",
+      "hold": "Hold your light to decrypt",
+      "count": "DECRYPTED {{done}}/{{total}}",
+      "complete": "FIELD LOG DECRYPTED"
+    },
+    "status": {
+      "items": [
+        {
+          "label": "LOCATION",
+          "value": "[CITY, COUNTRY]"
+        },
+        {
+          "label": "LANGUAGES",
+          "value": "English · Urdu"
+        },
+        {
+          "label": "FOCUS",
+          "value": "Frontend · Mobile"
+        }
+      ],
+      "availability": {
+        "alert": "SIGNAL_OPEN",
+        "title": "Open to work",
+        "detail": "[FULL-TIME / CONTRACT] · [REMOTE / ON-SITE]"
+      },
+      "caught": "CAUGHT",
+      "locked": "SIGNAL LOCKED",
+      "availabilityLabel": "AVAILABILITY",
+      "hint": "Hold your light on a satellite to catch it"
+    },
+    "decoded": "FILE_02 // SUBJECT DECODED"
+  },
+  "work": {
+    "label": "SELECTED WORK",
+    "heading": "Work",
+    "hint": "Scroll to move between projects. Your cursor is the light.",
+    "navLabel": "Projects",
+    "placeholder": "SCREENSHOT PLACEHOLDER",
+    "screenshotAlt": "Screenshot of {{name}}",
+    "panel": {
+      "stack": "Stack",
+      "highlights": "Highlights",
+      "open": "View project",
+      "newTab": "opens in a new tab"
+    },
+    "projects": [
+      {
+        "id": "project-1",
+        "name": "[PROJECT ONE]",
+        "role": "[ROLE]",
+        "year": "[YEAR]",
+        "summary": "[One line: what it is, who it's for, and what you did.]",
+        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "highlights": [
+          {
+            "id": "project-1-result",
+            "text": "[Key result: a number, a launch, an award]"
+          },
+          {
+            "id": "project-1-owned",
+            "text": "[What you owned or built]"
+          }
+        ],
+        "href": "",
+        "image": ""
+      },
+      {
+        "id": "project-2",
+        "name": "[PROJECT TWO]",
+        "role": "[ROLE]",
+        "year": "[YEAR]",
+        "summary": "[One line: what it is, who it's for, and what you did.]",
+        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "highlights": [
+          {
+            "id": "project-2-result",
+            "text": "[Key result: a number, a launch, an award]"
+          },
+          {
+            "id": "project-2-owned",
+            "text": "[What you owned or built]"
+          }
+        ],
+        "href": "",
+        "image": ""
+      },
+      {
+        "id": "project-3",
+        "name": "[PROJECT THREE]",
+        "role": "[ROLE]",
+        "year": "[YEAR]",
+        "summary": "[One line: what it is, who it's for, and what you did.]",
+        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "highlights": [
+          {
+            "id": "project-3-result",
+            "text": "[Key result: a number, a launch, an award]"
+          },
+          {
+            "id": "project-3-owned",
+            "text": "[What you owned or built]"
+          }
+        ],
+        "href": "",
+        "image": ""
+      },
+      {
+        "id": "project-4",
+        "name": "[PROJECT FOUR]",
+        "role": "[ROLE]",
+        "year": "[YEAR]",
+        "summary": "[One line: what it is, who it's for, and what you did.]",
+        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "highlights": [
+          {
+            "id": "project-4-result",
+            "text": "[Key result: a number, a launch, an award]"
+          },
+          {
+            "id": "project-4-owned",
+            "text": "[What you owned or built]"
+          }
+        ],
+        "href": "",
+        "image": ""
+      }
+    ]
+  }
+}

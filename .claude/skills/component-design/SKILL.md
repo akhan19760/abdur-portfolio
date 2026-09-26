@@ -19,10 +19,11 @@ src/components/
 │   └── card.tsx
 ├── layout/         # App shell pieces used across the whole page (e.g. loading screen wrapper)
 ├── cursor/         # The light-source custom cursor system
-└── scroll/         # Shared scroll infra (Lenis setup, scroll-trigger helpers)
+├── scroll/         # Shared scroll infra (Lenis setup, scroll-trigger helpers)
+└── <domain>/       # One folder per section domain (about/, projects/, …)
 ```
 
-Section-specific components (e.g. a card used only inside the Projects section) live inside that section's own folder — see `section-design` skill — NOT in `src/components/`. `src/components/` is reserved for things reused across 2+ sections.
+Components that support a section (e.g. a card used only inside the Projects section) live in that section's domain folder, `src/components/<domain>/`, even when only one section uses them — see the `section-design` skill. `src/sections/<name>/` holds only the section's entry component. Things reused across domains go in `ui/`, `layout/`, `cursor/`, `scroll/` or `shared/`.
 
 - File names MUST use `kebab-case`.
 - Co-locate a `[name]-utils.ts` for helper functions and a `[name]-types.ts`/`types.ts` for shared types when a component's logic grows.
@@ -75,7 +76,7 @@ A file MAY export multiple related named exports forming one logical unit (e.g. 
 - **Project-specific:** since the cursor-as-light-source concept can visually de-emphasize content until "lit," all content MUST remain reachable and legible via keyboard navigation and screen readers regardless of cursor position — the light effect is a visual enhancement layered on top of a baseline-accessible page, never the sole way to perceive content.
 
 ## 8. Checklist
-- [ ] Correct subdirectory (`ui/`, `layout/`, `cursor/`, `scroll/`, or owned by a section)
+- [ ] Correct subdirectory (`ui/`, `layout/`, `cursor/`, `scroll/`, `shared/`, or the section's domain folder)
 - [ ] `kebab-case` filename
 - [ ] Props typed above the component
 - [ ] Named exports only

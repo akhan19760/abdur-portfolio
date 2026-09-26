@@ -1,6 +1,34 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   Kiloy — self-hosted primary display font
+   woff2 is listed first (best compression); woff as broad fallback.
+   The italic face uses font-style: italic so `italic` Tailwind utility / CSS
+   keyword automatically selects the correct file.
+───────────────────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: "Kiloy";
+  src:
+    url("./assets/fonts/Kiloy.woff2") format("woff2"),
+    url("./assets/fonts/Kiloy.woff") format("woff"),
+    url("./assets/fonts/Kiloy.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Kiloy";
+  src:
+    url("./assets/fonts/Kiloy-Italic.woff2") format("woff2"),
+    url("./assets/fonts/Kiloy-Italic.woff") format("woff"),
+    url("./assets/fonts/Kiloy-Italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    Design Tokens — Tailwind v4 @theme
    All --color-* and --font-* values here are automatically exposed as
    Tailwind utilities: bg-base, text-accent, font-display, etc.
@@ -11,19 +39,173 @@
   --color-base: #0a0a0a; /* near-black page background — cursor glow canvas */
   --color-surface: #141414; /* slightly lifted — cards, panels, overlays       */
   --color-text: #f0ede8; /* primary text — warm off-white, not pure #fff     */
-  --color-accent: #9900fa; /* orange — Abdur's brand accent                    */
-  --color-accent-muted: #ff851b4d; /* accent at ~30% opacity — glows, halos, rings  */
+  --color-accent: #9900fa; /* purple — Abdur's brand accent                    */
+  --color-accent-muted: #9900fa4d; /* accent at ~30% opacity — glows, halos, rings  */
+  /* accent lifted toward the text colour — purple small text that still meets
+     AA on --color-base (#9900fa alone is ~3.5:1, below the 4.5:1 minimum)     */
+  --color-accent-soft: color-mix(in oklab, #9900fa 55%, #f0ede8);
   --color-border: #2a2a2a; /* subtle dividers and borders                      */
 
   /* Font families */
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-sans: "DM Sans", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --font-display: "Kiloy", Georgia, serif; /* primary — display headings        */
+  --font-sans: "Outfit", system-ui, sans-serif; /* secondary — UI, body, labels */
+  --font-mono: "JetBrains Mono", "Fira Code", monospace; /* chrome / code       */
+
+  /* Animations (About mechanics). The reduced-motion rule in the base layer
+     shortens all of them to ~0, so they never need their own guards. */
+  --animate-word-in: word-in 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-star-flare: star-flare 1.1s ease-out both;
+  --animate-beacon-pulse: beacon-pulse 2.4s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+  --animate-scan-sweep: scan-sweep 1.1s ease-in-out both;
+  --animate-word-from-star: word-from-star 1s cubic-bezier(0.16, 0.9, 0.2, 1) backwards;
+  --animate-word-rise: word-rise 1.2s cubic-bezier(0.16, 0.9, 0.2, 1) backwards;
+  --animate-twinkle: twinkle 3.2s ease-in-out infinite;
+  --animate-scan-beam: scan-beam 1.4s linear infinite;
+  --animate-card-flash: card-flash 1s ease-out both;
+  --animate-orbit-spin: orbit-spin 6s linear infinite;
+
+  /* A word flying out of a star into its place: --fx/--fy is the star's
+     offset from the word, set just before paint by the Origin layer */
+  @keyframes word-from-star {
+    from {
+      translate: var(--fx, 0px) var(--fy, 0px);
+      scale: 0.2;
+      opacity: 0;
+      filter: blur(10px);
+    }
+    55% {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+
+  /* A word rising out of the core, oversized and blurred, into place */
+  @keyframes word-rise {
+    from {
+      translate: 0 0.5em;
+      scale: 1.25;
+      opacity: 0;
+      filter: blur(14px);
+    }
+  }
+
+  /* An untraced star breathing */
+  @keyframes twinkle {
+    0%,
+    100% {
+      scale: 0.8;
+    }
+    50% {
+      scale: 1.15;
+    }
+  }
+
+  /* The scan line sweeping down a case file while the light is on it */
+  @keyframes scan-beam {
+    from {
+      top: -25%;
+    }
+    to {
+      top: 110%;
+    }
+  }
+
+  /* White flash across a case file the moment it's decrypted */
+  @keyframes card-flash {
+    from {
+      opacity: 0.75;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes orbit-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  /* A word materialising out of blur (transcript lines as stars are traced) */
+  @keyframes word-in {
+    from {
+      opacity: 0;
+      filter: blur(6px);
+      translate: 0 0.35em;
+    }
+  }
+
+  /* A ring bursting outward from a star the moment it's traced */
+  @keyframes star-flare {
+    from {
+      opacity: 0.9;
+      scale: 0.4;
+    }
+    to {
+      opacity: 0;
+      scale: 3.2;
+    }
+  }
+
+  /* Concentric rings pulsing out of the "Open to work" beacon */
+  @keyframes beacon-pulse {
+    from {
+      opacity: 0.7;
+      scale: 0.6;
+    }
+    to {
+      opacity: 0;
+      scale: 2.4;
+    }
+  }
+
+  /* A bright band sweeping down the log panel when it's fully decrypted */
+  @keyframes scan-sweep {
+    from {
+      translate: 0 -100%;
+      opacity: 1;
+    }
+    to {
+      translate: 0 100%;
+      opacity: 0;
+    }
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Base Layer — reset, body, and reduced-motion baseline
 ───────────────────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   3D Purple Button — social-links squircle style
+   Multi-layer radial gradient + inset highlight + depth shadow are used here
+   rather than Tailwind utilities because they cannot be expressed as atomic
+   utility classes (nested inset + outer box-shadows, precise radial gradient).
+───────────────────────────────────────────────────────────────────────────── */
+@layer components {
+  .social-btn-3d {
+    background: radial-gradient(ellipse at 45% 25%, #c084fc 0%, #8b5cf6 42%, #6d28d9 82%);
+    box-shadow:
+      /* inner top highlight — convex/inflated look */
+      inset 0 1.5px 0 rgba(255, 255, 255, 0.4),
+      /* inner bottom shadow — depth */ inset 0 -2px 4px rgba(0, 0, 0, 0.28);
+  }
+
+  .social-btn-3d:hover {
+    background: radial-gradient(ellipse at 45% 25%, #d8b4fe 0%, #a78bfa 42%, #7c3aed 82%);
+    box-shadow:
+      inset 0 1.5px 0 rgba(255, 255, 255, 0.45),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.28);
+  }
+
+  .social-btn-3d:active {
+    background: radial-gradient(ellipse at 45% 30%, #a855f7 0%, #7c3aed 42%, #5b21b6 82%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      inset 0 -1px 3px rgba(0, 0, 0, 0.35);
+    translate: 0 2px;
+  }
+}
+
 @layer base {
   *,
   *::before,
@@ -47,11 +229,19 @@
     font-family: var(--font-sans);
     overflow-x: hidden;
     min-height: 100dvh;
-    /*
-      cursor: none is intentionally commented out.
-      It will be uncommented when the custom cursor component is built,
-      so the OS cursor remains usable during development until then.
-    */
+    cursor: none; /* custom cursor active — hides OS cursor on the page body */
+  }
+
+  /*
+    Suppress browser cursor overrides on interactive elements.
+    <a>, <button>, inputs etc. apply cursor: pointer / text by default,
+    which would show the OS cursor again even when body is cursor: none.
+    !important is necessary here to beat specificity from UA stylesheet.
+  */
+  *,
+  *::before,
+  *::after {
+    cursor: none !important;
   }
 
   /* ── prefers-reduced-motion — required per accessibility skill (WCAG 2.2) ── */
