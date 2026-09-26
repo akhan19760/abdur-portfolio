@@ -43,6 +43,7 @@ import { cn } from "@/lib/utils"
 import { canHover, prefersImmersive } from "@/lib/media"
 import { emitPing } from "@/lib/ping"
 import { emitSparks, sparkFrom } from "@/lib/sparks"
+import { applyStatementReveal } from "@/lib/statement-reveal"
 import { ErrorBoundary } from "@/components/layout"
 import {
   AboutFx,
@@ -79,6 +80,10 @@ const FORMATION_WINDOWS = PHASES.holds.map(
 )
 // When the finale plays by itself if the visitor hasn't caught every satellite
 const FINALE_AT = PHASES.tailStart + 0.3
+// The statement (first layer) is revealed character by character over this
+// stretch: from late in its approach to just before it flies away.
+const REVEAL_START = PHASES.arrivals[0] - 0.4
+const REVEAL_END = PHASES.holds[0][1] - 0.1
 const MAX_DEPTH = 400 // metres shown on the readout at the bottom of the dive
 
 // Where each fragment sits in depth mode, by its index in the fragment list.
@@ -277,6 +282,7 @@ export function AboutSection() {
 
   // ── Scroll-driven HUD, written straight to the DOM (no re-renders) ──────
   const progressRef = useRef(0)
+  const statementRef = useRef<HTMLElement | null>(null)
   const burstRef = useRef(0)
   const readoutRef = useRef<HTMLSpanElement>(null)
   const gaugeMarkerRef = useRef<HTMLSpanElement>(null)
@@ -299,6 +305,13 @@ export function AboutSection() {
     }
     const enter = smoothstep(PHASES.quietUntil, PHASES.arrivals[0] - 0.15, units)
     stageRef.current?.style.setProperty("--about-enter", enter.toFixed(3))
+    const reveal = Math.min(
+      1,
+      Math.max(0, (units - REVEAL_START) / (REVEAL_END - REVEAL_START))
+    )
+    statementRef.current ??=
+      stageRef.current?.querySelector<HTMLElement>("[data-statement]") ?? null
+    if (statementRef.current) applyStatementReveal(statementRef.current, reveal)
     // Same-value updates are bailed out by React, so this rarely re-renders.
     setTailReached(units >= FINALE_AT)
     setWorldActive(units >= PHASES.quietUntil - 0.05)
@@ -470,7 +483,7 @@ export function AboutSection() {
           </div>
           {!depth && (
             <div className="mt-8 space-y-4">
-              <p className="max-w-md font-mono text-[11px] leading-relaxed text-text/60">
+              <p className="max-w-md font-support text-[11px] leading-relaxed text-text/60">
                 {pointer ? t("about.hintPointer") : t("about.hintTouch")}
               </p>
               {fragmentCounter}
@@ -481,7 +494,7 @@ export function AboutSection() {
         {depth && (
           <>
             <div className="pointer-events-none absolute inset-x-10 bottom-10 z-20 flex items-end justify-between gap-10 opacity-[var(--about-enter,1)]">
-              <p className="max-w-sm font-mono text-[11px] leading-relaxed text-text/60">
+              <p className="max-w-sm font-support text-[11px] leading-relaxed text-text/60">
                 {t("about.hintPointer")}
               </p>
               {fragmentCounter}
@@ -526,7 +539,7 @@ export function AboutSection() {
               : "relative mx-auto flex max-w-5xl flex-col gap-32 px-6"
           )}
         >
-          {/* 01 — Signal: the statement, lit word by word */}
+          {/* 01 — Signal: the statement, revealed letter by letter as you scroll */}
           <AboutLayer
             index={layers[0].index}
             title={layers[0].title}

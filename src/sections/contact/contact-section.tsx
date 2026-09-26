@@ -168,7 +168,7 @@ export function ContactSection() {
         {immersive && (
           <p
             data-wall-hud
-            className="absolute end-10 bottom-10 max-w-[17rem] text-end font-mono text-[11px] leading-relaxed text-text/55"
+            className="absolute end-10 bottom-10 max-w-[17rem] text-end font-support text-[11px] leading-relaxed text-text/55"
           >
             {t("contact.hint")}
           </p>

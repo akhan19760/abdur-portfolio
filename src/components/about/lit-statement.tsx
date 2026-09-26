@@ -6,29 +6,36 @@ type LitStatementProps = {
   className?: string
 }
 
-// At rest words sit at 55% (large text, still well above AA contrast); the
-// cursor light lifts them to full strength via --light (useLightProximity).
+// The cursor light glows around whichever word it's on. The glow is on the
+// word and simply inherited by its characters, so they never recompute it.
 const WORD = cn(
-  "opacity-[calc(0.55_+_var(--light,0)_*_0.45)]",
-  "transition-[opacity,text-shadow] duration-200 ease-out"
+  "[text-shadow:0_0_calc(var(--light,0)*22px)_rgba(153,0,250,0.5)]",
+  "transition-[text-shadow] duration-200 ease-out"
 )
 
-// Keywords: soft purple at rest, glowing in the brand purple when lit.
+// Keywords: soft purple, glowing brighter in the brand purple when lit.
 const ACCENT = cn(
   "font-normal text-accent-soft font-stretch-semi-expanded",
   "[text-shadow:0_0_calc(var(--light,0)*28px)_var(--color-accent)]"
 )
 
 /**
- * The About statement, set large and split into words so each word can be
- * lit individually by the cursor light.
+ * The About statement, set large and revealed one character at a time as the
+ * visitor scrolls: the About section drives the sweep with
+ * `applyStatementReveal` (`lib/statement-reveal`), which colours the
+ * `[data-char]` spans directly. Left alone (the flat fallback), every
+ * character shows in its real colour.
  *
- * Every word is a `[data-light]` span. Whitespace stays as plain text between
- * spans, so screen readers and copy/paste get the sentence exactly as written.
+ * Every word is a `[data-light]` span so the cursor light can find it. The
+ * character spans stay inline (never inline-block) and whitespace stays as
+ * plain text between words, so screen readers and copy/paste get the
+ * sentence exactly as written.
  */
 export function LitStatement({ segments, className }: LitStatementProps) {
   return (
     <p
+      // The About section finds the statement by this to drive the reveal
+      data-statement
       className={cn(
         "font-display text-[clamp(2.25rem,5vw,4.75rem)] font-light leading-[1.08] text-text",
         className
@@ -44,7 +51,11 @@ export function LitStatement({ segments, className }: LitStatementProps) {
               data-light
               className={cn(WORD, segment.accent && ACCENT)}
             >
-              {part}
+              {Array.from(part, (char, ci) => (
+                <span key={ci} data-char>
+                  {char}
+                </span>
+              ))}
             </span>
           )
         })

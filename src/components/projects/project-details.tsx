@@ -73,7 +73,7 @@ export function ProjectDetails({
       <p className="mt-5 font-mono text-[12px] uppercase tracking-[0.25em] text-text/70">
         {project.role} · {project.year}
       </p>
-      <p className="mt-4 max-w-md text-[16px] leading-relaxed text-text/85">
+      <p className="mt-4 max-w-md font-support text-[16px] leading-relaxed text-text/85">
         {project.summary}
       </p>
 
@@ -96,7 +96,7 @@ export function ProjectDetails({
         {project.highlights.map((highlight) => (
           <li
             key={highlight.id}
-            className="flex items-baseline gap-3 text-[15px] text-text/85"
+            className="flex items-baseline gap-3 font-support text-[15px] text-text/85"
           >
             <span
               aria-hidden="true"

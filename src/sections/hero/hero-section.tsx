@@ -136,6 +136,7 @@ type HeroSectionProps = {
 export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const logosRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const particlesRef = useRef<Particle[]>([])
   const groupsRef = useRef<LetterGroup[]>([])
@@ -263,6 +264,7 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
     const still = prefersReducedMotion()
     let lastExit = -1
     let lastArrive = -1
+    let lastCursor = ""
     // True for the first frame drawn after being hidden: no streaks from
     // wherever the particles were last drawn
     let fresh = true
@@ -307,6 +309,19 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
         fresh = true
         rafId = requestAnimationFrame(tick)
         return
+      }
+
+      // The light masks read --cursor-x/y on their own layers: the variables
+      // are non-inherited (index.css), so they don't flow down from :root
+      const root = document.documentElement.style
+      const cursorX = root.getPropertyValue("--cursor-x")
+      const cursorY = root.getPropertyValue("--cursor-y")
+      if (cursorX + cursorY !== lastCursor) {
+        for (const layer of [container, logosRef.current]) {
+          layer?.style.setProperty("--cursor-x", cursorX)
+          layer?.style.setProperty("--cursor-y", cursorY)
+        }
+        lastCursor = cursorX + cursorY
       }
 
       // e: 0 → 1 over the first EXIT_END of the scroll-away (eased in)
@@ -520,6 +535,7 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
 
       {/* ── Corner accents + floating logos — pinned, fly past the camera on exit ── */}
       <div
+        ref={logosRef}
         aria-hidden="true"
         className={cn(
           "pointer-events-none fixed inset-0",

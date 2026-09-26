@@ -20,34 +20,34 @@
       "complete": "SAB MIL GAYE",
       "items": [
         {
-          "id": "first-line",
+          "id": "sprint",
           "code": "FRAG_01",
-          "text": "Code ki pehli line: [YEAR], [LANGUAGE] mein."
+          "text": "6 hafton mein 366 ghante, 200 ghante ke plan par."
         },
         {
-          "id": "setup",
+          "id": "bug-free",
           "code": "FRAG_02",
-          "text": "Editor theme: [THEME]. Font: [FONT]."
+          "text": "National deadline par sirf mere modules bug-free nikle."
         },
         {
-          "id": "fuel",
+          "id": "emir",
           "code": "FRAG_03",
-          "text": "Chai ya coffee: [ANSWER]."
+          "text": "Aise platform ke liye banaya jo His Highness Emir-e-Qatar istemaal karte hain."
         },
         {
-          "id": "bug",
+          "id": "migration",
           "code": "FRAG_04",
-          "text": "Sab se pasandeeda bug jo main ne theek kiya: [ONE LINE]."
+          "text": "Project ke beech Next.js se TanStack Start par gaya. Kuch zaaya nahi hua."
         },
         {
-          "id": "learning",
+          "id": "three-languages",
           "code": "FRAG_05",
-          "text": "Aaj kal seekh raha hoon: [THING]."
+          "text": "English, Kazakh aur Russian mein live transcription."
         },
         {
-          "id": "offline",
+          "id": "three-weeks",
           "code": "FRAG_06",
-          "text": "Screen se door: [HOBBY]."
+          "text": "3–4 mahine ka kaam, taqreeban 3 hafton mein ship."
         }
       ]
     },
@@ -102,8 +102,8 @@
       "star": "{{total}} mein se sitara {{n}}: {{mark}}",
       "beats": [
         {
-          "mark": "[YEAR]",
-          "text": "Shuruaat [THE FIRST THING YOU BUILT] se hui."
+          "mark": "2019",
+          "text": "Shuruaat IBA Karachi se hui, computer science ki degree ke saath."
         },
         {
           "mark": "CURIOSITY",
@@ -111,7 +111,7 @@
         },
         {
           "mark": "FIRST_SHIP",
-          "text": "[FIRST PROJECT OR JOB]: pehli baar anjaan logon ne meri banayi hui cheez istemaal ki."
+          "text": "Kazakhstan ki Ministry of Education ke liye ek learning platform: pehli baar anjaan logon ne meri banayi hui cheez istemaal ki."
         },
         {
           "mark": "REACT",
@@ -122,8 +122,8 @@
           "text": "Flutter ne wohi tawajjoh phones tak pohanchayi."
         },
         {
-          "mark": "[N]+",
-          "text": "Tab se main web aur mobile par [N]+ projects ship kar chuka hoon."
+          "mark": "3+",
+          "text": "Tab se 3+ saal se main hukoomaton, industry aur apne products ke liye React aur TypeScript ship kar raha hoon."
         },
         {
           "mark": "CRAFT",
@@ -141,21 +141,21 @@
       "educationTitle": "Taleem",
       "experience": [
         {
-          "org": "[COMPANY]",
-          "period": "20XX – AB TAK",
-          "role": "Frontend Developer"
+          "org": "Qatar Datamation Systems",
+          "period": "2025 – AB TAK",
+          "role": "Software Consultant · Frontend / Full Stack"
         },
         {
-          "org": "[COMPANY]",
-          "period": "20XX – 20XX",
-          "role": "[ROLE]"
+          "org": "Veraqor",
+          "period": "2023 – 2025",
+          "role": "Software Developer · Frontend Engineer"
         }
       ],
       "education": [
         {
-          "org": "[INSTITUTION]",
-          "period": "20XX – 20XX",
-          "role": "[DEGREE]"
+          "org": "Institute of Business Administration",
+          "period": "2019 – 2023",
+          "role": "BS Computer Science"
         }
       ],
       "decryptAll": "Sab decrypt karein",
@@ -170,7 +170,7 @@
       "items": [
         {
           "label": "MAQAAM",
-          "value": "[CITY, COUNTRY]"
+          "value": "Karachi, Pakistan"
         },
         {
           "label": "ZABAANEIN",
@@ -184,7 +184,7 @@
       "availability": {
         "alert": "SIGNAL_OPEN",
         "title": "Kaam ke liye dastiyaab",
-        "detail": "[FULL-TIME / CONTRACT] · [REMOTE / ON-SITE]"
+        "detail": "Full-time ya contract · Remote ya on-site"
       },
       "caught": "CAUGHT",
       "locked": "SIGNAL LOCKED",
@@ -208,80 +208,111 @@
     },
     "projects": [
       {
-        "id": "project-1",
-        "name": "[PROJECT ONE]",
-        "role": "[ROLE]",
-        "year": "[YEAR]",
-        "summary": "[Ek line: ye kya hai, kis ke liye hai, aur aap ne kya kiya.]",
-        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "id": "sceai",
+        "name": "SCEAI Platform",
+        "role": "Frontend Engineer",
+        "year": "2023 – AB TAK",
+        "summary": "Qatar ki Supreme Council of Economic Affairs ka platform, jo His Highness Emir-e-Qatar istemaal karte hain. Main ne is ke 9 core frontend modules ki architecture banayi.",
+        "stack": [
+          "React",
+          "TypeScript",
+          "Redux Toolkit",
+          "Zustand",
+          "TanStack Query",
+          "SignalR",
+          "Yjs"
+        ],
         "highlights": [
           {
-            "id": "project-1-result",
-            "text": "[Ahem nateeja: koi number, launch ya award]"
+            "id": "sceai-result",
+            "text": "6 hafton mein 366 ghante, aur national deadline par sirf mere modules bug-free"
           },
           {
-            "id": "project-1-owned",
-            "text": "[Aap ne kya banaya ya sambhala]"
+            "id": "sceai-owned",
+            "text": "Store ki nayi tarteeb se load time ~25% kam hua"
           }
         ],
         "href": "",
         "image": ""
       },
       {
-        "id": "project-2",
-        "name": "[PROJECT TWO]",
-        "role": "[ROLE]",
-        "year": "[YEAR]",
-        "summary": "[Ek line: ye kya hai, kis ke liye hai, aur aap ne kya kiya.]",
-        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "id": "accuratespend",
+        "name": "AccurateSpend",
+        "role": "Frontend",
+        "year": "Zaati project",
+        "summary": "Pharma aur biotech companies ke liye compliance SaaS, jo CMS Open Payments (Sunshine Act) reporting ko data intake se submission tak automate karta hai.",
+        "stack": [
+          "React",
+          "TypeScript",
+          "TanStack Start",
+          "TanStack Query",
+          "Zustand",
+          "Radix UI",
+          "Orval"
+        ],
         "highlights": [
           {
-            "id": "project-2-result",
-            "text": "[Ahem nateeja: koi number, launch ya award]"
+            "id": "accuratespend-result",
+            "text": "8 modules, 60+ components, 3–4 mahine ke andaaze ke muqable mein taqreeban 3 hafton mein"
           },
           {
-            "id": "project-2-owned",
-            "text": "[Aap ne kya banaya ya sambhala]"
+            "id": "accuratespend-owned",
+            "text": "Validation engine jo har payment record ko CMS rules par parakhta hai"
           }
         ],
         "href": "",
         "image": ""
       },
       {
-        "id": "project-3",
-        "name": "[PROJECT THREE]",
-        "role": "[ROLE]",
-        "year": "[YEAR]",
-        "summary": "[Ek line: ye kya hai, kis ke liye hai, aur aap ne kya kiya.]",
-        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "id": "protocoling",
+        "name": "Protocoling Suite",
+        "role": "Frontend Lead",
+        "year": "2023 – 2024",
+        "summary": "Kazakhstan Petrochemical Industries ke liye AI suite, jo English, Kazakh aur Russian mein guftagu ko live transcribe karta hai aur phir us ka khulasa banata hai.",
+        "stack": [
+          "React",
+          "TypeScript",
+          "Whisper API",
+          "Tailwind CSS",
+          "Framer Motion",
+          "ApexCharts"
+        ],
         "highlights": [
           {
-            "id": "project-3-result",
-            "text": "[Ahem nateeja: koi number, launch ya award]"
+            "id": "protocoling-result",
+            "text": "Browser se Whisper API tak chunked audio upload"
           },
           {
-            "id": "project-3-owned",
-            "text": "[Aap ne kya banaya ya sambhala]"
+            "id": "protocoling-owned",
+            "text": "MIME filtering, RBAC aur protected routes ke saath mehfooz file handling"
           }
         ],
         "href": "",
         "image": ""
       },
       {
-        "id": "project-4",
-        "name": "[PROJECT FOUR]",
-        "role": "[ROLE]",
-        "year": "[YEAR]",
-        "summary": "[Ek line: ye kya hai, kis ke liye hai, aur aap ne kya kiya.]",
-        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "id": "kunarchgpt",
+        "name": "KunARCHGPT",
+        "role": "Developer",
+        "year": "Zaati project",
+        "summary": "UK ke architectural qawaneen ke baare mein sawalon ke jawab dene wala AI chatbot, paid tiers aur usage dashboard ke saath.",
+        "stack": [
+          "React",
+          "TypeScript",
+          "OpenAI",
+          "Stripe",
+          "Firebase",
+          "Material UI",
+          "ECharts"
+        ],
         "highlights": [
           {
-            "id": "project-4-result",
-            "text": "[Ahem nateeja: koi number, launch ya award]"
+            "id": "kunarchgpt-result",
+            "text": "Query limits aur SendGrid emails ke saath tiered Stripe subscriptions"
           },
           {
-            "id": "project-4-owned",
-            "text": "[Aap ne kya banaya ya sambhala]"
+            "id": "kunarchgpt-owned",
+            "text": "OAuth 2.0 par Google aur Microsoft sign-in"
           }
         ],
         "href": "",

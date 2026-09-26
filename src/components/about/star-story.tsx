@@ -262,10 +262,11 @@ export function StarStory({
           key={active ?? "prompt"}
           aria-hidden="true"
           className={cn(
-            "mx-auto max-w-4xl font-display font-light leading-[1.12]",
+            "mx-auto max-w-4xl leading-[1.12]",
+            // A story line is the layer's main text; the prompt is a cue
             beat
-              ? "text-[clamp(1.6rem,3vw,2.9rem)] text-text"
-              : "text-[clamp(1.2rem,2vw,1.8rem)] text-text/70"
+              ? "font-display font-light text-[clamp(1.6rem,3vw,2.9rem)] text-text"
+              : "font-support text-[clamp(1.2rem,2vw,1.8rem)] text-text/70"
           )}
         >
           {words.map((word, i) => (

@@ -60,14 +60,22 @@ export function CustomCursor({ lerpFactor = 0.3 }: CustomCursorProps) {
 
   // Publish lerp position as CSS vars every frame for the Hero overlay (and any
   // other section wanting cursor-proximity effects without React coupling).
+  // They're registered as non-inherited (index.css), so a write only touches
+  // :root instead of restyling the whole page.
   useEffect(() => {
     document.documentElement.style.setProperty("--cursor-x", `${lerp.x}px`)
     document.documentElement.style.setProperty("--cursor-y", `${lerp.y}px`)
-    return () => {
+  }, [lerp.x, lerp.y])
+
+  // Removed only on unmount — clearing them on every move would double the
+  // style work and briefly leave readers without a position.
+  useEffect(
+    () => () => {
       document.documentElement.style.removeProperty("--cursor-x")
       document.documentElement.style.removeProperty("--cursor-y")
-    }
-  }, [lerp.x, lerp.y])
+    },
+    []
+  )
 
   return (
     <>

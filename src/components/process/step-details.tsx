@@ -66,7 +66,7 @@ export function StepDetails({
         </h3>
         <p
           data-fold-body
-          className="mt-6 max-w-md text-[17px] leading-relaxed text-text/85"
+          className="mt-6 max-w-md font-support text-[17px] leading-relaxed text-text/85"
         >
           {step.summary}
         </p>

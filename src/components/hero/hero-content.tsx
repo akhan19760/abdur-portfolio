@@ -31,7 +31,7 @@ export function HeroContent() {
           "opacity-[calc(1_-_var(--hero-exit,0)_*_2.4)] has-[:focus-visible]:opacity-100"
         )}
       >
-        <p className="mb-6 font-hero text-xs uppercase tracking-[0.4em] text-accent/60">
+        <p className="mb-6 font-support text-xs uppercase tracking-[0.4em] text-accent/60">
           {t("hero.role")}
         </p>
 
@@ -42,7 +42,7 @@ export function HeroContent() {
         */}
         <div aria-hidden="true" className="h-[clamp(10.5rem,28vw,26rem)]" />
 
-        <p className="mb-10 mt-6 font-hero text-sm tracking-widest text-text/35">
+        <p className="mb-10 mt-6 font-support text-sm tracking-widest text-text/35">
           {t("hero.tagline")}
         </p>
 

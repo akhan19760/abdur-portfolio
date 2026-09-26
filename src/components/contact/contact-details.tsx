@@ -57,7 +57,7 @@ export function ContactDetails({
     <div className={cn(centered && "text-center", className)}>
       <p
         className={cn(
-          "max-w-xl text-[17px] leading-relaxed text-text/85",
+          "max-w-xl font-support text-[17px] leading-relaxed text-text/85",
           centered && "mx-auto"
         )}
       >
@@ -116,7 +116,7 @@ export function ContactDetails({
       </div>
       <p
         role="status"
-        className="mt-4 min-h-5 font-mono text-[11px] tracking-[0.15em] text-accent-soft"
+        className="mt-4 min-h-5 font-support text-[11px] tracking-[0.15em] text-accent-soft"
       >
         {message}
       </p>
