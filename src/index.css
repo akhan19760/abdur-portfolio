@@ -1,17 +1,32 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Kiloy — self-hosted primary display font
+   Stellar Core — self-hosted font for all site text except Hero (variable:
+   wght 100–400, wdth 75–125%). One file serves every weight and width, so
+   font-thin / font-extralight / font-light / font-normal and font-stretch-*
+   all map onto real outlines. There is no heavier weight and no italic:
+   emphasis uses Regular against a Light/Thin base, a wider stretch and the
+   accent colour — never font-bold or italic, which would be faked.
+───────────────────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: "Stellar Core";
+  src: url("./assets/fonts/stellar-core/StellarCore-Variable.ttf") format("truetype");
+  font-weight: 100 400;
+  font-stretch: 75% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Kiloy — self-hosted font for the Hero section only (regular + italic)
    woff2 is listed first (best compression); woff as broad fallback.
-   The italic face uses font-style: italic so `italic` Tailwind utility / CSS
-   keyword automatically selects the correct file.
 ───────────────────────────────────────────────────────────────────────────── */
 @font-face {
   font-family: "Kiloy";
   src:
-    url("./assets/fonts/Kiloy.woff2") format("woff2"),
-    url("./assets/fonts/Kiloy.woff") format("woff"),
-    url("./assets/fonts/Kiloy.otf") format("opentype");
+    url("./assets/fonts/kiloy/Kiloy.woff2") format("woff2"),
+    url("./assets/fonts/kiloy/Kiloy.woff") format("woff"),
+    url("./assets/fonts/kiloy/Kiloy.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -20,9 +35,9 @@
 @font-face {
   font-family: "Kiloy";
   src:
-    url("./assets/fonts/Kiloy-Italic.woff2") format("woff2"),
-    url("./assets/fonts/Kiloy-Italic.woff") format("woff"),
-    url("./assets/fonts/Kiloy-Italic.otf") format("opentype");
+    url("./assets/fonts/kiloy/Kiloy-Italic.woff2") format("woff2"),
+    url("./assets/fonts/kiloy/Kiloy-Italic.woff") format("woff"),
+    url("./assets/fonts/kiloy/Kiloy-Italic.otf") format("opentype");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -47,9 +62,12 @@
   --color-border: #2a2a2a; /* subtle dividers and borders                      */
 
   /* Font families */
-  --font-display: "Kiloy", Georgia, serif; /* primary — display headings        */
-  --font-sans: "Outfit", system-ui, sans-serif; /* secondary — UI, body, labels */
-  --font-mono: "JetBrains Mono", "Fira Code", monospace; /* chrome / code       */
+  /* Stellar Core everywhere except Hero. The three roles stay separate tokens
+     so headings, body and terminal-style readouts can diverge again later. */
+  --font-display: "Stellar Core", system-ui, sans-serif; /* display headings    */
+  --font-sans: "Stellar Core", system-ui, sans-serif; /* UI, body, labels        */
+  --font-mono: "Stellar Core", ui-monospace, monospace; /* readouts, counters */
+  --font-hero: "Kiloy", Georgia, serif; /* Hero section only                     */
 
   /* Animations (About mechanics). The reduced-motion rule in the base layer
      shortens all of them to ~0, so they never need their own guards. */

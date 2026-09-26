@@ -15,7 +15,7 @@ const WORD = cn(
 
 // Keywords: soft purple at rest, glowing in the brand purple when lit.
 const ACCENT = cn(
-  "text-accent-soft",
+  "font-normal text-accent-soft font-stretch-semi-expanded",
   "[text-shadow:0_0_calc(var(--light,0)*28px)_var(--color-accent)]"
 )
 
@@ -30,7 +30,7 @@ export function LitStatement({ segments, className }: LitStatementProps) {
   return (
     <p
       className={cn(
-        "font-display text-[clamp(2.25rem,5vw,4.75rem)] leading-[1.08] text-text",
+        "font-display text-[clamp(2.25rem,5vw,4.75rem)] font-light leading-[1.08] text-text",
         className
       )}
     >

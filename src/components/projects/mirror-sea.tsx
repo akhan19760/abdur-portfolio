@@ -14,6 +14,9 @@
  *   under the cursor turns a little toward it.
  * - Clicks (lib/ping) send rings across the water; so does every screen
  *   breaking the surface.
+ * - After the last project it turns to look straight down at the water and
+ *   the waves go still; the Process section's sheet of paper lands on it
+ *   (another ring) and the sea fades away under it.
  *
  * Rendering: one full-screen shader (mirror-sea-shader), drawn from GSAP's
  * ticker right after Lenis has moved the page, so the horizon never lags
@@ -59,13 +62,14 @@ import {
   seaFragmentShader,
   seaVertexShader,
 } from "./mirror-sea-shader"
-import { seaStateAt } from "./sea-choreography"
+import { PAPER_LANDING, PAPER_SCREEN, seaStateAt } from "./sea-choreography"
 import { averageSlotColors, buildAtlas } from "./sea-panels"
 
 const LIGHT_DISTANCE = 20 // metres from the camera along the cursor's ray
 const LIGHT_MIN_HEIGHT = 1.2 // never lower than this over the water
 const HOVER_YAW = 0.16 // radians a screen turns toward the cursor at its edge
 const RISE_RIPPLE = { radius: 8, strength: 1.3 }
+const LANDING_RIPPLE = { radius: 1.1, strength: 1.2 } // from under Process's sheet
 const PANEL_CULL = 60 // screens further than this from the camera (x) aren't drawn
 
 type MirrorSeaProps = {
@@ -126,6 +130,7 @@ function createUniforms(): Record<string, IUniform> {
     uSunDir: { value: new Vector3(0, 0, -1) },
     uLight: { value: new Vector3(0, 4, 10) },
     uLightOn: { value: 0 },
+    uSwell: { value: 1 },
     uPanelCount: { value: 0 },
     uPanelX: { value: new Array<number>(MAX_PANELS).fill(0) },
     uPanelYaw: { value: new Array<number>(MAX_PANELS).fill(0) },
@@ -175,13 +180,26 @@ function cursorOnScreen(): { sx: number; sy: number } | null {
   return { sx: x / window.innerWidth, sy: y / window.innerHeight }
 }
 
-/** The cursor's light: a little way out along the cursor's ray, never in the water. */
-function lightFor(camera: SeaCamera, cursor: { sx: number; sy: number } | null): Vec3 {
+/**
+ * The cursor's light: a little way out along the cursor's ray, never in the
+ * water. While the camera looks down at the water (`lookDown`), it comes
+ * closer until it hovers just over the water under the cursor.
+ */
+function lightFor(
+  camera: SeaCamera,
+  cursor: { sx: number; sy: number } | null,
+  lookDown: number
+): Vec3 {
   const dir = rayDirection(camera, cursor?.sx ?? 0.62, cursor?.sy ?? 0.55)
+  let reach = LIGHT_DISTANCE
+  if (lookDown > 0 && dir.y < 0) {
+    const overWater = (camera.y - LIGHT_MIN_HEIGHT) / -dir.y
+    reach += (Math.min(LIGHT_DISTANCE, overWater) - LIGHT_DISTANCE) * lookDown
+  }
   return {
-    x: camera.x + dir.x * LIGHT_DISTANCE,
-    y: Math.max(LIGHT_MIN_HEIGHT, camera.y + dir.y * LIGHT_DISTANCE),
-    z: camera.z + dir.z * LIGHT_DISTANCE,
+    x: camera.x + dir.x * reach,
+    y: Math.max(LIGHT_MIN_HEIGHT, camera.y + dir.y * reach),
+    z: camera.z + dir.z * reach,
   }
 }
 
@@ -242,10 +260,8 @@ function SeaScene({
     }
     const fonts = document.fonts
     if (fonts) {
-      Promise.all([
-        fonts.load("700 60px Outfit"),
-        fonts.load("500 14px 'JetBrains Mono'"),
-      ])
+      fonts
+        .load("400 60px 'Stellar Core'")
         .catch(() => undefined)
         .then(build)
     } else {
@@ -268,6 +284,7 @@ function SeaScene({
     const wasUp = new Array<boolean>(MAX_PANELS).fill(false)
     let camera: SeaCamera | null = null
     let visible = false
+    let landed: boolean | null = null // unknown until the first frame
 
     const addRipple = (ripple: Ripple) => {
       ripples.push(ripple)
@@ -339,9 +356,18 @@ function SeaScene({
 
       // ── The cursor's light ──
       const cursor = cursorOnScreen()
-      const light = lightFor(camera, cursor)
+      const light = lightFor(camera, cursor, state.lookDown)
       ;(uniforms.uLight.value as Vector3).set(light.x, light.y, light.z)
       uniforms.uLightOn.value = state.light
+      uniforms.uSwell.value = state.swell
+
+      // ── Process's sheet of paper landing on the water ──
+      const down = u >= phases.total + PAPER_LANDING
+      if (down && landed === false) {
+        const under = screenToSea(camera, PAPER_SCREEN.sx, PAPER_SCREEN.sy)
+        if (under) addRipple({ x: under.x, z: under.z, start: now, ...LANDING_RIPPLE })
+      }
+      landed = down
 
       // ── Screens: rise, sink, turn toward the cursor ──
       const count = Math.min(MAX_PANELS, state.panels.length)

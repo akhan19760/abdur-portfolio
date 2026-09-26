@@ -10,6 +10,10 @@
  *   projects Each project's screen rises out of the water as the camera
  *            glides sideways (x) toward it, and stays standing: gliding on
  *            carries it out of view as the next one rises and slides in.
+ *   exit     Process's handoff. The last screen sinks, the camera turns to
+ *            look straight down at the water and the waves go still; the
+ *            Process section's sheet of paper drifts down and lands on it
+ *            (a ring goes out from under it), then the sea fades away.
  */
 
 import type { SeaPhases } from "@/hooks/projects"
@@ -39,6 +43,18 @@ const HOLD_OFFSET = 7 // to the left of the screen, so it stands right of centre
 // ── Handoff ──────────────────────────────────────────────────────────────────
 const START_HEIGHT = 1200 // high over the planet, where About left off
 const START_CURVATURE = 1 / 6000 // curves the horizon like About's planet rim
+
+// ── Exit: down to the water for the Process section's sheet of paper ────────
+/**
+ * Screens after the section ends at which Process's sheet lands on the water
+ * (Process's PAPER_LANDING must match).
+ */
+export const PAPER_LANDING = 1.05
+/** Where on screen it lands, 0–1 (Process's PAPER_SCREEN_X must match). */
+export const PAPER_SCREEN = { sx: 0.63, sy: 0.5 }
+const EXIT_HEIGHT = 4.2 // the camera sinks a little as it turns to look down
+const CALM_SWELL = 0.2 // how much of the waves is left once the water goes still
+const FADE_START = 1.15 // after the landing, the sea fades out under the sheet
 
 // ── Glides ───────────────────────────────────────────────────────────────────
 const GLIDE_ROLL = 0.03 // radians of bank mid-glide
@@ -77,6 +93,10 @@ export type SeaState = {
   panels: Panel[]
   /** The project the camera is at or heading to, for the HUD. */
   active: number
+  /** 0–1: the camera turning to look straight down at the water (exit). */
+  lookDown: number
+  /** 0–1: how much of the waves is running (they go still for the paper). */
+  swell: number
 }
 
 const easeInOutSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2
@@ -118,29 +138,36 @@ export function seaStateAt(u: number, phases: SeaPhases, aspect: number): SeaSta
     HORIZON_Y,
     smoothstep(0.28, 0.55, u)
   )
-  const pitch = pitchForHorizon(horizon, SEA_FOV, height, curvature) - GLIDE_LIFT * glide
+  const level = pitchForHorizon(horizon, SEA_FOV, height, curvature) - GLIDE_LIFT * glide
+
+  // ── Exit: turning to look straight down at the water ──
+  const exit = u - phases.total
+  const lookDown = smoothstep(-0.15, 0.85, exit)
 
   const camera: SeaCamera = {
     x,
-    y: height,
+    y: mix(height, EXIT_HEIGHT, lookDown),
     z: HOLD_DISTANCE,
     yaw: 0,
-    pitch,
+    pitch: mix(level, Math.PI / 2, lookDown),
     roll: -GLIDE_ROLL * glide,
     fov: SEA_FOV,
     aspect,
     curvature,
   }
 
-  // ── Screens: rise out of the water on the way in, then stay standing ────
+  // ── Screens: rise out of the water on the way in, stay standing, and
+  //    sink again as the camera turns down for the paper ──
+  const sink = 1 - smoothstep(-0.1, 0.45, exit)
   const panels = phases.arrivals.map((arrival, i) => ({
     x: siteX(i),
     yaw: 0,
-    rise: smoothstep(phases.riseStarts[i], arrival, u),
+    rise: smoothstep(phases.riseStarts[i], arrival, u) * sink,
   }))
 
   const opacity =
-    smoothstep(-0.2, 0.05, u) * (1 - smoothstep(phases.total, phases.total + SEA_EXIT, u))
+    smoothstep(-0.2, 0.05, u) *
+    (1 - smoothstep(phases.total + FADE_START, phases.total + SEA_EXIT, u))
 
   return {
     camera,
@@ -149,5 +176,7 @@ export function seaStateAt(u: number, phases: SeaPhases, aspect: number): SeaSta
     opacity,
     panels,
     active: clamp(active, 0, Math.max(0, last)),
+    lookDown,
+    swell: 1 - (1 - CALM_SWELL) * smoothstep(0, 0.9, exit),
   }
 }

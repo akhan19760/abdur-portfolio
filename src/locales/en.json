@@ -288,5 +288,60 @@
         "image": ""
       }
     ]
+  },
+  "process": {
+    "label": "HOW I WORK",
+    "heading": "Process",
+    "hint": "Scroll to fold the paper. Your cursor is the light.",
+    "navLabel": "Steps",
+    "notesLabel": "Notes from the first page",
+    "notes": [
+      "who is it for?",
+      "what does success look like?",
+      "constraints?",
+      "has to feel fast",
+      "works on phones",
+      "ship v1, then learn"
+    ],
+    "steps": [
+      {
+        "id": "discover",
+        "name": "Discover",
+        "summary": "I start by understanding the problem: who it's for, what success looks like, and what could get in the way."
+      },
+      {
+        "id": "design",
+        "name": "Design",
+        "summary": "I plan the structure and sketch the key screens and interactions before writing code."
+      },
+      {
+        "id": "build",
+        "name": "Build",
+        "summary": "I build it in small, tested pieces, checking performance and accessibility as I go."
+      },
+      {
+        "id": "refine",
+        "name": "Refine",
+        "summary": "I test on real devices with real people, then polish the details until it feels right."
+      },
+      {
+        "id": "launch",
+        "name": "Launch",
+        "summary": "I ship it, measure how it performs, and keep improving it after launch."
+      }
+    ]
+  },
+  "contact": {
+    "label": "GET IN TOUCH",
+    "heading": "Contact",
+    "wall": "Say hello",
+    "intro": "Have a project in mind, a role to fill, or just want to say hello? My inbox is open.",
+    "copy": "Copy email",
+    "copied": "Email address copied",
+    "copyFailed": "Couldn't copy it. Select the address above instead.",
+    "linksLabel": "Elsewhere",
+    "newTab": "opens in a new tab",
+    "hint": "Your cursor presses the pins. Hold to press harder, click to send a ripple.",
+    "footer": "© {{year}} {{name}}"
   }
 }

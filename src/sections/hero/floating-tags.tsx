@@ -61,6 +61,7 @@ import {
   Cursor,
 } from "@dev.icons/react"
 import { useEffect, useRef } from "react"
+import { loopArrival } from "@/lib/page-loop"
 import type { ComponentType, SVGProps } from "react"
 
 // ── Physics ────────────────────────────────────────────────────────────────────
@@ -194,8 +195,10 @@ export function FloatingTags() {
     const tick = () => {
       if (!active) return
       // Once the Hero has scrolled away the logos have faded out — skip the
-      // per-icon layout reads until it's back.
-      if (window.scrollY > window.innerHeight) {
+      // per-icon layout reads until it's back (at the top, or coming round
+      // the page's loop from Contact).
+      const arriving = loopArrival()
+      if (window.scrollY > window.innerHeight && (arriving === null || arriving >= 1)) {
         rafId = requestAnimationFrame(tick)
         return
       }
@@ -301,7 +304,7 @@ export function FloatingTags() {
           }}
         >
           <Icon width={56} height={56} className="opacity-80" />
-          <span className="mt-1 block text-center font-mono text-[10px] leading-tight tracking-wide text-white/50">
+          <span className="mt-1 block text-center font-hero text-[10px] leading-tight tracking-wide text-white/50">
             {name}
           </span>
         </div>

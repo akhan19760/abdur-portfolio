@@ -103,12 +103,12 @@ function drawPlaceholder(
 
   // Hero: the name, two lines of copy, a button
   ctx.fillStyle = "#f0ede8"
-  ctx.font = "700 60px Outfit, system-ui, sans-serif"
+  ctx.font = "400 60px 'Stellar Core', system-ui, sans-serif"
   ctx.textBaseline = "alphabetic"
   let size = 60
   while (ctx.measureText(name).width > 500 && size > 28) {
     size -= 4
-    ctx.font = `700 ${size}px Outfit, system-ui, sans-serif`
+    ctx.font = `400 ${size}px 'Stellar Core', system-ui, sans-serif`
   }
   ctx.fillText(name, 64, 160)
   ctx.fillStyle = "#2c2c35"
@@ -150,7 +150,7 @@ function drawPlaceholder(
 
   // Say what it is
   ctx.fillStyle = "#5a5a66"
-  ctx.font = "500 14px 'JetBrains Mono', monospace"
+  ctx.font = "400 14px 'Stellar Core', monospace"
   ctx.textAlign = "right"
   ctx.fillText(label, w - 24, h - 22)
   ctx.restore()

@@ -56,7 +56,7 @@ export function ProjectDetails({
       </p>
       <h3
         id={titleId}
-        className="mt-4 font-display text-[clamp(2.75rem,5vw,5.25rem)] leading-[0.95] text-text"
+        className="mt-4 font-display text-[clamp(2.75rem,5vw,5.25rem)] font-light leading-[0.95] text-text"
       >
         {words.map((word, i) => (
           <span key={i}>

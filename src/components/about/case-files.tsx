@@ -114,7 +114,7 @@ function Card({ file, decrypted, onDecrypt, labels, depth, angle }: CardProps) {
                 LENS_PEEK
               )}
             >
-              <span className="font-display text-3xl leading-tight text-text">
+              <span className="font-display text-3xl leading-tight text-text font-stretch-semi-condensed">
                 {file.role}
               </span>
               <span className="mt-2 text-sm text-accent-soft">{file.org}</span>
@@ -148,7 +148,7 @@ function Card({ file, decrypted, onDecrypt, labels, depth, angle }: CardProps) {
             <span className="block font-mono text-[11px] tracking-[0.25em] text-text/70">
               {file.period}
             </span>
-            <span className="mt-3 block font-display text-[clamp(1.8rem,2.4vw,2.7rem)] leading-[1.05] text-text">
+            <span className="mt-3 block font-display text-[clamp(1.8rem,2.4vw,2.7rem)] leading-[1.05] text-text font-stretch-semi-condensed">
               {file.role}
             </span>
             <span className="mt-3 block font-mono text-sm text-accent-soft">

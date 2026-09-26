@@ -33,6 +33,14 @@
  * past is cut off at the section edge. Reduced motion: no explosion, the name
  * just scrolls away and fades.
  *
+ * Arrival — round the loop from Contact:
+ * The page loops (lib/page-loop): past Contact the camera flies through the
+ * pin wall, and the name comes toward you out of the dark, each particle
+ * starting far off and small near the middle of the view (deeper ones
+ * arriving last) until it's back in place and the scroll wraps to the top.
+ * The logos fade in and grow into place with it. The frame where it
+ * arrives is exactly this Hero at rest, so the wrap doesn't show.
+ *
  * Layers back → front (all above the page-level SignalField):
  *   1. Canvas (fixed to the viewport) — letter particles + connections
  *   2. Corner accents + floating logos (fixed to the viewport)
@@ -43,10 +51,10 @@
  */
 
 import { useCallback, useEffect, useRef } from "react"
-import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
-import { LanguageSwitcher } from "@/components/shared"
+import { HERO_FRAME, HeroContent } from "@/components/hero"
 import { prefersReducedMotion } from "@/lib/media"
+import { loopArrival } from "@/lib/page-loop"
 import { onPing } from "@/lib/ping"
 import { FloatingTags } from "./floating-tags"
 
@@ -69,6 +77,10 @@ const EXIT_END = 0.7 // fraction of the Hero scrolled away when the name is gone
 const EXIT_MAX_Z = 0.96 // how close to the camera the deepest particles get
 const EXIT_SCATTER = 180 // px — sideways drift so letters don't just scale up
 const EXIT_STREAK_MIN = 3 // px moved per frame before a particle becomes a streak
+
+// ── Arrival (round the loop from Contact) ───────────────────────────────────
+const ARRIVE_FROM = 20 // the name starts this many times further off than where it lands
+const ARRIVE_SPREAD = 0.8 // the deepest particles are this much further off again
 
 // ── Constellation connections ─────────────────────────────────────────────────
 const CONN_CURSOR_R = 210 // px — look for connections within this cursor radius
@@ -122,7 +134,6 @@ type HeroSectionProps = {
 }
 
 export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
-  const { t } = useTranslation()
   const sectionRef = useRef<HTMLElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -148,10 +159,10 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
     octx.textBaseline = "alphabetic"
     octx.fillStyle = "white"
 
-    // Both lines centred vertically at h/2
+    // Both lines centred vertically at h/2, baselines 1.45 × fontSize apart
     const lineY = [
-      h * 0.5 - fontSize * 0.5, // ABDUR baseline — above centre
-      h * 0.5 + fontSize * 0.62, // KHAN baseline  — below centre
+      h * 0.5 - fontSize * 0.66, // ABDUR baseline — above centre
+      h * 0.5 + fontSize * 0.79, // KHAN baseline  — below centre
     ]
 
     const particles: Particle[] = []
@@ -251,6 +262,10 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
 
     const still = prefersReducedMotion()
     let lastExit = -1
+    let lastArrive = -1
+    // True for the first frame drawn after being hidden: no streaks from
+    // wherever the particles were last drawn
+    let fresh = true
     let rafId = 0
     let timerId: ReturnType<typeof setTimeout>
     let active = true
@@ -273,19 +288,34 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
 
       // How far the Hero has scrolled away: 0 at rest, 1 once it's gone
       const rect = section.getBoundingClientRect()
-      const exit = Math.min(1, Math.max(0, -rect.top / Math.max(rect.height, 1)))
-      if (Math.abs(exit - lastExit) > 0.001) {
+      let exit = Math.min(1, Math.max(0, -rect.top / Math.max(rect.height, 1)))
+      // …or, once it's gone, how far off the name is as the visitor comes
+      // round the loop from Contact (1 far away, 0 arrived)
+      const loop = exit >= 1 ? loopArrival() : null
+      const arriving = loop !== null && loop < 1
+      const arrive = arriving ? loop : 0
+      if (arriving) exit = 0
+      const gone = exit >= 1
+      if (Math.abs(exit - lastExit) > 0.001 || Math.abs(arrive - lastArrive) > 0.0005) {
         section.style.setProperty("--hero-exit", exit.toFixed(3))
-        container.style.visibility = exit >= 1 ? "hidden" : ""
+        section.style.setProperty("--hero-arrive", arrive.toFixed(4))
+        container.style.visibility = gone || arrive >= 1 ? "hidden" : ""
         lastExit = exit
+        lastArrive = arrive
       }
-      if (exit >= 1) {
+      if (gone) {
+        fresh = true
         rafId = requestAnimationFrame(tick)
         return
       }
 
       // e: 0 → 1 over the first EXIT_END of the scroll-away (eased in)
       const e = still ? 0 : Math.min(1, exit / EXIT_END) ** 1.6
+      // a: 1 → 0 as the name comes in round the loop (eased so it slows as it lands)
+      const a = still ? 0 : arrive * arrive
+      // How much further off than its place the name is: a steady zoom in
+      // (ARRIVE_FROM times as far at the start, landing gently at 0)
+      const far = ARRIVE_FROM ** a - 1
       // With motion the name stays pinned while it breaks apart; with reduced
       // motion it scrolls away with the page like normal content.
       const scrollShift = still ? rect.top : 0
@@ -329,8 +359,10 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
       const ps = particlesRef.current
       const cx = w / 2
       const cy = h / 2
-      const fade = 1 - e * e
-      const exiting = e > 0.002
+      // Coming round the loop it shows almost at once, tiny and far off
+      const appear = 1 - Math.max(0, (arrive - 0.8) / 0.2) ** 2
+      const fade = (1 - e * e) * appear
+      const exiting = e > 0.002 || a > 0.002
 
       if (exiting) {
         ctx.save()
@@ -354,18 +386,19 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
         p.y += p.vy
 
         const dc = Math.sqrt((p.x - mx) ** 2 + (p.y - my) ** 2)
-        const glow = Math.max(0, 1 - dc / 220) * (1 - e)
+        const glow = Math.max(0, 1 - dc / 220) * (1 - e) * (1 - a)
         const brightness = 50 + glow * 40
 
-        // Exit projection: pull toward the camera around the viewport centre
+        // Exit projection: pull toward the camera around the viewport centre.
+        // Arrival: push away from it, deeper particles further off.
         const z = e * p.depth * EXIT_MAX_Z
-        const scale = 1 / (1 - z)
+        const scale = 1 / (1 - z) / (1 + far * (1 + ARRIVE_SPREAD * (1 - p.depth)))
         const drift = e * e * EXIT_SCATTER
         const dx = cx + (p.x - cx) * scale + p.scatterX * drift
         const dy = cy + (p.y + scrollShift - cy) * scale + p.scatterY * drift
 
         if (exiting) {
-          const moved = Math.hypot(dx - p.lastX, dy - p.lastY)
+          const moved = fresh ? 0 : Math.hypot(dx - p.lastX, dy - p.lastY)
           const onScreen = dx > -50 && dx < w + 50 && dy > -50 && dy < h + 50
           if (onScreen && moved > EXIT_STREAK_MIN) {
             ctx.moveTo(p.lastX, p.lastY)
@@ -390,6 +423,7 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
         ctx.stroke()
         ctx.restore()
       }
+      fresh = false
 
       // ── 3. Constellation connections near cursor (only while at rest) ─────
       // Batched into a single ctx.stroke() call for performance.
@@ -424,14 +458,19 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
       rafId = requestAnimationFrame(tick)
     }
 
-    // Wait for Kiloy to load before sampling offscreen text
-    document.fonts.ready.then(() => {
-      if (!active) return
-      resize()
-      ro = new ResizeObserver(resize)
-      ro.observe(container)
-      timerId = setTimeout(tick, revealDelay * 1000)
-    })
+    // Request Kiloy explicitly — nothing in Hero's DOM uses it, so the
+    // browser wouldn't fetch it on its own — then sample once fonts settle
+    document.fonts
+      .load('400 1em "Kiloy"')
+      .catch(() => {})
+      .then(() => document.fonts.ready)
+      .then(() => {
+        if (!active) return
+        resize()
+        ro = new ResizeObserver(resize)
+        ro.observe(container)
+        timerId = setTimeout(tick, revealDelay * 1000)
+      })
 
     const onMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY }
@@ -463,11 +502,7 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
   }, [buildParticles, revealDelay])
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative flex min-h-screen flex-col overflow-hidden"
-      aria-label="Hero"
-    >
+    <section ref={sectionRef} className={HERO_FRAME} aria-label="Hero">
       {/* Accessible text — canvas is purely visual */}
       <div className="sr-only">
         <h1>Abdur Khan — Frontend Developer</h1>
@@ -489,8 +524,9 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
         className={cn(
           "pointer-events-none fixed inset-0",
           CURSOR_LIGHT_MASK,
-          "opacity-[calc(1_-_var(--hero-exit,0)_*_1.6)]",
-          "motion-safe:scale-[calc(1_+_var(--hero-exit,0)_*_1.1)]"
+          // Flies past the camera as the Hero leaves; grows into place as it arrives
+          "opacity-[calc(1_-_var(--hero-exit,0)_*_1.6_-_var(--hero-arrive,0)_*_1.6)]",
+          "motion-safe:scale-[calc(1_+_var(--hero-exit,0)_*_1.1_-_var(--hero-arrive,0)_*_0.6)]"
         )}
       >
         <div className="absolute left-8 top-8 h-14 w-14 border-l border-t border-accent/20" />
@@ -502,47 +538,8 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
         <FloatingTags />
       </div>
 
-      {/* ── Language switcher — EN · UR, top-right ───────────────────────────── */}
-      <div className="absolute right-10 top-10 z-10">
-        <LanguageSwitcher />
-      </div>
-
-      {/* ── Layer 2: HTML content (role, tagline, CTA) ───────────────────────── */}
-      {/* Fades out on exit, but comes back if the CTA receives keyboard focus */}
-      <div
-        className={cn(
-          "pointer-events-none relative z-10 flex min-h-screen flex-col items-center justify-center px-6 text-center",
-          "opacity-[calc(1_-_var(--hero-exit,0)_*_2.4)] has-[:focus-visible]:opacity-100"
-        )}
-      >
-        <p className="mb-6 font-sans text-xs uppercase tracking-[0.4em] text-accent/60">
-          {t("hero.role")}
-        </p>
-
-        {/*
-          Invisible spacer — reserves the canvas text area in the flex column.
-          Height approximates two lines of Kiloy at clamp(4.5rem, 13vw, 12rem).
-          Tune in browser if the role/tagline drift relative to the canvas name.
-        */}
-        <div aria-hidden="true" style={{ height: "clamp(9rem, 24vw, 22rem)" }} />
-
-        <p className="mb-10 mt-6 font-sans text-sm tracking-widest text-text/35">
-          {t("hero.tagline")}
-        </p>
-
-        <a
-          href="#work"
-          className={cn(
-            "pointer-events-auto inline-flex items-center gap-3",
-            "border border-accent/30 px-6 py-3",
-            "font-sans text-xs uppercase tracking-widest text-accent/70",
-            "transition-colors duration-300 hover:border-accent/60 hover:bg-accent/10",
-            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-          )}
-        >
-          {t("hero.cta")} <span aria-hidden="true">↓</span>
-        </a>
-      </div>
+      {/* ── Layer 2: HTML content (language switcher, role, tagline, CTA) ─── */}
+      <HeroContent />
     </section>
   )
 }

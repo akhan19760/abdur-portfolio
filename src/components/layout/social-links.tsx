@@ -14,6 +14,7 @@
  */
 
 import { useEffect, useRef } from "react"
+import { CONTACT } from "@/constants"
 
 // ── Physics ────────────────────────────────────────────────────────────────────
 const ATTRACT_R = 120 // px — cursor influence radius
@@ -23,9 +24,9 @@ const FRICTION = 0.7
 
 // ── Social data ────────────────────────────────────────────────────────────────
 const SOCIALS = [
-  { name: "GitHub", href: "https://github.com/akhan19760", Icon: GithubIcon },
-  { name: "LinkedIn", href: "https://linkedin.com/in/khanabdur", Icon: LinkedinIcon },
-  { name: "Email", href: "mailto:kabdurrahim706@gmail.com", Icon: EmailIcon },
+  { name: "GitHub", href: CONTACT.github, Icon: GithubIcon },
+  { name: "LinkedIn", href: CONTACT.linkedin, Icon: LinkedinIcon },
+  { name: "Email", href: `mailto:${CONTACT.email}`, Icon: EmailIcon },
 ] as const
 
 // ── Icon SVGs ──────────────────────────────────────────────────────────────────

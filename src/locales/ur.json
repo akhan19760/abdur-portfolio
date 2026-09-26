@@ -288,5 +288,60 @@
         "image": ""
       }
     ]
+  },
+  "process": {
+    "label": "MAIN KAISE KAAM KARTA HOON",
+    "heading": "Tareeqa",
+    "hint": "Kaghaz tah karne ke liye scroll karein. Aap ka cursor roshni hai.",
+    "navLabel": "Marahil",
+    "notesLabel": "Pehle safhe ke notes",
+    "notes": [
+      "kis ke liye hai?",
+      "kamyabi kaisi dikhegi?",
+      "rukawatein?",
+      "tez mehsoos ho",
+      "phone par chale",
+      "v1 bhejo, phir seekho"
+    ],
+    "steps": [
+      {
+        "id": "discover",
+        "name": "Khoj",
+        "summary": "Main pehle masla samajhta hoon: ye kis ke liye hai, kamyabi kaisi dikhti hai, aur raaste mein kya aa sakta hai."
+      },
+      {
+        "id": "design",
+        "name": "Khaaka",
+        "summary": "Code likhne se pehle main dhaancha banata hoon aur ahem screens aur interactions ka khaaka tayyar karta hoon."
+      },
+      {
+        "id": "build",
+        "name": "Tameer",
+        "summary": "Main ise chhote, test kiye hue hisson mein banata hoon, aur saath saath performance aur accessibility check karta hoon."
+      },
+      {
+        "id": "refine",
+        "name": "Nikhaar",
+        "summary": "Main asli devices par asli logon ke saath test karta hoon, phir tafseelat ko tab tak sanwaarta hoon jab tak sab theek na lage."
+      },
+      {
+        "id": "launch",
+        "name": "Launch",
+        "summary": "Main ise launch karta hoon, dekhta hoon ke ye kaisa chal raha hai, aur launch ke baad bhi behtar karta rehta hoon."
+      }
+    ]
+  },
+  "contact": {
+    "label": "RABTA KAREIN",
+    "heading": "Rabta",
+    "wall": "Salaam",
+    "intro": "Koi project zehan mein hai, koi role bharna hai, ya bas salaam kehna hai? Mera inbox khula hai.",
+    "copy": "Email copy karein",
+    "copied": "Email ka pata copy ho gaya",
+    "copyFailed": "Copy nahin ho saka. Upar diya gaya pata khud select kar lein.",
+    "linksLabel": "Aur jagah",
+    "newTab": "naye tab mein khulta hai",
+    "hint": "Aap ka cursor pinon ko dabata hai. Zyada dabane ke liye button daba kar rakhein, lehar ke liye click karein.",
+    "footer": "© {{year}} {{name}}"
   }
 }
