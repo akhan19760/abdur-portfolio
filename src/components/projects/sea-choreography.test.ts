@@ -1,10 +1,12 @@
 import { describe, expect, it, vi } from "vitest"
-import { seaPhases } from "@/hooks/projects"
+import { SEA_EXIT, seaPhases } from "@/hooks/projects"
 import { hitSea, panelScreenRect, rayDirection } from "./mirror-sea-utils"
 import type { SeaCamera } from "./mirror-sea-utils"
 import {
   ABOUT_HORIZON_Y,
   HORIZON_Y,
+  PAPER_LANDING,
+  PAPER_SCREEN,
   holdCamera,
   seaStateAt,
   siteX,
@@ -120,16 +122,31 @@ describe("seaStateAt", () => {
     }
   })
 
-  it("keeps the last screen up until the sea has gone", () => {
-    const end = seaStateAt(PHASES.total + 0.3, PHASES, ASPECT)
+  it("keeps the last screen up while it's read", () => {
+    const end = seaStateAt(PHASES.total - 0.2, PHASES, ASPECT)
     expect(end.panels[3].rise).toBe(1)
     expect(end.active).toBe(3)
+    expect(end.lookDown).toBe(0)
+    expect(end.swell).toBe(1)
   })
 
-  it("fades in under About's horizon and out after the section", () => {
+  it("then sinks it and looks straight down at still water for Process's paper", () => {
+    const down = seaStateAt(PHASES.total + PAPER_LANDING, PHASES, ASPECT)
+    expect(down.panels.every((p) => p.rise === 0)).toBe(true)
+    expect(down.lookDown).toBe(1)
+    expect(down.camera.pitch).toBeCloseTo(Math.PI / 2)
+    expect(down.swell).toBeLessThan(0.3)
+    // The water is still there under the sheet as it lands
+    expect(down.opacity).toBe(1)
+    const under = rayDirection(down.camera, PAPER_SCREEN.sx, PAPER_SCREEN.sy)
+    expect(hitSea(down.camera, under)).not.toBeNull()
+  })
+
+  it("fades in under About's horizon and out once the paper has landed", () => {
     expect(seaStateAt(-0.5, PHASES, ASPECT).opacity).toBe(0)
     expect(seaStateAt(0.5, PHASES, ASPECT).opacity).toBe(1)
-    expect(seaStateAt(PHASES.total + 1, PHASES, ASPECT).opacity).toBe(0)
+    expect(seaStateAt(PHASES.total + 1.3, PHASES, ASPECT).opacity).toBeLessThan(1)
+    expect(seaStateAt(PHASES.total + SEA_EXIT, PHASES, ASPECT).opacity).toBe(0)
   })
 
   it("hands the light over from the dawn to the cursor", () => {

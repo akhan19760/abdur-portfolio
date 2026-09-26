@@ -196,7 +196,7 @@ function Finale({ visible, availability, floating }: FinaleProps) {
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent shadow-[0_0_8px_var(--color-accent)]" />
             {availability.alert}
           </p>
-          <p className="font-display text-[clamp(3rem,8.5vw,8rem)] leading-[0.95] text-text">
+          <p className="font-display text-[clamp(3rem,8.5vw,8rem)] font-thin leading-[0.95] text-text font-stretch-expanded">
             {words.map((word, i) => (
               <span key={i}>
                 {i > 0 && " "}

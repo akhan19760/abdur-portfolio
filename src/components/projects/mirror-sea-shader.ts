@@ -55,6 +55,7 @@ uniform vec3 uSunDir;
 
 uniform vec3 uLight;         // the cursor's light, floating over the water
 uniform float uLightOn;
+uniform float uSwell;        // 0–1, how much of the waves is running
 
 uniform int uPanelCount;
 uniform float uPanelX[MAX_PANELS];
@@ -170,6 +171,9 @@ vec3 waterNormal(vec2 p, float fw, out float lost) {
   s += wave(p, normalize(vec2(-0.85, 0.55)), 3.3, 0.034, 2.6, fw, lost);
   s += wave(p, normalize(vec2(0.6, -0.25)), 1.9, 0.028, 3.5, fw, lost);
   s += wave(p, normalize(vec2(-0.3, -1.0)), 1.05, 0.022, 4.6, fw, lost);
+  // Still water for Process's paper to land on (the rings below keep going)
+  s *= uSwell;
+  lost *= uSwell * uSwell;
 
   // Rings from clicks and from screens rising out of the water
   for (int i = 0; i < MAX_RIPPLES; i++) {

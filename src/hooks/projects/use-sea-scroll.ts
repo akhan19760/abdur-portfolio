@@ -19,8 +19,12 @@ function registerPlugins() {
  * comes down from About's dawn horizon over exactly this stretch.
  */
 export const SEA_HANDOFF = 1
-/** Screens after the section ends over which the sea fades out. */
-export const SEA_EXIT = 0.6
+/**
+ * Screens after the section ends until the sea has gone: it turns to look
+ * down at the water for Process's sheet of paper to land on, then fades out
+ * under it (sea-choreography).
+ */
+export const SEA_EXIT = 1.6
 
 const INTRO = 0.1 // the camera settles before the first project rises
 const RISE = 0.55 // a project's screen rising out of the water (overlaps the last one sinking)

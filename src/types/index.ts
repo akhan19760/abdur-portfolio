@@ -1,5 +1,7 @@
 export * from "./about"
+export * from "./contact"
 export * from "./cursor"
 export * from "./loading-screen"
+export * from "./process"
 export * from "./projects"
 export * from "./shared"

@@ -262,7 +262,7 @@ export function StarStory({
           key={active ?? "prompt"}
           aria-hidden="true"
           className={cn(
-            "mx-auto max-w-4xl font-display leading-[1.12]",
+            "mx-auto max-w-4xl font-display font-light leading-[1.12]",
             beat
               ? "text-[clamp(1.6rem,3vw,2.9rem)] text-text"
               : "text-[clamp(1.2rem,2vw,1.8rem)] text-text/70"

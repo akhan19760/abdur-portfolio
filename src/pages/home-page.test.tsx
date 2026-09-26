@@ -39,26 +39,28 @@ vi.mock("@/components/projects/mirror-sea", () => ({
   MirrorSea: () => null,
 }))
 
+vi.mock("@/components/process/folding-paper", () => ({
+  FoldingPaper: () => null,
+}))
+
+vi.mock("@/components/contact/pin-wall", () => ({
+  PinWall: () => null,
+}))
+
 describe("HomePage", () => {
   it("renders the sections in scroll order", () => {
     render(<HomePage />)
     const regions = screen
       .getAllByRole("region")
       .map((r) => r.getAttribute("aria-label") ?? r.id)
-    expect(regions.slice(0, 3)).toEqual(["Hero", "about", "work"])
+    expect(regions).toEqual(["Hero", "about", "work", "process", "contact"])
   })
 
-  it("renders the About and Work sections", () => {
+  it("renders the About, Work, Process and Contact sections, each once", () => {
     render(<HomePage />)
-    expect(screen.getByRole("heading", { level: 2, name: "About" })).toBeInTheDocument()
-    expect(screen.getByRole("heading", { level: 2, name: "Work" })).toBeInTheDocument()
-  })
-
-  it("keeps placeholders for the sections not built yet", () => {
-    render(<HomePage />)
-    expect(screen.getByRole("heading", { level: 2, name: "Process" })).toBeInTheDocument()
-    expect(screen.getByRole("heading", { level: 2, name: "Contact" })).toBeInTheDocument()
-    expect(screen.getAllByRole("heading", { level: 2, name: "Work" })).toHaveLength(1)
+    for (const name of ["About", "Work", "Process", "Contact"]) {
+      expect(screen.getAllByRole("heading", { level: 2, name })).toHaveLength(1)
+    }
   })
 
   it(

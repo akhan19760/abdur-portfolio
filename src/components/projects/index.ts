@@ -1,7 +1,12 @@
 export { ProjectDetails } from "./project-details"
 export { ProjectNav } from "./project-nav"
 export { ProjectVisual } from "./project-visual"
-export { ABOUT_HORIZON_Y, seaStateAt } from "./sea-choreography"
+export {
+  ABOUT_HORIZON_Y,
+  PAPER_LANDING,
+  PAPER_SCREEN,
+  seaStateAt,
+} from "./sea-choreography"
 export type { SeaState } from "./sea-choreography"
 // MirrorSea is deliberately not exported here: it pulls in three.js and is
 // loaded with React.lazy from "@/components/projects/mirror-sea" so it gets
