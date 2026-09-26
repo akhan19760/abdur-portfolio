@@ -20,34 +20,34 @@
       "complete": "ALL RECOVERED",
       "items": [
         {
-          "id": "first-line",
+          "id": "sprint",
           "code": "FRAG_01",
-          "text": "First line of code: [YEAR], in [LANGUAGE]."
+          "text": "366 hours in 6 weeks, on a 200-hour plan."
         },
         {
-          "id": "setup",
+          "id": "bug-free",
           "code": "FRAG_02",
-          "text": "Editor theme: [THEME]. Font: [FONT]."
+          "text": "Shipped the only bug-free modules on a national deadline."
         },
         {
-          "id": "fuel",
+          "id": "emir",
           "code": "FRAG_03",
-          "text": "Tea or coffee: [ANSWER]."
+          "text": "Built for a platform used by His Highness the Emir of Qatar."
         },
         {
-          "id": "bug",
+          "id": "migration",
           "code": "FRAG_04",
-          "text": "Favourite bug I've ever fixed: [ONE LINE]."
+          "text": "Swapped Next.js for TanStack Start mid-project. Lost nothing."
         },
         {
-          "id": "learning",
+          "id": "three-languages",
           "code": "FRAG_05",
-          "text": "Currently learning: [THING]."
+          "text": "Live transcription in English, Kazakh and Russian."
         },
         {
-          "id": "offline",
+          "id": "three-weeks",
           "code": "FRAG_06",
-          "text": "Off-screen: [HOBBY]."
+          "text": "A 3–4 month build, shipped in about 3 weeks."
         }
       ]
     },
@@ -102,8 +102,8 @@
       "star": "Star {{n}} of {{total}}: {{mark}}",
       "beats": [
         {
-          "mark": "[YEAR]",
-          "text": "It started with [THE FIRST THING YOU BUILT]."
+          "mark": "2019",
+          "text": "It started at IBA Karachi, with a degree in computer science."
         },
         {
           "mark": "CURIOSITY",
@@ -111,7 +111,7 @@
         },
         {
           "mark": "FIRST_SHIP",
-          "text": "[FIRST PROJECT OR JOB]: the first time strangers used something I made."
+          "text": "A learning platform for Kazakhstan's Ministry of Education: the first time strangers used something I made."
         },
         {
           "mark": "REACT",
@@ -122,8 +122,8 @@
           "text": "Flutter took the same care onto phones."
         },
         {
-          "mark": "[N]+",
-          "text": "Since then I've shipped [N]+ projects across web and mobile."
+          "mark": "3+",
+          "text": "Since then I've spent 3+ years shipping React and TypeScript for governments, industry and my own products."
         },
         {
           "mark": "CRAFT",
@@ -141,21 +141,21 @@
       "educationTitle": "Education",
       "experience": [
         {
-          "org": "[COMPANY]",
-          "period": "20XX – NOW",
-          "role": "Frontend Developer"
+          "org": "Qatar Datamation Systems",
+          "period": "2025 – NOW",
+          "role": "Software Consultant · Frontend / Full Stack"
         },
         {
-          "org": "[COMPANY]",
-          "period": "20XX – 20XX",
-          "role": "[ROLE]"
+          "org": "Veraqor",
+          "period": "2023 – 2025",
+          "role": "Software Developer · Frontend Engineer"
         }
       ],
       "education": [
         {
-          "org": "[INSTITUTION]",
-          "period": "20XX – 20XX",
-          "role": "[DEGREE]"
+          "org": "Institute of Business Administration",
+          "period": "2019 – 2023",
+          "role": "BS Computer Science"
         }
       ],
       "decryptAll": "Decrypt all",
@@ -170,7 +170,7 @@
       "items": [
         {
           "label": "LOCATION",
-          "value": "[CITY, COUNTRY]"
+          "value": "Karachi, Pakistan"
         },
         {
           "label": "LANGUAGES",
@@ -184,7 +184,7 @@
       "availability": {
         "alert": "SIGNAL_OPEN",
         "title": "Open to work",
-        "detail": "[FULL-TIME / CONTRACT] · [REMOTE / ON-SITE]"
+        "detail": "Full-time or contract · Remote or on-site"
       },
       "caught": "CAUGHT",
       "locked": "SIGNAL LOCKED",
@@ -208,80 +208,111 @@
     },
     "projects": [
       {
-        "id": "project-1",
-        "name": "[PROJECT ONE]",
-        "role": "[ROLE]",
-        "year": "[YEAR]",
-        "summary": "[One line: what it is, who it's for, and what you did.]",
-        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "id": "sceai",
+        "name": "SCEAI Platform",
+        "role": "Frontend Engineer",
+        "year": "2023 – NOW",
+        "summary": "Qatar's Supreme Council of Economic Affairs platform, used by His Highness the Emir. I architected 9 of its core frontend modules.",
+        "stack": [
+          "React",
+          "TypeScript",
+          "Redux Toolkit",
+          "Zustand",
+          "TanStack Query",
+          "SignalR",
+          "Yjs"
+        ],
         "highlights": [
           {
-            "id": "project-1-result",
-            "text": "[Key result: a number, a launch, an award]"
+            "id": "sceai-result",
+            "text": "366 hours in 6 weeks, and the only bug-free modules at a national deadline"
           },
           {
-            "id": "project-1-owned",
-            "text": "[What you owned or built]"
+            "id": "sceai-owned",
+            "text": "Restructured the store to cut load times by ~25%"
           }
         ],
         "href": "",
         "image": ""
       },
       {
-        "id": "project-2",
-        "name": "[PROJECT TWO]",
-        "role": "[ROLE]",
-        "year": "[YEAR]",
-        "summary": "[One line: what it is, who it's for, and what you did.]",
-        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "id": "accuratespend",
+        "name": "AccurateSpend",
+        "role": "Frontend",
+        "year": "Personal",
+        "summary": "A compliance SaaS that automates CMS Open Payments (Sunshine Act) reporting for pharma and biotech, from data intake to submission.",
+        "stack": [
+          "React",
+          "TypeScript",
+          "TanStack Start",
+          "TanStack Query",
+          "Zustand",
+          "Radix UI",
+          "Orval"
+        ],
         "highlights": [
           {
-            "id": "project-2-result",
-            "text": "[Key result: a number, a launch, an award]"
+            "id": "accuratespend-result",
+            "text": "8 modules, 60+ components, built in about 3 weeks against a 3–4 month estimate"
           },
           {
-            "id": "project-2-owned",
-            "text": "[What you owned or built]"
+            "id": "accuratespend-owned",
+            "text": "A validation engine that checks every payment record against CMS rules"
           }
         ],
         "href": "",
         "image": ""
       },
       {
-        "id": "project-3",
-        "name": "[PROJECT THREE]",
-        "role": "[ROLE]",
-        "year": "[YEAR]",
-        "summary": "[One line: what it is, who it's for, and what you did.]",
-        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "id": "protocoling",
+        "name": "Protocoling Suite",
+        "role": "Frontend Lead",
+        "year": "2023 – 2024",
+        "summary": "An AI suite for Kazakhstan Petrochemical Industries that transcribes conversations live in English, Kazakh and Russian, then summarizes them.",
+        "stack": [
+          "React",
+          "TypeScript",
+          "Whisper API",
+          "Tailwind CSS",
+          "Framer Motion",
+          "ApexCharts"
+        ],
         "highlights": [
           {
-            "id": "project-3-result",
-            "text": "[Key result: a number, a launch, an award]"
+            "id": "protocoling-result",
+            "text": "Chunked in-browser audio upload into the Whisper API"
           },
           {
-            "id": "project-3-owned",
-            "text": "[What you owned or built]"
+            "id": "protocoling-owned",
+            "text": "Secure file handling with MIME filtering, RBAC and protected routes"
           }
         ],
         "href": "",
         "image": ""
       },
       {
-        "id": "project-4",
-        "name": "[PROJECT FOUR]",
-        "role": "[ROLE]",
-        "year": "[YEAR]",
-        "summary": "[One line: what it is, who it's for, and what you did.]",
-        "stack": ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
+        "id": "kunarchgpt",
+        "name": "KunARCHGPT",
+        "role": "Developer",
+        "year": "Personal",
+        "summary": "An AI chatbot that answers questions about UK architectural law, with paid tiers and a usage dashboard.",
+        "stack": [
+          "React",
+          "TypeScript",
+          "OpenAI",
+          "Stripe",
+          "Firebase",
+          "Material UI",
+          "ECharts"
+        ],
         "highlights": [
           {
-            "id": "project-4-result",
-            "text": "[Key result: a number, a launch, an award]"
+            "id": "kunarchgpt-result",
+            "text": "Tiered Stripe subscriptions with query limits and SendGrid emails"
           },
           {
-            "id": "project-4-owned",
-            "text": "[What you owned or built]"
+            "id": "kunarchgpt-owned",
+            "text": "Google and Microsoft sign-in over OAuth 2.0"
           }
         ],
         "href": "",
