@@ -57,16 +57,26 @@ export function useCursorPosition(lerpFactor = 0.1): CursorPosition {
     }
 
     let rafId = 0
+    let renderedRaw = rawRef.current
 
     function tick() {
       const raw = rawRef.current
       const lerp = lerpRef.current
-      const nextLerp = {
-        x: lerp.x + (raw.x - lerp.x) * lerpFactor,
-        y: lerp.y + (raw.y - lerp.y) * lerpFactor,
+      // Within a twentieth of a pixel it snaps home; from then on, until the
+      // mouse moves again, nothing changes and nothing re-renders (every
+      // render also rewrites --cursor-x/y, which costs style work).
+      const settled = Math.abs(raw.x - lerp.x) < 0.05 && Math.abs(raw.y - lerp.y) < 0.05
+      const nextLerp = settled
+        ? raw
+        : {
+            x: lerp.x + (raw.x - lerp.x) * lerpFactor,
+            y: lerp.y + (raw.y - lerp.y) * lerpFactor,
+          }
+      if (nextLerp.x !== lerp.x || nextLerp.y !== lerp.y || raw !== renderedRaw) {
+        lerpRef.current = nextLerp
+        renderedRaw = raw
+        setPosition({ raw, lerp: nextLerp })
       }
-      lerpRef.current = nextLerp
-      setPosition({ raw, lerp: nextLerp })
       rafId = requestAnimationFrame(tick)
     }
     rafId = requestAnimationFrame(tick)

@@ -304,7 +304,7 @@ export function FloatingTags() {
           }}
         >
           <Icon width={56} height={56} className="opacity-80" />
-          <span className="mt-1 block text-center font-hero text-[10px] leading-tight tracking-wide text-white/50">
+          <span className="mt-1 block text-center font-support text-[10px] leading-tight tracking-wide text-white/50">
             {name}
           </span>
         </div>

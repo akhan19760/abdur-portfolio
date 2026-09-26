@@ -179,7 +179,7 @@ export function ProjectsSection() {
               label={t("work.navLabel")}
               className="pointer-events-auto"
             />
-            <p className="max-w-[17rem] text-end font-mono text-[11px] leading-relaxed text-text/55">
+            <p className="max-w-[17rem] text-end font-support text-[11px] leading-relaxed text-text/55">
               {t("work.hint")}
             </p>
           </div>

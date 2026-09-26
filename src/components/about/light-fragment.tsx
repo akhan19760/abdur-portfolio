@@ -61,7 +61,7 @@ export function LightFragment({
         )}
       >
         <span className="block tracking-[0.2em] text-accent-soft">{fragment.code}</span>
-        <span className="block text-text/85">{fragment.text}</span>
+        <span className="block font-support text-text/85">{fragment.text}</span>
       </span>
     </button>
   )

@@ -156,7 +156,7 @@ function SatelliteButton({
         {satellite.detail && (
           <span
             className={cn(
-              "block font-mono text-[11px] text-text/75 transition-opacity duration-700",
+              "block font-support text-[11px] text-text/75 transition-opacity duration-700",
               shown ? "opacity-100" : "opacity-0"
             )}
           >
@@ -211,7 +211,7 @@ function Finale({ visible, availability, floating }: FinaleProps) {
               </span>
             ))}
           </p>
-          <p className="mt-6 animate-word-in font-mono text-[12px] tracking-[0.2em] text-text/80 [animation-delay:900ms]">
+          <p className="mt-6 animate-word-in font-support text-[12px] tracking-[0.2em] text-text/80 [animation-delay:900ms]">
             {availability.detail}
           </p>
         </>
@@ -264,7 +264,7 @@ export function OrbitField({
           : `${labels.caught} ${pad(caughtCount)}/${pad(satellites.length)}`}
       </span>
       {!locked && animate && (
-        <span className="mt-2 block text-text/50">{labels.hint}</span>
+        <span className="mt-2 block font-support text-text/50">{labels.hint}</span>
       )}
     </p>
   )

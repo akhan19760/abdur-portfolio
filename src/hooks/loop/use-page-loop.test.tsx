@@ -119,7 +119,8 @@ describe("settleScrollAnimations", () => {
     const smoothing = { progress: vi.fn() }
     vi.spyOn(ScrollTrigger, "getAll").mockReturnValue([
       { getTween: () => smoothing },
-      { getTween: () => undefined }, // not smoothed
+      { getTween: () => 0 }, // not smoothed: GSAP gives 0
+      { getTween: () => undefined },
     ] as unknown as ScrollTrigger[])
     settleScrollAnimations()
     expect(update).toHaveBeenCalledOnce()

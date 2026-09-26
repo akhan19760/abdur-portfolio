@@ -72,9 +72,9 @@ export function hasWrapped(previous: number, next: number, limit: number): boole
 export function settleScrollAnimations(): void {
   ScrollTrigger.update()
   for (const trigger of ScrollTrigger.getAll()) {
-    // The scrub tween, if the trigger is smoothed (undefined otherwise)
-    const smoothing = trigger.getTween() as gsap.core.Tween | undefined
-    smoothing?.progress(1)
+    // The scrub tween if the trigger is smoothed; GSAP gives 0 when it isn't
+    const smoothing = trigger.getTween() as gsap.core.Tween | 0 | undefined
+    if (smoothing) smoothing.progress(1)
   }
 }
 

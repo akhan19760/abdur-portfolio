@@ -148,7 +148,7 @@ export function ProcessSection() {
             </div>
             <p
               data-fold-hud
-              className="absolute bottom-10 end-10 max-w-[17rem] text-end font-mono text-[11px] leading-relaxed text-text/55"
+              className="absolute bottom-10 end-10 max-w-[17rem] text-end font-support text-[11px] leading-relaxed text-text/55"
             >
               {t("process.hint")}
             </p>

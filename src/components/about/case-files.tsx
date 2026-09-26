@@ -125,7 +125,7 @@ function Card({ file, decrypted, onDecrypt, labels, depth, angle }: CardProps) {
           <span className="pointer-events-none absolute inset-x-0 block h-20 animate-scan-beam bg-gradient-to-b from-transparent via-accent/40 to-transparent opacity-[var(--light,0)]" />
 
           <span className="mt-4 block">
-            <span className="block text-[10px] uppercase tracking-[0.3em] text-text/70">
+            <span className="block font-support text-[10px] uppercase tracking-[0.3em] text-text/70">
               {labels.hold}
             </span>
             <span className="mt-2 block h-1 overflow-hidden rounded-full bg-accent/20">
