@@ -20,7 +20,7 @@ export function HeroContent() {
   return (
     <>
       {/* ── Language switcher — EN · UR, top-right ─────────────────────────── */}
-      <div className="absolute right-10 top-10 z-10">
+      <div className="absolute right-4 top-4 z-10 sm:right-6 sm:top-6 lg:right-10 lg:top-10">
         <LanguageSwitcher />
       </div>
 
@@ -31,18 +31,24 @@ export function HeroContent() {
           "opacity-[calc(1_-_var(--hero-exit,0)_*_2.4)] has-[:focus-visible]:opacity-100"
         )}
       >
-        <p className="mb-6 font-support text-xs uppercase tracking-[0.4em] text-accent/60">
+        <p className="mb-6 font-support text-xs uppercase tracking-[0.4em] text-accent/60 short:mb-3">
           {t("hero.role")}
         </p>
 
         {/*
           Invisible spacer — reserves the canvas text area in the flex column.
-          Height approximates two lines of Kiloy at clamp(4.5rem, 13vw, 12rem).
-          Tune in browser if the role/tagline drift relative to the canvas name.
+          The name is about 2.2 × its font size tall, and the font size comes
+          from heroFontSize (lib/hero-name): 22% / 18% / 13% of the width on
+          phones / tablets / desktops, at most 24% of the (large) viewport
+          height, at most 192px. Keep these in step with it.
         */}
-        <div aria-hidden="true" className="h-[clamp(10.5rem,28vw,26rem)]" />
+        <div
+          aria-hidden="true"
+          data-hero-slot
+          className="h-[min(48vw,53lvh,26rem)] sm:h-[min(40vw,53lvh,26rem)] lg:h-[min(28vw,53lvh,26rem)]"
+        />
 
-        <p className="mb-10 mt-6 font-support text-sm tracking-widest text-text/35">
+        <p className="mb-8 mt-6 max-w-xs font-support text-sm tracking-widest text-text/35 sm:mb-10 sm:max-w-none short:mb-4 short:mt-3">
           {t("hero.tagline")}
         </p>
 

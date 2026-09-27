@@ -54,6 +54,7 @@ import { useCallback, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
 import { HERO_FRAME, HeroContent } from "@/components/hero"
 import { prefersReducedMotion } from "@/lib/media"
+import { heroFontSize } from "@/lib/hero-name"
 import { loopArrival } from "@/lib/page-loop"
 import { onPing } from "@/lib/ping"
 import { FloatingTags } from "./floating-tags"
@@ -144,26 +145,27 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
   const sizeRef = useRef({ w: 0, h: 0 })
 
   // ── Build particles from offscreen text ────────────────────────────────────
-  const buildParticles = useCallback((w: number, h: number) => {
+  const buildParticles = useCallback((w: number, h: number, centreY: number) => {
     const off = document.createElement("canvas")
     off.width = w
     off.height = h
     const octx = off.getContext("2d")!
 
-    // Font size mirrors CSS clamp(4.5rem, 13vw, 12rem) in raw pixels
-    const fontSize = Math.min(w * 0.13, 192)
+    const fontSize = heroFontSize(w, h)
     // Adaptive gap — denser on small screens so letters form clearly
     const gap = Math.max(3, Math.round(fontSize / 38))
+    // Dots scale with the gap, so small names stay dotted instead of solid
+    const dot = Math.min(1.4, gap * 0.28)
 
     octx.font = `400 ${fontSize}px "Kiloy", Georgia, serif`
     octx.textAlign = "left"
     octx.textBaseline = "alphabetic"
     octx.fillStyle = "white"
 
-    // Both lines centred vertically at h/2, baselines 1.45 × fontSize apart
+    // Baselines 1.45 × fontSize apart around centreY
     const lineY = [
-      h * 0.5 - fontSize * 0.66, // ABDUR baseline — above centre
-      h * 0.5 + fontSize * 0.79, // KHAN baseline  — below centre
+      centreY - fontSize * 0.66, // ABDUR baseline — above centre
+      centreY + fontSize * 0.79, // KHAN baseline  — below centre
     ]
 
     const particles: Particle[] = []
@@ -229,7 +231,7 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
               vx: (Math.random() - 0.5) * 3,
               vy: (Math.random() - 0.5) * 3,
               groupIndex: gi,
-              size: 1.4 + Math.random() * 0.7,
+              size: dot * (1 + Math.random() * 0.5),
               alpha: 0.55 + Math.random() * 0.45,
               depth: 0.5 + Math.random() * 0.5,
               scatterX: Math.cos(angle),
@@ -272,14 +274,34 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
     let timerId: ReturnType<typeof setTimeout>
     let active = true
     let ro: ResizeObserver | null = null
+    // Sharp on high-density phone and tablet screens; desktops keep 1× so
+    // the per-frame fill cost doesn't grow on large Retina displays
+    const dpr = () =>
+      window.innerWidth < 1024 ? Math.min(2, window.devicePixelRatio || 1) : 1
 
     const resize = () => {
       const w = container.clientWidth
       const h = container.clientHeight
+      // Rebuilding scatters the name to reassemble it, so only do it when the
+      // size really changed (not for a resize event with the same box)
+      if (w === sizeRef.current.w && h === sizeRef.current.h) return
       sizeRef.current = { w, h }
-      canvas.width = w
-      canvas.height = h
-      const built = buildParticles(w, h)
+      const scale = dpr()
+      canvas.width = Math.round(w * scale)
+      canvas.height = Math.round(h * scale)
+      ctx.setTransform(scale, 0, 0, scale, 0, 0)
+      // Desktops keep the name where it was tuned (baselines around h/2). On
+      // narrower screens the tagline wraps and shifts the column, so the name
+      // is centred on the slot HeroContent reserves for it instead (the
+      // letters' middle sits 0.3 × the font size above centreY).
+      let centreY = h * 0.5
+      const slot = section.querySelector<HTMLElement>("[data-hero-slot]")
+      if (slot && w < 1024) {
+        const s = slot.getBoundingClientRect()
+        const top = s.top - section.getBoundingClientRect().top
+        centreY = top + s.height / 2 + heroFontSize(w, h) * 0.3
+      }
+      const built = buildParticles(w, h, centreY)
       particlesRef.current = built.particles
       groupsRef.current = built.groups
     }
@@ -491,6 +513,19 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
       mouseRef.current = { x: e.clientX, y: e.clientY }
     }
     window.addEventListener("mousemove", onMouseMove)
+    // On touch a finger does what the cursor does: letters shy away from it
+    // while it's down (it can still scroll — the listeners are passive)
+    const onTouch = (e: TouchEvent) => {
+      const touch = e.touches[0]
+      if (touch) mouseRef.current = { x: touch.clientX, y: touch.clientY }
+    }
+    const onTouchEnd = () => {
+      mouseRef.current = { x: -9999, y: -9999 }
+    }
+    window.addEventListener("touchstart", onTouch, { passive: true })
+    window.addEventListener("touchmove", onTouch, { passive: true })
+    window.addEventListener("touchend", onTouchEnd)
+    window.addEventListener("touchcancel", onTouchEnd)
 
     // A ping knocks nearby letters away from it; the group springs pull them back.
     const offPing = onPing((ping) => {
@@ -512,6 +547,10 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
       cancelAnimationFrame(rafId)
       ro?.disconnect()
       window.removeEventListener("mousemove", onMouseMove)
+      window.removeEventListener("touchstart", onTouch)
+      window.removeEventListener("touchmove", onTouch)
+      window.removeEventListener("touchend", onTouchEnd)
+      window.removeEventListener("touchcancel", onTouchEnd)
       offPing()
     }
   }, [buildParticles, revealDelay])
@@ -525,10 +564,15 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
       </div>
 
       {/* ── Layer 1: particle canvas — fixed so the exit isn't clipped ──────── */}
+      {/* h-lvh, not inset-0: a phone's toolbar sliding away mustn't resize it
+          (that would rebuild and re-scatter the name mid-scroll) */}
       <div
         ref={containerRef}
         aria-hidden="true"
-        className={cn("pointer-events-none fixed inset-0", CURSOR_LIGHT_MASK)}
+        className={cn(
+          "pointer-events-none fixed inset-x-0 top-0 h-lvh",
+          CURSOR_LIGHT_MASK
+        )}
       >
         <canvas ref={canvasRef} className="h-full w-full" />
       </div>
@@ -538,17 +582,21 @@ export function HeroSection({ revealDelay = 4.2 }: HeroSectionProps) {
         ref={logosRef}
         aria-hidden="true"
         className={cn(
-          "pointer-events-none fixed inset-0",
+          "pointer-events-none fixed inset-x-0 top-0 h-lvh overflow-hidden",
           CURSOR_LIGHT_MASK,
           // Flies past the camera as the Hero leaves; grows into place as it arrives
           "opacity-[calc(1_-_var(--hero-exit,0)_*_1.6_-_var(--hero-arrive,0)_*_1.6)]",
           "motion-safe:scale-[calc(1_+_var(--hero-exit,0)_*_1.1_-_var(--hero-arrive,0)_*_0.6)]"
         )}
       >
-        <div className="absolute left-8 top-8 h-14 w-14 border-l border-t border-accent/20" />
-        <div className="absolute right-8 top-8 h-14 w-14 border-r border-t border-accent/20" />
-        <div className="absolute bottom-8 left-8 h-14 w-14 border-b border-l border-accent/20" />
-        <div className="absolute bottom-8 right-8 h-14 w-14 border-b border-r border-accent/20" />
+        {/* Corner accents — wide screens only; smaller ones use the corners
+            for the social links and language switcher */}
+        <div className="hidden lg:block">
+          <div className="absolute left-8 top-8 h-14 w-14 border-l border-t border-accent/20" />
+          <div className="absolute right-8 top-8 h-14 w-14 border-r border-t border-accent/20" />
+          <div className="absolute bottom-8 left-8 h-14 w-14 border-b border-l border-accent/20" />
+          <div className="absolute bottom-8 right-8 h-14 w-14 border-b border-r border-accent/20" />
+        </div>
 
         {/* Floating tech logos — decorative */}
         <FloatingTags />

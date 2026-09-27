@@ -19,17 +19,18 @@
  *      project (shown in turn), the project list and a one-line hint
  *
  * Two modes, decided once on mount:
- * - immersive: hover-capable pointer, no reduced-motion preference, ≥1024px
- *   wide. A tall section; useSeaScroll scrubs the glide and brings each
- *   project's text in; the sea reads the same scroll position.
- * - flat: everything else. Projects stack in normal flow, each with its
+ * - immersive: every device without a reduced-motion preference. In portrait
+ *   each screen stands across the top of the view with its details below
+ *   (lib/stage-framing). A tall section; useSeaScroll scrubs the glide and
+ *   brings each project's text in; the sea reads the same scroll position.
+ * - flat: reduced motion. Projects stack in normal flow, each with its
  *   picture beside it, and no WebGL.
  */
 
 import { Suspense, lazy, useCallback, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
-import { prefersImmersive } from "@/lib/media"
+import { canHover, prefersImmersive } from "@/lib/media"
 import { ErrorBoundary } from "@/components/layout"
 import { ProjectDetails, ProjectNav, seaStateAt } from "@/components/projects"
 import { useLightProximity } from "@/hooks/cursor"
@@ -47,6 +48,7 @@ export function ProjectsSection() {
 
   // Input type and motion preference don't change mid-session in practice.
   const [immersive] = useState(prefersImmersive)
+  const [pointer] = useState(canHover)
 
   const projects = t("work.projects", { returnObjects: true }) as Project[]
   const count = projects.length
@@ -85,7 +87,7 @@ export function ProjectsSection() {
       id="work"
       aria-labelledby="work-heading"
       data-mode={immersive ? "immersive" : "flat"}
-      className={cn("relative", immersive ? "z-10" : "py-28")}
+      className={cn("relative", immersive ? "z-10" : "py-20 sm:py-28")}
       // Derived from the timeline (seaPhases), so the scroll length can't drift from it
       style={immersive ? { height: `${phases.sectionVh}vh` } : undefined}
     >
@@ -111,13 +113,23 @@ export function ProjectsSection() {
             : "relative"
         )}
       >
+        {/* Portrait: a pool of dark under the text, over the screen's
+            reflection (fades in and out with the rest of the HUD) */}
+        {immersive && (
+          <div
+            aria-hidden="true"
+            data-sea-hud
+            className="absolute inset-x-0 bottom-0 hidden h-[58%] bg-[linear-gradient(to_bottom,transparent,rgba(10,10,10,0.78)_22%,rgba(10,10,10,0.9))] portrait:block"
+          />
+        )}
+
         {/* ── 2. Heading (first in DOM so the h2 precedes the project h3s) ──── */}
         <header
           data-sea-hud={immersive ? "" : undefined}
           className={cn(
             immersive
-              ? "absolute start-10 top-10"
-              : "relative mx-auto mb-20 max-w-6xl px-6"
+              ? "absolute start-5 top-5 lg:start-10 lg:top-10"
+              : "relative mx-auto mb-14 max-w-6xl px-6 sm:mb-20"
           )}
         >
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent-soft">
@@ -126,8 +138,10 @@ export function ProjectsSection() {
           <h2
             id="work-heading"
             className={cn(
-              "mt-3 font-sans uppercase tracking-[0.6em] text-text",
-              immersive ? "text-2xl" : "text-5xl"
+              "mt-3 font-sans uppercase text-text",
+              immersive
+                ? "text-lg tracking-[0.45em] lg:text-2xl lg:tracking-[0.6em]"
+                : "text-3xl tracking-[0.35em] sm:text-5xl sm:tracking-[0.6em]"
             )}
           >
             {t("work.heading")}
@@ -138,7 +152,7 @@ export function ProjectsSection() {
           <p
             data-sea-hud
             aria-hidden="true"
-            className="absolute end-10 top-10 font-mono text-sm tracking-[0.3em] text-text/50"
+            className="absolute end-5 top-5 font-mono text-sm tracking-[0.3em] text-text/50 lg:end-10 lg:top-10"
           >
             <span className="text-text">{pad(active + 1)}</span> / {pad(count)}
           </p>
@@ -147,7 +161,7 @@ export function ProjectsSection() {
         {/* ── 3. Projects ─────────────────────────────────────────────────────── */}
         <div
           className={cn(
-            !immersive && "relative mx-auto flex max-w-6xl flex-col gap-28 px-6"
+            !immersive && "relative mx-auto flex max-w-6xl flex-col gap-20 px-6 sm:gap-28"
           )}
         >
           {projects.map((project, i) => (
@@ -165,7 +179,11 @@ export function ProjectsSection() {
         {immersive && (
           <div
             data-sea-hud
-            className="absolute bottom-10 end-10 isolate flex flex-col items-end gap-5"
+            className={cn(
+              "absolute bottom-10 end-10 isolate flex flex-col items-end gap-5",
+              // Compact: one row along the bottom, the list on the left
+              "max-lg:inset-x-5 max-lg:bottom-4 max-lg:flex-row-reverse max-lg:items-center max-lg:justify-between max-lg:gap-4"
+            )}
           >
             {/* A soft pool of dark so the list reads over the reflections */}
             <span
@@ -179,8 +197,8 @@ export function ProjectsSection() {
               label={t("work.navLabel")}
               className="pointer-events-auto"
             />
-            <p className="max-w-[17rem] text-end font-support text-[11px] leading-relaxed text-text/55">
-              {t("work.hint")}
+            <p className="max-w-[17rem] text-end font-support text-[11px] leading-relaxed text-text/55 max-lg:max-w-[48%] max-lg:text-[10px]">
+              {pointer ? t("work.hint") : t("work.hintTouch")}
             </p>
           </div>
         )}

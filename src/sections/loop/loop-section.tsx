@@ -15,21 +15,21 @@
  * PinWall, and the name's approach by the Hero's own canvas (lib/page-loop).
  *
  * Purely visual: aria-hidden and inert, so the copy is never read out or
- * focused twice. Immersive mode only (it needs the page's smooth scroll):
- * with touch, reduced motion or a narrow screen the page just ends at
- * Contact.
+ * focused twice. Mouse and trackpad only, without reduced motion (it needs
+ * the page's smooth wheel scrolling — see prefersPageLoop): on touch or with
+ * reduced motion the page just ends at Contact.
  */
 
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { prefersImmersive } from "@/lib/media"
+import { prefersPageLoop } from "@/lib/media"
 import { HERO_FRAME, HeroContent } from "@/components/hero"
 import { LOOP_SCREENS, usePageLoop } from "@/hooks/loop"
 
 export function LoopSection() {
   // Input type and motion preference don't change mid-session in practice.
-  const [immersive] = useState(prefersImmersive)
-  return immersive ? <LoopStretch /> : null
+  const [loop] = useState(prefersPageLoop)
+  return loop ? <LoopStretch /> : null
 }
 
 /** The stretch itself (split out so the loop's hook only runs when it's on). */

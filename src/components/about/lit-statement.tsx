@@ -37,7 +37,7 @@ export function LitStatement({ segments, className }: LitStatementProps) {
       // The About section finds the statement by this to drive the reveal
       data-statement
       className={cn(
-        "font-display text-[clamp(2.25rem,5vw,4.75rem)] font-light leading-[1.08] text-text",
+        "font-display text-[clamp(1.6rem,7.4vw,2.6rem)] font-light leading-[1.1] text-text lg:text-[clamp(2.25rem,5vw,4.75rem)] lg:leading-[1.08]",
         className
       )}
     >

@@ -29,6 +29,7 @@ type CaseFilesProps = {
 }
 
 const CAROUSEL_STEP = 32 // deg between cards around the carousel
+const COMPACT_STEP = 38 // …and around the compact (vertical) wheel
 
 // The x-ray peek: a soft 90px circle at the light, in the element's own
 // coordinates (--lens-x/y from useLightLens).
@@ -73,12 +74,22 @@ function Card({ file, decrypted, onDecrypt, labels, depth, angle }: CardProps) {
           ? cn(
               "absolute left-1/2 top-1/2 h-[min(54vh,470px)] aspect-[3/4]",
               "[transform:translate(-50%,-50%)_rotateY(var(--a))_translateZ(calc(var(--r)_+_var(--light,0)*70px))]",
+              // Compact: landscape cards on a wheel turning about the x axis
+              "max-lg:h-auto max-lg:w-[min(74vw,320px)] max-lg:aspect-[16/9]",
+              "max-lg:[transform:translate(-50%,-50%)_rotateX(var(--ax))_translateZ(calc(var(--r)_+_var(--light,0)*30px))]",
               "transition-transform duration-300 ease-out"
             )
-          : "relative aspect-[3/4] w-full"
+          : "relative aspect-[4/3] w-full lg:aspect-[3/4]"
       )}
       // Each card's place around the carousel — derived from its index
-      style={depth ? ({ "--a": `${angle}deg` } as CSSProperties) : undefined}
+      style={
+        depth
+          ? ({
+              "--a": `${angle}deg`,
+              "--ax": `${(-angle * COMPACT_STEP) / CAROUSEL_STEP}deg`,
+            } as CSSProperties)
+          : undefined
+      }
     >
       <span
         className={cn(
@@ -92,7 +103,10 @@ function Card({ file, decrypted, onDecrypt, labels, depth, angle }: CardProps) {
         {/* ── Front: encrypted ──────────────────────────────────────────── */}
         <span
           aria-hidden="true"
-          className="absolute inset-0 flex flex-col overflow-hidden rounded-xl border border-accent/40 bg-[#0c0714]/95 p-5 text-left font-mono [backface-visibility:hidden]"
+          className={cn(
+            "absolute inset-0 flex flex-col overflow-hidden rounded-xl border border-accent/40 bg-[#0c0714]/95 p-5 text-left font-mono [backface-visibility:hidden]",
+            depth && "max-lg:p-4"
+          )}
         >
           <span className="flex justify-between text-[10px] tracking-[0.3em]">
             <span className="text-accent-soft">
@@ -138,7 +152,14 @@ function Card({ file, decrypted, onDecrypt, labels, depth, angle }: CardProps) {
         {/* ── Back: decrypted ───────────────────────────────────────────── */}
         <span
           aria-hidden="true"
-          className="absolute inset-0 flex flex-col overflow-hidden rounded-xl border border-accent/70 bg-[radial-gradient(120%_80%_at_50%_0%,rgba(153,0,250,0.32),rgba(12,7,20,0.96)_62%)] p-6 text-left [backface-visibility:hidden] [transform:rotateY(180deg)] shadow-[0_0_60px_var(--color-accent-muted)]"
+          className={cn(
+            "absolute inset-0 flex flex-col overflow-hidden rounded-xl border border-accent/70 bg-[radial-gradient(120%_80%_at_50%_0%,rgba(153,0,250,0.32),rgba(12,7,20,0.96)_62%)] p-5 text-left [backface-visibility:hidden] [transform:rotateY(180deg)] sm:p-6",
+            depth && "max-lg:p-4!",
+            // Stacked cards on a phone would run their glows together
+            depth
+              ? "shadow-[0_0_60px_var(--color-accent-muted)]"
+              : "sm:shadow-[0_0_40px_var(--color-accent-muted)]"
+          )}
         >
           <span className="flex justify-between font-mono text-[10px] uppercase tracking-[0.3em]">
             <span className="text-accent-soft">{file.group}</span>
@@ -148,7 +169,12 @@ function Card({ file, decrypted, onDecrypt, labels, depth, angle }: CardProps) {
             <span className="block font-mono text-[11px] tracking-[0.25em] text-text/70">
               {file.period}
             </span>
-            <span className="mt-3 block font-display text-[clamp(1.8rem,2.4vw,2.7rem)] leading-[1.05] text-text font-stretch-semi-condensed">
+            <span
+              className={cn(
+                "mt-3 block font-display text-[clamp(1.5rem,6.5vw,1.8rem)] leading-[1.05] text-text font-stretch-semi-condensed sm:text-[clamp(1.8rem,2.4vw,2.7rem)]",
+                depth && "max-lg:mt-1.5 max-lg:text-lg"
+              )}
+            >
               {file.role}
             </span>
             <span className="mt-3 block font-mono text-sm text-accent-soft">
@@ -220,12 +246,12 @@ export function CaseFiles({
         data-tilt
         className={cn(
           depth
-            ? "relative h-[62vh] w-full [perspective:1700px]"
+            ? "relative h-[62vh] w-full [perspective:1700px] max-lg:h-[56vh] max-lg:translate-y-8 max-lg:[perspective:1100px]"
             : "grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
         )}
       >
         {depth ? (
-          <div className="absolute inset-0 [--r:950px] [transform-style:preserve-3d] [transform:translateZ(calc(var(--r)*-1))_rotateY(calc(var(--tilt-x,0)*-16deg))_rotateX(calc(var(--tilt-y,0)*6deg))]">
+          <div className="absolute inset-0 [--r:950px] [transform-style:preserve-3d] [transform:translateZ(calc(var(--r)*-1))_rotateY(calc(var(--tilt-x,0)*-16deg))_rotateX(calc(var(--tilt-y,0)*6deg))] max-lg:[--r:min(35vh,300px)] max-lg:[transform:translateZ(calc(var(--r)*-1))_rotateX(calc(var(--tilt-y,0)*10deg))]">
             {files.map((file, i) => (
               <Card
                 key={file.id}

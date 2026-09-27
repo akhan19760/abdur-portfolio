@@ -26,7 +26,9 @@ export function ProjectNav({
 }: ProjectNavProps) {
   return (
     <nav aria-label={label} className={className}>
-      <ol className="flex flex-col items-end gap-1">
+      {/* Compact screens: a row of numbered marks (the names are kept for
+          screen readers), so it fits under the text */}
+      <ol className="flex flex-col items-end gap-1 max-lg:flex-row max-lg:items-center max-lg:gap-1">
         {projects.map((project, i) => {
           const current = i === active
           return (
@@ -37,16 +39,19 @@ export function ProjectNav({
                 aria-current={current ? "true" : undefined}
                 className={cn(
                   "group flex min-h-7 items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors duration-300",
+                  "max-lg:min-h-10 max-lg:gap-2 max-lg:px-1",
                   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
                   current ? "text-text" : "text-text/55 hover:text-text/90"
                 )}
               >
-                <span>{project.name}</span>
+                <span className="max-lg:sr-only">{project.name}</span>
                 <span
                   aria-hidden="true"
                   className={cn(
                     "h-px transition-all duration-500",
-                    current ? "w-10 bg-accent" : "w-4 bg-text/30 group-hover:w-6"
+                    current
+                      ? "w-10 bg-accent max-lg:w-6"
+                      : "w-4 bg-text/30 group-hover:w-6 max-lg:w-3"
                   )}
                 />
                 <span aria-hidden="true">{pad(i + 1)}</span>

@@ -62,7 +62,8 @@ import {
   seaFragmentShader,
   seaVertexShader,
 } from "./mirror-sea-shader"
-import { PAPER_LANDING, PAPER_SCREEN, seaStateAt } from "./sea-choreography"
+import { isPortrait, paperScreen } from "@/lib/stage-framing"
+import { PAPER_LANDING, seaStateAt } from "./sea-choreography"
 import { averageSlotColors, buildAtlas } from "./sea-panels"
 
 const LIGHT_DISTANCE = 20 // metres from the camera along the cursor's ray
@@ -190,7 +191,10 @@ function lightFor(
   cursor: { sx: number; sy: number } | null,
   lookDown: number
 ): Vec3 {
-  const dir = rayDirection(camera, cursor?.sx ?? 0.62, cursor?.sy ?? 0.55)
+  // With no cursor (or finger) on the screen, the light rests over the
+  // project's screen: right of centre, or centred up top in portrait
+  const rest = isPortrait(camera.aspect) ? { sx: 0.5, sy: 0.42 } : { sx: 0.62, sy: 0.55 }
+  const dir = rayDirection(camera, cursor?.sx ?? rest.sx, cursor?.sy ?? rest.sy)
   let reach = LIGHT_DISTANCE
   if (lookDown > 0 && dir.y < 0) {
     const overWater = (camera.y - LIGHT_MIN_HEIGHT) / -dir.y
@@ -364,7 +368,8 @@ function SeaScene({
       // ── Process's sheet of paper landing on the water ──
       const down = u >= phases.total + PAPER_LANDING
       if (down && landed === false) {
-        const under = screenToSea(camera, PAPER_SCREEN.sx, PAPER_SCREEN.sy)
+        const landing = paperScreen(aspect)
+        const under = screenToSea(camera, landing.sx, landing.sy)
         if (under) addRipple({ x: under.x, z: under.z, start: now, ...LANDING_RIPPLE })
       }
       landed = down

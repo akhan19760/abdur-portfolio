@@ -189,7 +189,8 @@
       "caught": "CAUGHT",
       "locked": "SIGNAL LOCKED",
       "availabilityLabel": "DASTIYAABI",
-      "hint": "Satellite pakarne ke liye us par roshni rokein"
+      "hint": "Satellite pakarne ke liye us par roshni rokein",
+      "hintTouch": "Satellite pakarne ke liye us par tap karein"
     },
     "decoded": "FILE_02 // SUBJECT DECODED"
   },
@@ -197,6 +198,7 @@
     "label": "CHUNEEDA KAAM",
     "heading": "Kaam",
     "hint": "Projects ke darmiyan jaane ke liye scroll karein. Aap ka cursor roshni hai.",
+    "hintTouch": "Projects ke darmiyan jaane ke liye scroll karein. Paani ko roshan karne ke liye chhooiye.",
     "navLabel": "Projects",
     "placeholder": "SCREENSHOT PLACEHOLDER",
     "screenshotAlt": "{{name}} ka screenshot",
@@ -324,6 +326,7 @@
     "label": "MAIN KAISE KAAM KARTA HOON",
     "heading": "Tareeqa",
     "hint": "Kaghaz tah karne ke liye scroll karein. Aap ka cursor roshni hai.",
+    "hintTouch": "Kaghaz tah karne ke liye scroll karein. Roshni ke liye screen ko chhooiye.",
     "navLabel": "Marahil",
     "notesLabel": "Pehle safhe ke notes",
     "notes": [
@@ -373,6 +376,7 @@
     "linksLabel": "Aur jagah",
     "newTab": "naye tab mein khulta hai",
     "hint": "Aap ka cursor pinon ko dabata hai. Zyada dabane ke liye button daba kar rakhein, lehar ke liye click karein.",
+    "hintTouch": "Ungli se pinon ko dabaiye. Lehar ke liye tap karein.",
     "footer": "© {{year}} {{name}}"
   }
 }

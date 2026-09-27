@@ -28,10 +28,12 @@
  * The core and HUD fade in with --about-enter during the handoff.
  *
  * Two modes, decided once on mount:
- * - depth: hover-capable pointer, no reduced-motion preference, ≥1024px wide.
- *   Overlaps the Hero; a tall section with a sticky stage; useDepthScroll
- *   scrubs the dive.
- * - flat: everything else. The layers stack in normal flow after the Hero,
+ * - depth: every device without a reduced-motion preference. Overlaps the
+ *   Hero; a tall section with a sticky stage; useDepthScroll scrubs the
+ *   dive. Below 1024px the HUD, fragments, sky, case-file wheel (vertical)
+ *   and satellite readouts switch to a compact layout; on touch the finger
+ *   is the light (TouchLight) and the story and case files start revealed.
+ * - flat: reduced motion. The layers stack in normal flow after the Hero,
  *   no 3D or FX canvas, satellites sit in a grid, and on touch the story,
  *   case files and satellites start fully revealed.
  */
@@ -87,15 +89,20 @@ const REVEAL_END = PHASES.holds[0][1] - 0.1
 const MAX_DEPTH = 400 // metres shown on the readout at the bottom of the dive
 
 // Where each fragment sits in depth mode, by its index in the fragment list.
-// Positions keep clear of each layer's content.
+// Positions keep clear of each layer's content. On compact screens (below
+// lg) each layer's first fragment sits in the top right, beside the heading,
+// and its second just above the hint bar.
+const FRAGMENT_TOP = "max-lg:start-auto max-lg:bottom-auto max-lg:end-3 max-lg:top-4"
+const FRAGMENT_BOTTOM =
+  "max-lg:end-auto max-lg:top-auto max-lg:start-3 max-lg:bottom-[4.25rem]"
 const FRAGMENT_POSITIONS = [
-  "absolute start-[5%] top-[16%]",
-  "absolute end-[6%] bottom-[14%]",
-  "absolute end-[3%] top-[7%]",
-  "absolute start-[3%] bottom-[16%]",
-  "absolute end-[4%] top-[9%]",
-  "absolute start-[5%] top-[12%]",
-] as const
+  cn("absolute start-[5%] top-[16%]", FRAGMENT_TOP),
+  cn("absolute end-[6%] bottom-[14%]", FRAGMENT_BOTTOM),
+  cn("absolute end-[3%] top-[7%]", FRAGMENT_TOP),
+  cn("absolute start-[3%] bottom-[16%]", FRAGMENT_BOTTOM),
+  cn("absolute end-[4%] top-[9%]", FRAGMENT_TOP),
+  cn("absolute start-[5%] top-[12%]", FRAGMENT_TOP),
+].map((position) => cn(position, "max-lg:max-w-[10rem]"))
 
 // Which fragments belong to which layer, as indexes into the fragment list.
 const LAYER_FRAGMENTS = {
@@ -414,7 +421,7 @@ export function AboutSection() {
         className={cn(
           depth
             ? "pointer-events-none sticky top-0 h-svh overflow-hidden"
-            : "relative py-28"
+            : "relative py-20 sm:py-28"
         )}
       >
         {/* ── 1. 3D world (depth mode only; decorative, so failures render nothing) ── */}
@@ -427,7 +434,8 @@ export function AboutSection() {
                 windows={FORMATION_WINDOWS}
                 dispersalStart={FINALE_AT / PHASES.total}
                 active={worldActive}
-                className="z-[1] opacity-[var(--about-enter,1)]"
+                // Dimmer on compact screens, where the text sits right over the core
+                className="z-[1] opacity-[var(--about-enter,1)] max-lg:opacity-[calc(var(--about-enter,1)*0.7)]"
               />
             </Suspense>
           </ErrorBoundary>
@@ -441,13 +449,17 @@ export function AboutSection() {
           className={cn(
             "z-20",
             depth
-              ? "pointer-events-none absolute inset-x-10 top-10 flex items-start justify-between opacity-[var(--about-enter,1)]"
-              : "relative mx-auto mb-24 max-w-5xl px-6"
+              ? "pointer-events-none absolute inset-x-5 top-5 flex items-start justify-between opacity-[var(--about-enter,1)] lg:inset-x-10 lg:top-10"
+              : "relative mx-auto mb-16 max-w-5xl px-6 sm:mb-24"
           )}
         >
           <div>
             <p className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.3em] text-accent-soft">
-              {fullyDecoded ? t("about.decoded") : t("about.file")}
+              {/* Compact screens keep just the progress dots: the top right corner
+                  there holds each layer's first fragment */}
+              <span className={cn(depth && "max-lg:sr-only")}>
+                {fullyDecoded ? t("about.decoded") : t("about.file")}
+              </span>
               <span aria-hidden="true" className="flex gap-1">
                 {decoded.map((done, i) => (
                   <span
@@ -465,8 +477,10 @@ export function AboutSection() {
             <h2
               id="about-heading"
               className={cn(
-                "mt-3 font-sans uppercase tracking-[0.6em] text-text",
-                depth ? "text-2xl" : "text-5xl"
+                "mt-3 font-sans uppercase text-text",
+                depth
+                  ? "text-lg tracking-[0.45em] lg:text-2xl lg:tracking-[0.6em]"
+                  : "text-3xl tracking-[0.35em] sm:text-5xl sm:tracking-[0.6em]"
               )}
             >
               {t("about.heading")}
@@ -474,7 +488,8 @@ export function AboutSection() {
             {depth && (
               <p
                 aria-hidden="true"
-                className="mt-4 font-mono text-[11px] uppercase tracking-[0.3em] text-text/60"
+                // Compact screens have the gauge, and need the room under the heading
+                className="mt-4 font-mono text-[11px] uppercase tracking-[0.3em] text-text/60 max-lg:hidden"
               >
                 {t("about.depth")} <span ref={readoutRef}>000</span>
                 {t("about.depthUnit")}
@@ -493,9 +508,9 @@ export function AboutSection() {
 
         {depth && (
           <>
-            <div className="pointer-events-none absolute inset-x-10 bottom-10 z-20 flex items-end justify-between gap-10 opacity-[var(--about-enter,1)]">
-              <p className="max-w-sm font-support text-[11px] leading-relaxed text-text/60">
-                {t("about.hintPointer")}
+            <div className="pointer-events-none absolute inset-x-5 bottom-5 z-20 flex items-end justify-between gap-4 opacity-[var(--about-enter,1)] lg:inset-x-10 lg:bottom-10 lg:gap-10">
+              <p className="max-w-[58%] font-support text-[10px] leading-relaxed text-text/60 lg:max-w-sm lg:text-[11px]">
+                {pointer ? t("about.hintPointer") : t("about.hintTouch")}
               </p>
               {fragmentCounter}
             </div>
@@ -503,7 +518,7 @@ export function AboutSection() {
             {/* Depth gauge — one tick per layer, marker follows scroll progress */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute end-10 top-1/2 z-20 h-[40vh] -translate-y-1/2 opacity-[var(--about-enter,1)]"
+              className="pointer-events-none absolute end-2 top-1/2 z-20 h-[30vh] -translate-y-1/2 opacity-[var(--about-enter,1)] lg:end-10 lg:h-[40vh]"
             >
               <div className="relative h-full w-px bg-border">
                 {layers.map((layer, i) => (
@@ -514,7 +529,7 @@ export function AboutSection() {
                       GAUGE_TICKS[i]
                     )}
                   >
-                    <span className="font-mono text-[10px] text-text/50">
+                    <span className="font-mono text-[10px] text-text/50 max-lg:hidden">
                       {layer.index}
                     </span>
                     <span className="h-px w-2 bg-text/40" />
@@ -536,7 +551,7 @@ export function AboutSection() {
             "z-10",
             depth
               ? "absolute inset-0 [perspective:1200px]"
-              : "relative mx-auto flex max-w-5xl flex-col gap-32 px-6"
+              : "relative mx-auto flex max-w-5xl flex-col gap-20 px-6 sm:gap-32"
           )}
         >
           {/* 01 — Signal: the statement, revealed letter by letter as you scroll */}
@@ -555,7 +570,7 @@ export function AboutSection() {
             index={layers[1].index}
             title={layers[1].title}
             depth={depth}
-            contentClassName={depth ? "h-[84vh] max-w-7xl" : "max-w-4xl"}
+            contentClassName={depth ? "h-[84vh] max-w-7xl max-lg:h-[72vh]" : "max-w-4xl"}
             titleClassName={depth ? FLOATING_TITLE : undefined}
             fragments={renderFragments(LAYER_FRAGMENTS.origin)}
           >
@@ -579,7 +594,7 @@ export function AboutSection() {
             index={layers[2].index}
             title={layers[2].title}
             depth={depth}
-            contentClassName={depth ? "h-[84vh] max-w-7xl" : "max-w-5xl"}
+            contentClassName={depth ? "h-[84vh] max-w-7xl max-lg:h-[72vh]" : "max-w-5xl"}
             titleClassName={depth ? FLOATING_TITLE : undefined}
             fragments={renderFragments(LAYER_FRAGMENTS.log)}
           >
@@ -608,7 +623,7 @@ export function AboutSection() {
             index={layers[3].index}
             title={layers[3].title}
             depth={depth}
-            contentClassName={depth ? "h-[80vh] max-w-6xl" : "max-w-3xl"}
+            contentClassName={depth ? "h-[80vh] max-w-6xl max-lg:h-[72vh]" : "max-w-3xl"}
             titleClassName={depth ? FLOATING_TITLE : undefined}
             fragments={renderFragments(LAYER_FRAGMENTS.status)}
           >
@@ -622,7 +637,7 @@ export function AboutSection() {
               labels={{
                 caught: t("about.status.caught"),
                 locked: t("about.status.locked"),
-                hint: t("about.status.hint"),
+                hint: pointer ? t("about.status.hint") : t("about.status.hintTouch"),
               }}
               animate={depth}
             />

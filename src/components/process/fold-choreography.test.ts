@@ -11,6 +11,7 @@ import {
   projectToScreen,
 } from "./fold-choreography"
 import { FOLDS, FOLD_INDEX, SHEET_WIDTH } from "./paper-fold"
+import { paperScreen } from "@/lib/stage-framing"
 
 const phases = foldPhases()
 const [discover, design, build, refine, launch] = phases.starts
@@ -43,6 +44,29 @@ describe("orbitCamera", () => {
         expect(p.sy).toBeCloseTo(0.5, 5)
       }
     }
+  })
+})
+
+describe("orbitCamera in portrait", () => {
+  it("centres what it frames in the top part of the view, over the text", () => {
+    for (const aspect of [390 / 844, 390 / 664, 810 / 1080]) {
+      const cam = orbitCamera(
+        { target: origin, distance: 5, elevation: 0.6, azimuth: -0.5 },
+        aspect
+      )
+      const p = projectToScreen(cam, origin)!
+      expect(p.sx).toBeCloseTo(paperScreen(aspect).sx, 5)
+      expect(p.sy).toBeCloseTo(paperScreen(aspect).sy, 5)
+    }
+  })
+
+  it("pulls back so the landed sheet fits across a phone", () => {
+    const aspect = 390 / 844
+    const landed = at(phases.landing, aspect)
+    const left = projectToScreen(landed.camera, { x: -SHEET_WIDTH / 2, y: 0, z: 0 })!
+    const right = projectToScreen(landed.camera, { x: SHEET_WIDTH / 2, y: 0, z: 0 })!
+    expect(left.sx).toBeGreaterThan(0.02)
+    expect(right.sx).toBeLessThan(0.98)
   })
 })
 

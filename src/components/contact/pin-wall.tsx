@@ -61,7 +61,6 @@ import { PLANE_ARRIVAL, onPlaneArrival, planeSighting } from "@/lib/paper-plane"
 import type { WallPhases } from "@/hooks/contact"
 import {
   PIN_CHANNELS,
-  PIN_GRID,
   createPinField,
   setRelief,
   setRevealOrigin,
@@ -78,6 +77,7 @@ import {
   WALL_VISIBLE_FROM,
   clamp,
   letteringBox,
+  pinGridFor,
   mix,
   smoothstep,
   toCell,
@@ -184,7 +184,8 @@ function WallScene({ wrapperRef, readUnits, phases, lettering }: WallSceneProps)
   const dpr = useThree((s) => s.viewport.dpr)
   const camera = useThree((s) => s.camera) as PerspectiveCamera
 
-  const { cols, rows } = PIN_GRID
+  // A tall wall for portrait views, a wide one for landscape (lib/stage-framing)
+  const { cols, rows } = pinGridFor(size.width / Math.max(1, size.height))
   const field = useMemo(() => createPinField(cols, rows), [cols, rows])
   const data = useMemo(() => new Float32Array(cols * rows * PIN_CHANNELS), [cols, rows])
   const texture = useMemo(() => {

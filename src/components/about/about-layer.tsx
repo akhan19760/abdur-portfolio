@@ -44,7 +44,7 @@ export function AboutLayer({
       className={cn(
         depth
           ? cn(
-              "pointer-events-none absolute inset-0 flex items-center justify-center px-16 will-change-transform",
+              "pointer-events-none absolute inset-0 flex items-center justify-center px-5 will-change-transform lg:px-16",
               "[&_button]:pointer-events-auto data-[light-off]:[&_button]:pointer-events-none"
             )
           : "relative"

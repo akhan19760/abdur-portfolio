@@ -3,7 +3,8 @@ import { LOG_LINES } from "../constants"
 
 export function TerminalLog() {
   return (
-    <div className="absolute bottom-8 left-6 z-20 flex flex-col gap-[3px]">
+    // Hidden on short screens (a phone on its side), where it would run into the counter
+    <div className="absolute bottom-8 left-6 z-20 flex flex-col gap-[3px] [@media(max-height:500px)]:hidden">
       {LOG_LINES.map((line) => (
         <span
           key={line.text}

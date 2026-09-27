@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { cellCoverage, drawLettering } from "./wall-lettering"
+import { cellCoverage, drawLettering, splitLines } from "./wall-lettering"
 
 /** RGBA pixels `width` × `height`, with alpha from `alpha(x, y)`. */
 function pixels(width: number, height: number, alpha: (x: number, y: number) => number) {
@@ -33,8 +33,27 @@ describe("cellCoverage", () => {
   })
 })
 
+describe("splitLines", () => {
+  it("keeps everything on one line when asked for one", () => {
+    expect(splitLines("SAY HELLO", 1)).toEqual(["SAY HELLO"])
+  })
+
+  it("stacks the words for two lines", () => {
+    expect(splitLines("SAY HELLO", 2)).toEqual(["SAY", "HELLO"])
+  })
+
+  it("balances longer text by length", () => {
+    expect(splitLines("GET IN TOUCH NOW", 2)).toEqual(["GET IN", "TOUCH NOW"])
+  })
+
+  it("never makes more lines than there are words", () => {
+    expect(splitLines("HELLO", 2)).toEqual(["HELLO"])
+    expect(splitLines("SAY HELLO", 3)).toEqual(["SAY", "HELLO"])
+  })
+})
+
 describe("drawLettering", () => {
-  const box = { col: 20, row: 10, width: 30, height: 8 }
+  const box = { col: 20, row: 10, width: 30, height: 8, lines: 1 }
 
   afterEach(() => vi.restoreAllMocks())
 

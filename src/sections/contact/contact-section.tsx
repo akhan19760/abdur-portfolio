@@ -28,17 +28,18 @@
  *      finish rising
  *
  * Two modes, decided once on mount:
- * - immersive: hover-capable pointer, no reduced-motion preference, ≥1024px
- *   wide. useWallScroll fades the text in; the wall reads the same scroll
- *   position.
- * - flat: everything else. The same content in normal flow, with the words
+ * - immersive: every device without a reduced-motion preference. In portrait
+ *   the wall is tall and spells SAY / HELLO on two lines above the details
+ *   (lib/stage-framing). useWallScroll fades the text in; the wall reads the
+ *   same scroll position.
+ * - flat: reduced motion. The same content in normal flow, with the words
  *   drawn in dots like pin heads, and no WebGL. The page ends here (no loop).
  */
 
 import { Suspense, lazy, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
-import { prefersImmersive } from "@/lib/media"
+import { canHover, prefersImmersive } from "@/lib/media"
 import { CONTACT, SITE_CONFIG } from "@/constants"
 import { ErrorBoundary } from "@/components/layout"
 import { ContactDetails } from "@/components/contact"
@@ -61,6 +62,7 @@ export function ContactSection() {
 
   // Input type and motion preference don't change mid-session in practice.
   const [immersive] = useState(prefersImmersive)
+  const [pointer] = useState(canHover)
   const phases = useMemo(wallPhases, [])
 
   const { sectionRef, readUnits } = useWallScroll<HTMLElement>({ enabled: immersive })
@@ -82,9 +84,9 @@ export function ContactSection() {
       id="contact"
       aria-labelledby="contact-heading"
       data-mode={immersive ? "immersive" : "flat"}
-      // Flat: room at the bottom on smaller screens, so the page can end with
-      // the details clear of the floating social links (fixed, bottom left)
-      className={cn("relative", !immersive && "overflow-hidden pt-28 pb-72 lg:pb-28")}
+      // Flat: the social links only float (fixed, bottom left) on screens wide
+      // enough to keep them in the margin, so no extra room is needed for them
+      className={cn("relative", !immersive && "overflow-hidden py-20 sm:py-28")}
       // Derived from the timeline (wallPhases), so the scroll length can't drift from it
       style={immersive ? { height: `${phases.sectionVh}vh` } : undefined}
     >
@@ -112,7 +114,9 @@ export function ContactSection() {
         {/* ── 2. Heading ────────────────────────────────────────────────────── */}
         <header
           data-wall-hud={hud}
-          className={cn(immersive ? "absolute start-10 top-10" : "relative")}
+          className={cn(
+            immersive ? "absolute start-5 top-5 lg:start-10 lg:top-10" : "relative"
+          )}
         >
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent-soft">
             {t("contact.label")}
@@ -122,8 +126,8 @@ export function ContactSection() {
             className={cn(
               "mt-3 font-sans uppercase text-text",
               immersive
-                ? "text-2xl tracking-[0.6em]"
-                : "text-4xl tracking-[0.4em] sm:text-5xl sm:tracking-[0.6em]"
+                ? "text-lg tracking-[0.45em] lg:text-2xl lg:tracking-[0.6em]"
+                : "text-3xl tracking-[0.35em] sm:text-5xl sm:tracking-[0.6em]"
             )}
           >
             {t("contact.heading")}
@@ -134,7 +138,7 @@ export function ContactSection() {
         {!immersive && (
           <p
             aria-hidden="true"
-            className="mt-14 bg-[radial-gradient(circle,var(--color-text)_1.4px,transparent_1.9px)] bg-[length:6px_6px] bg-clip-text font-display text-[clamp(3.5rem,12vw,8rem)] leading-none font-normal text-transparent uppercase"
+            className="mt-10 bg-[radial-gradient(circle,var(--color-text)_1.4px,transparent_1.9px)] bg-[length:6px_6px] bg-clip-text font-display text-[clamp(3.5rem,12vw,8rem)] leading-none font-normal text-transparent uppercase"
           >
             {t("contact.wall")}
           </p>
@@ -152,7 +156,7 @@ export function ContactSection() {
           data-wall-hud={hud}
           className={cn(
             immersive
-              ? "pointer-events-auto absolute inset-x-0 bottom-[max(6.5rem,13vh)] mx-auto w-[min(92vw,56rem)] data-light-off:pointer-events-none"
+              ? "pointer-events-auto absolute inset-x-0 bottom-[max(6.5rem,13vh)] mx-auto w-[min(92vw,56rem)] data-light-off:pointer-events-none max-lg:bottom-[4.75rem]"
               : "relative mt-12"
           )}
         >
@@ -168,15 +172,19 @@ export function ContactSection() {
         {immersive && (
           <p
             data-wall-hud
-            className="absolute end-10 bottom-10 max-w-[17rem] text-end font-support text-[11px] leading-relaxed text-text/55"
+            className="absolute end-10 bottom-10 max-w-[17rem] text-end font-support text-[11px] leading-relaxed text-text/55 max-lg:inset-x-5 max-lg:bottom-10 max-lg:max-w-none max-lg:text-center max-lg:text-[10px]"
           >
-            {t("contact.hint")}
+            {pointer ? t("contact.hint") : t("contact.hintTouch")}
           </p>
         )}
 
         <footer
           data-wall-hud={hud}
-          className={cn(immersive ? "absolute inset-x-0 bottom-10 text-center" : "mt-24")}
+          className={cn(
+            immersive
+              ? "absolute inset-x-0 bottom-10 text-center max-lg:bottom-4"
+              : "mt-24"
+          )}
         >
           <p className="font-mono text-[11px] tracking-[0.2em] text-text/55">
             {t("contact.footer", {

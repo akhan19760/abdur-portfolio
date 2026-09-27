@@ -40,12 +40,18 @@ export function StepDetails({
       data-fold-step={floating ? "" : undefined}
       className={cn(
         floating
-          ? "pointer-events-none absolute start-[max(9rem,10vw)] top-1/2 w-[min(34vw,32rem)] -translate-y-1/2"
-          : "relative flex items-center justify-between gap-10 border-t border-border py-14",
+          ? cn(
+              "pointer-events-none absolute start-[max(9rem,10vw)] top-1/2 w-[min(34vw,32rem)] -translate-y-1/2",
+              // Smaller landscape screens: less margin, a wider column
+              "max-lg:start-6 max-lg:w-[42vw]",
+              // Portrait: under the paper, which sits in the top part of the view
+              "portrait:inset-x-5 portrait:top-[63%] portrait:w-auto portrait:translate-y-0 sm:portrait:inset-x-10"
+            )
+          : "relative flex items-center justify-between gap-10 border-t border-border py-10 sm:py-14",
         className
       )}
     >
-      <div>
+      <div className="min-w-0">
         <p
           aria-hidden="true"
           data-fold-body
@@ -55,7 +61,7 @@ export function StepDetails({
         </p>
         <h3
           data-fold-title
-          className="mt-4 font-display text-[clamp(3rem,6.5vw,6.5rem)] font-light leading-[0.95] text-text"
+          className="mt-4 font-display text-[clamp(2.5rem,11vw,3rem)] font-light leading-[0.95] text-text [overflow-wrap:anywhere] sm:text-[clamp(3rem,6.5vw,6.5rem)]"
         >
           <span
             data-light
@@ -66,7 +72,7 @@ export function StepDetails({
         </h3>
         <p
           data-fold-body
-          className="mt-6 max-w-md font-support text-[17px] leading-relaxed text-text/85"
+          className="mt-5 max-w-md font-support text-base leading-relaxed text-text/85 sm:mt-6 sm:text-[17px]"
         >
           {step.summary}
         </p>

@@ -47,7 +47,7 @@ export function ProjectDetails({
   const words = project.name.split(" ")
 
   const text = (
-    <div>
+    <div className="min-w-0">
       <p
         aria-hidden="true"
         className="font-mono text-sm tracking-[0.3em] text-accent-soft"
@@ -56,7 +56,7 @@ export function ProjectDetails({
       </p>
       <h3
         id={titleId}
-        className="mt-4 font-display text-[clamp(2.75rem,5vw,5.25rem)] font-light leading-[0.95] text-text"
+        className="mt-4 font-display text-[clamp(1.5rem,8vw,2.75rem)] font-light leading-[0.95] text-text [overflow-wrap:anywhere] sm:text-[clamp(2.75rem,5vw,5.25rem)]"
       >
         {words.map((word, i) => (
           <span key={i}>
@@ -70,33 +70,40 @@ export function ProjectDetails({
           </span>
         ))}
       </h3>
-      <p className="mt-5 font-mono text-[12px] uppercase tracking-[0.25em] text-text/70">
+      <p className="mt-5 font-mono text-[12px] uppercase tracking-[0.25em] text-text/70 max-lg:mt-3 max-lg:text-[11px]">
         {project.role} · {project.year}
       </p>
-      <p className="mt-4 max-w-md font-support text-[16px] leading-relaxed text-text/85">
+      <p className="mt-4 max-w-md font-support text-[15px] leading-relaxed text-text/85 max-lg:mt-2.5 max-lg:text-[14px] sm:text-[16px]">
         {project.summary}
       </p>
 
       <h4 className="sr-only">{labels.stack}</h4>
-      <ul className="mt-6 flex flex-wrap gap-2">
+      <ul className="mt-6 flex flex-wrap gap-2 max-lg:mt-4 max-lg:gap-1.5 short:hidden">
         {project.stack.map((tech, i) => (
           <li
             key={`${tech}-${i}`}
-            className="border border-border px-2.5 py-1 font-mono text-[11px] text-text/80"
+            className="border border-border px-2.5 py-1 font-mono text-[11px] text-text/80 max-lg:px-2 max-lg:text-[10px]"
           >
             {tech}
           </li>
         ))}
       </ul>
 
-      <h4 className="mt-6 font-mono text-[10px] uppercase tracking-[0.3em] text-text/60">
+      <h4
+        className={cn(
+          "mt-6 font-mono text-[10px] uppercase tracking-[0.3em] text-text/60 max-lg:mt-4 short:sr-only",
+          // Over the sea on a phone there's only room for the summary; the
+          // highlights stay for screen readers
+          floating && "max-sm:sr-only"
+        )}
+      >
         {labels.highlights}
       </h4>
-      <ul className="mt-2 space-y-1.5">
+      <ul className={cn("mt-2 space-y-1.5 short:sr-only", floating && "max-sm:sr-only")}>
         {project.highlights.map((highlight) => (
           <li
             key={highlight.id}
-            className="flex items-baseline gap-3 font-support text-[15px] text-text/85"
+            className="flex items-baseline gap-3 font-support text-[15px] text-text/85 max-lg:text-[13px]"
           >
             <span
               aria-hidden="true"
@@ -134,9 +141,13 @@ export function ProjectDetails({
         floating
           ? cn(
               "pointer-events-none absolute start-[max(9rem,10vw)] top-1/2 w-[min(38vw,36rem)] -translate-y-1/2",
+              // Smaller landscape screens: less margin, a wider column
+              "max-lg:start-6 max-lg:w-[44vw]",
+              // Portrait: under the screen standing across the top of the view
+              "portrait:inset-x-5 portrait:top-[49%] portrait:w-auto portrait:translate-y-0 sm:portrait:inset-x-10",
               "[&_a]:pointer-events-auto data-[light-off]:[&_a]:pointer-events-none"
             )
-          : "relative grid items-center gap-10 lg:grid-cols-[5fr_6fr]",
+          : "relative grid items-center gap-8 sm:gap-10 lg:grid-cols-[5fr_6fr]",
         className
       )}
     >

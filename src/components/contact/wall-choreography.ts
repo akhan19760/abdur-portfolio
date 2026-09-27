@@ -26,7 +26,8 @@
  */
 
 import type { WallPhases } from "@/hooks/contact"
-import { PIN_GRID } from "./pin-field"
+import { isPortrait } from "@/lib/stage-framing"
+import { PIN_GRID, PORTRAIT_PIN_GRID } from "./pin-field"
 
 // ── Small helpers ────────────────────────────────────────────────────────────
 export function clamp(x: number, min = 0, max = 1) {
@@ -58,6 +59,17 @@ export const WALL_FOV = (40 * Math.PI) / 180
 export const VIEW_COLUMNS = 124
 /** The most pins down the view (on narrow screens it pulls back less). */
 const VIEW_ROWS_MAX = 84
+/**
+ * Portrait views: pins across (fewer, so the letters stay big on a phone)
+ * and the most down, inside the taller portrait wall.
+ */
+export const PORTRAIT_VIEW_COLUMNS = 62
+const PORTRAIT_VIEW_ROWS_MAX = PORTRAIT_PIN_GRID.rows - 12
+
+/** The wall for a view of this shape: wide in landscape, tall in portrait. */
+export function pinGridFor(aspect: number): { cols: number; rows: number } {
+  return isPortrait(aspect) ? PORTRAIT_PIN_GRID : PIN_GRID
+}
 
 /** Where the camera starts: this much further back, and this far up (units). */
 const APPROACH = { far: 1.55, lift: 34 }
@@ -108,8 +120,10 @@ export const WALL_EXIT_END = EXIT.fade.to
 /** How far back the camera sits once it has arrived, to fit VIEW_COLUMNS across. */
 export function holdDistance(aspect: number): number {
   const t = Math.tan(WALL_FOV / 2)
-  const byWidth = VIEW_COLUMNS / 2 / (t * Math.max(0.1, aspect))
-  const byHeight = VIEW_ROWS_MAX / 2 / t
+  const portrait = isPortrait(aspect)
+  const columns = portrait ? PORTRAIT_VIEW_COLUMNS : VIEW_COLUMNS
+  const byWidth = columns / 2 / (t * Math.max(0.1, aspect))
+  const byHeight = (portrait ? PORTRAIT_VIEW_ROWS_MAX : VIEW_ROWS_MAX) / 2 / t
   return Math.min(byWidth, byHeight)
 }
 
@@ -179,7 +193,9 @@ export function toCell(
  * Where the letters go, as a share of the view once the camera has arrived:
  * across the middle, a little above centre, clear of the text below them.
  */
-const LETTERING = { centreY: 0.36, width: 0.86, height: 0.26 }
+const LETTERING = { centreY: 0.36, width: 0.86, height: 0.26, lines: 1 }
+/** In portrait there's no width for one line: the words stack, in the top part. */
+const PORTRAIT_LETTERING = { centreY: 0.26, width: 0.84, height: 0.3, lines: 2 }
 
 export type LetteringBox = {
   /** The box's middle, as a cell. */
@@ -188,21 +204,25 @@ export type LetteringBox = {
   /** Most it can take up, in cells. */
   width: number
   height: number
+  /** Lines to set the words on. */
+  lines: number
 }
 
 /** Where the letters sit on the wall for a view of this shape. */
 export function letteringBox(
   aspect: number,
-  grid: { cols: number; rows: number } = PIN_GRID
+  grid: { cols: number; rows: number } = pinGridFor(aspect)
 ): LetteringBox {
+  const place = isPortrait(aspect) ? PORTRAIT_LETTERING : LETTERING
   const viewHeight = 2 * holdDistance(aspect) * Math.tan(WALL_FOV / 2)
   const viewWidth = viewHeight * aspect
-  const centre = toCell(0, (0.5 - LETTERING.centreY) * viewHeight, grid)
+  const centre = toCell(0, (0.5 - place.centreY) * viewHeight, grid)
   return {
     col: centre.col,
     row: centre.row,
-    width: Math.min(grid.cols - 4, viewWidth * LETTERING.width),
-    height: viewHeight * LETTERING.height,
+    width: Math.min(grid.cols - 4, viewWidth * place.width),
+    height: viewHeight * place.height,
+    lines: place.lines,
   }
 }
 

@@ -27,8 +27,8 @@ type ContactDetailsProps = {
 }
 
 const chip = cn(
-  "inline-flex min-h-11 items-center gap-2 rounded-full border border-text/25 bg-base/70 px-5",
-  "font-mono text-[11px] uppercase tracking-[0.22em] text-text/85",
+  "inline-flex min-h-11 items-center gap-2 rounded-full border border-text/25 bg-base/70 px-5 max-lg:px-3.5",
+  "font-mono text-[11px] uppercase tracking-[0.22em] text-text/85 max-lg:tracking-[0.14em]",
   "transition-colors duration-300 hover:border-accent hover:text-text",
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
 )
@@ -57,7 +57,7 @@ export function ContactDetails({
     <div className={cn(centered && "text-center", className)}>
       <p
         className={cn(
-          "max-w-xl font-support text-[17px] leading-relaxed text-text/85",
+          "max-w-xl font-support text-[17px] leading-relaxed text-text/85 max-lg:text-[15px]",
           centered && "mx-auto"
         )}
       >
@@ -68,7 +68,7 @@ export function ContactDetails({
         // The same as its text; the <wbr> below would otherwise read as a space
         aria-label={email}
         className={cn(
-          "group mt-6 inline-block font-display text-[clamp(1.75rem,3.6vw,3.4rem)] font-light leading-tight text-text [overflow-wrap:anywhere]",
+          "group mt-6 inline-block font-display text-[clamp(1.5rem,7vw,1.9rem)] font-light leading-tight text-text [overflow-wrap:anywhere] max-lg:mt-4 lg:text-[clamp(1.75rem,3.6vw,3.4rem)]",
           "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-accent"
         )}
       >
@@ -90,14 +90,14 @@ export function ContactDetails({
       </a>
       <div
         className={cn(
-          "mt-8 flex flex-wrap items-center gap-3",
+          "mt-8 flex flex-wrap items-center gap-3 max-lg:mt-5 max-lg:gap-2",
           centered && "justify-center"
         )}
       >
         <button type="button" onClick={() => void copy(email)} className={chip}>
           {labels.copy}
         </button>
-        <ul aria-label={labels.links} className="flex flex-wrap gap-3">
+        <ul aria-label={labels.links} className="flex flex-wrap gap-3 max-lg:gap-2">
           {links.map((link) => (
             <li key={link.id}>
               <a
@@ -116,7 +116,7 @@ export function ContactDetails({
       </div>
       <p
         role="status"
-        className="mt-4 min-h-5 font-support text-[11px] tracking-[0.15em] text-accent-soft"
+        className="mt-4 min-h-5 font-support text-[11px] tracking-[0.15em] text-accent-soft max-lg:mt-2"
       >
         {message}
       </p>

@@ -171,8 +171,8 @@ export function StarStory({
         className={cn(
           "[transform-style:preserve-3d]",
           depth
-            ? "absolute inset-x-[9%] top-[16%] h-[48%] [transform:perspective(1300px)_rotateX(calc(var(--tilt-y,0)*-10deg))_rotateY(calc(var(--tilt-x,0)*14deg))]"
-            : "relative mx-auto aspect-[16/9] w-full max-w-3xl"
+            ? "absolute inset-x-[9%] top-[16%] h-[48%] [transform:perspective(1300px)_rotateX(calc(var(--tilt-y,0)*-10deg))_rotateY(calc(var(--tilt-x,0)*14deg))] max-lg:inset-x-[13%] max-lg:top-[14%] max-lg:h-[46%]"
+            : "relative mx-auto aspect-[4/3] w-[86%] max-w-3xl sm:aspect-[16/9] sm:w-full"
         )}
       >
         {stars.map((star, i) => {
@@ -234,6 +234,12 @@ export function StarStory({
                 aria-hidden="true"
                 className={cn(
                   "absolute top-1/2 -translate-y-1/2 whitespace-nowrap font-mono text-[10px] leading-tight tracking-[0.25em] transition-opacity duration-500",
+                  // No room beside the edge stars on a phone; the list above
+                  // numbers every beat anyway
+                  !depth && "max-sm:hidden",
+                  // Compact sky: only the star being told has its tag, so
+                  // neighbouring tags never run into each other
+                  depth && active !== i && "max-lg:hidden",
                   star.tag === "left"
                     ? "right-full mr-2 text-right"
                     : "left-full ml-2 text-left",
@@ -254,7 +260,9 @@ export function StarStory({
       <div
         className={cn(
           "text-center",
-          depth ? "absolute inset-x-[12%] bottom-[7%]" : "mt-10"
+          depth
+            ? "absolute inset-x-[12%] bottom-[7%] max-lg:inset-x-0 max-lg:top-[64%] max-lg:bottom-auto"
+            : "mt-10"
         )}
       >
         <p
@@ -265,8 +273,8 @@ export function StarStory({
             "mx-auto max-w-4xl leading-[1.12]",
             // A story line is the layer's main text; the prompt is a cue
             beat
-              ? "font-display font-light text-[clamp(1.6rem,3vw,2.9rem)] text-text"
-              : "font-support text-[clamp(1.2rem,2vw,1.8rem)] text-text/70"
+              ? "font-display font-light text-[clamp(1.3rem,5.6vw,1.6rem)] text-text lg:text-[clamp(1.6rem,3vw,2.9rem)]"
+              : "font-support text-[clamp(1.05rem,4.4vw,1.2rem)] text-text/70 lg:text-[clamp(1.2rem,2vw,1.8rem)]"
           )}
         >
           {words.map((word, i) => (

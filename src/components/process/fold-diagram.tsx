@@ -21,7 +21,7 @@ const PLANE = "M105 8L28 286L105 272L182 286Z" // the finished plane from above
 
 /**
  * The paper at each step, as a small line drawing: the flat version's stand-in
- * for the 3D paper (touch, reduced motion, narrow screens). Decorative: the
+ * for the 3D paper (reduced motion). Decorative: the
  * step's own text says what happens, so it's hidden from assistive tech.
  */
 export function FoldDiagram({ stage, className }: FoldDiagramProps) {

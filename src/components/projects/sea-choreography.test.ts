@@ -2,11 +2,11 @@ import { describe, expect, it, vi } from "vitest"
 import { SEA_EXIT, seaPhases } from "@/hooks/projects"
 import { hitSea, panelScreenRect, rayDirection } from "./mirror-sea-utils"
 import type { SeaCamera } from "./mirror-sea-utils"
+import { paperScreen } from "@/lib/stage-framing"
 import {
   ABOUT_HORIZON_Y,
   HORIZON_Y,
   PAPER_LANDING,
-  PAPER_SCREEN,
   holdCamera,
   seaStateAt,
   siteX,
@@ -81,6 +81,36 @@ describe("seaStateAt", () => {
     expect(rect!.bottom).toBeLessThan(0.75)
   })
 
+  it("in portrait, stands each screen across the top of the view, text room below", () => {
+    for (const aspect of [390 / 844, 390 / 664, 810 / 1080]) {
+      const hold = holdCamera(1, aspect)
+      const rect = panelScreenRect(hold, { x: siteX(1, aspect), yaw: 0, rise: 1 })
+      expect(rect).not.toBeNull()
+      expect(rect!.left).toBeGreaterThan(0.02)
+      expect(rect!.right).toBeLessThan(0.98)
+      expect(rect!.right - rect!.left).toBeGreaterThan(0.75)
+      expect(rect!.top).toBeGreaterThan(0.1)
+      expect(rect!.bottom).toBeLessThan(0.55)
+    }
+  })
+
+  it("in portrait, keeps a screen in view through every glide too", () => {
+    const aspect = 390 / 844
+    for (let i = 1; i < PHASES.arrivals.length; i++) {
+      for (let s = 0; s <= 1; s += 0.1) {
+        const u =
+          PHASES.holdEnds[i - 1] + s * (PHASES.arrivals[i] - PHASES.holdEnds[i - 1])
+        const { camera, panels } = seaStateAt(u, PHASES, aspect)
+        const onScreen = panels.some((panel) => {
+          if (panel.rise < 0.15) return false
+          const rect = panelScreenRect(camera, panel)
+          return rect !== null && rect.right > 0.05 && rect.left < 0.95
+        })
+        expect(onScreen).toBe(true)
+      }
+    }
+  })
+
   it("keeps later screens under water until the camera heads their way; earlier ones stay up", () => {
     const u = (PHASES.arrivals[2] + PHASES.holdEnds[2]) / 2
     const { panels } = seaStateAt(u, PHASES, ASPECT)
@@ -138,7 +168,8 @@ describe("seaStateAt", () => {
     expect(down.swell).toBeLessThan(0.3)
     // The water is still there under the sheet as it lands
     expect(down.opacity).toBe(1)
-    const under = rayDirection(down.camera, PAPER_SCREEN.sx, PAPER_SCREEN.sy)
+    const landing = paperScreen(ASPECT)
+    const under = rayDirection(down.camera, landing.sx, landing.sy)
     expect(hitSea(down.camera, under)).not.toBeNull()
   })
 

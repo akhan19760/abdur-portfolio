@@ -75,7 +75,7 @@ export function depthPhases(layerCount: number): DepthPhases {
 }
 
 type DepthScrollOptions = {
-  /** False in the flat fallback (touch, reduced motion, narrow screens). */
+  /** False in the flat fallback (reduced motion). */
   enabled: boolean
   /** Called with the scrubbed 0–1 progress every time the timeline renders. */
   onProgress?: (progress: number) => void
@@ -101,8 +101,8 @@ type DepthScrollOptions = {
  *   and the consumer's styles turn off their pointer events).
  * - Keyboard focus moving into a layer that isn't showing scrolls straight to
  *   that layer, so a focused element is never invisible.
- * - Callers pass `enabled: false` for touch, reduced motion and narrow
- *   screens; the layers then stay in normal flow and nothing animates.
+ * - Callers pass `enabled: false` with reduced motion (every other device,
+ *   phones included, runs it with a compact layout); the layers then stay in normal flow and nothing animates.
  */
 export function useDepthScroll<T extends HTMLElement = HTMLElement>({
   enabled,

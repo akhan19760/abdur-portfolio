@@ -189,7 +189,8 @@
       "caught": "CAUGHT",
       "locked": "SIGNAL LOCKED",
       "availabilityLabel": "AVAILABILITY",
-      "hint": "Hold your light on a satellite to catch it"
+      "hint": "Hold your light on a satellite to catch it",
+      "hintTouch": "Tap a satellite to catch it"
     },
     "decoded": "FILE_02 // SUBJECT DECODED"
   },
@@ -197,6 +198,7 @@
     "label": "SELECTED WORK",
     "heading": "Work",
     "hint": "Scroll to move between projects. Your cursor is the light.",
+    "hintTouch": "Scroll to move between projects. Touch the water to light it.",
     "navLabel": "Projects",
     "placeholder": "SCREENSHOT PLACEHOLDER",
     "screenshotAlt": "Screenshot of {{name}}",
@@ -324,6 +326,7 @@
     "label": "HOW I WORK",
     "heading": "Process",
     "hint": "Scroll to fold the paper. Your cursor is the light.",
+    "hintTouch": "Scroll to fold the paper. Touch the screen to light it.",
     "navLabel": "Steps",
     "notesLabel": "Notes from the first page",
     "notes": [
@@ -373,6 +376,7 @@
     "linksLabel": "Elsewhere",
     "newTab": "opens in a new tab",
     "hint": "Your cursor presses the pins. Hold to press harder, click to send a ripple.",
+    "hintTouch": "Press the pins with your finger. Tap to send a ripple.",
     "footer": "© {{year}} {{name}}"
   }
 }

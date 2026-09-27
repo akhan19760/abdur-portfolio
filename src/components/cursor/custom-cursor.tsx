@@ -1,5 +1,6 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
+import { canHover } from "@/lib/media"
 import { useCursorPosition, useCursorState } from "@/hooks/cursor"
 
 type CustomCursorProps = {
@@ -39,8 +40,17 @@ type CustomCursorProps = {
  *
  * aria-hidden="true" on all elements — visual enhancement only, never the sole
  * way to perceive or interact with content.
+ *
+ * Mouse and trackpad only: on touch screens there's no pointer to follow, so
+ * nothing renders and the native cursor rules stay untouched.
  */
-export function CustomCursor({ lerpFactor = 0.3 }: CustomCursorProps) {
+export function CustomCursor(props: CustomCursorProps) {
+  // Input type doesn't change mid-session in practice
+  const [enabled] = useState(canHover)
+  return enabled ? <CursorDot {...props} /> : null
+}
+
+function CursorDot({ lerpFactor = 0.3 }: CustomCursorProps) {
   const { lerp, raw } = useCursorPosition(lerpFactor)
   const { isHovering, isPressed, isVisible } = useCursorState()
 

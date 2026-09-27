@@ -1,9 +1,15 @@
 /**
  * SocialLinks — GitHub, LinkedIn, and email icon links with magnetic cursor pull.
  *
- * Floating: `fixed` to the viewport so the links stay reachable on every
- * section, not just the hero. z-40 sits above page content but below the
- * loading screen (z-50) and the custom cursor (z-[9999]).
+ * Floating: on wide screens (≥1024px with the immersive sections, whose
+ * layouts leave room for them; ≥1280px with the flat ones, which need the
+ * wider margin) they're `fixed` to the viewport, bottom left, so the links
+ * stay reachable on every section. z-40
+ * sits above page content but below the loading screen (z-50) and the custom
+ * cursor (z-[9999]). Otherwise (tablets, phones) a fixed rail would sit on
+ * top of the text, so they're a smaller row in the Hero's top-left corner,
+ * opposite the language switcher, and scroll away with it (Contact repeats
+ * them at the end of the page).
  *
  * All three are real <a>/href elements: fully keyboard-navigable, focus-visible,
  * and screen-reader labelled. The magnetic pull effect is purely visual and does
@@ -13,8 +19,10 @@
  * repulsion used for floating logos) — feels like a gentle pull toward the link.
  */
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { CONTACT } from "@/constants"
+import { isCompact, matchesMedia, prefersImmersive } from "@/lib/media"
+import { cn } from "@/lib/utils"
 
 // ── Physics ────────────────────────────────────────────────────────────────────
 const ATTRACT_R = 120 // px — cursor influence radius
@@ -120,6 +128,11 @@ export function SocialLinks() {
   )
   const statesRef = useRef<LinkState[]>([])
   const mouseRef = useRef({ x: -9999, y: -9999 })
+  // Decided once on mount, like the sections' own modes
+  const [rail] = useState(
+    () =>
+      (prefersImmersive() && !isCompact()) || matchesMedia("(min-width: 1280px)", true)
+  )
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
@@ -184,7 +197,15 @@ export function SocialLinks() {
   }, [])
 
   return (
-    <div className="pointer-events-none fixed bottom-20 left-10 z-40 flex flex-col gap-4">
+    <div
+      data-placement={rail ? "rail" : "hero"}
+      className={cn(
+        "pointer-events-none z-40 flex",
+        rail
+          ? "fixed bottom-20 left-10 flex-col gap-4"
+          : "absolute left-4 top-4 gap-2 sm:left-6 sm:top-6 sm:gap-3"
+      )}
+    >
       {SOCIALS.map(({ name, href, Icon }, i) => (
         <a
           key={name}
@@ -199,16 +220,19 @@ export function SocialLinks() {
               ? `Send email to ${name}`
               : `${name} profile (opens in new tab)`
           }
-          className="
-            social-btn-3d
-            pointer-events-auto flex h-14 w-14 items-center justify-center
-            rounded-[22px] text-white will-change-transform
-            transition-[background,box-shadow,translate] duration-200
-            focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4
-            focus-visible:outline-white
-          "
+          className={cn(
+            "social-btn-3d pointer-events-auto flex items-center justify-center text-white will-change-transform",
+            "transition-[background,box-shadow,translate] duration-200",
+            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white",
+            rail ? "h-14 w-14 rounded-[22px]" : "h-12 w-12 rounded-[18px]"
+          )}
         >
-          <div className="h-6 w-6 [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.45))]">
+          <div
+            className={cn(
+              "[filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.45))]",
+              rail ? "h-6 w-6" : "h-5 w-5"
+            )}
+          >
             <Icon />
           </div>
         </a>

@@ -132,12 +132,13 @@ describe("ProcessSection", () => {
   describe("touch", () => {
     beforeEach(() => setMedia())
 
-    it("uses the flat layout", () => {
+    it("still folds the paper (the compact layout), with the touch hint", () => {
       const { container } = render(<ProcessSection />)
-      expect(screen.getByRole("region")).toHaveAttribute("data-mode", "flat")
+      expect(screen.getByRole("region")).toHaveAttribute("data-mode", "immersive")
       expect(container.querySelectorAll("section > div > ol > li")).toHaveLength(
         steps.length
       )
+      expect(screen.getByText(en.process.hintTouch)).toBeInTheDocument()
     })
   })
 
