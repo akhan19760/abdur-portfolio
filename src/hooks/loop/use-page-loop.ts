@@ -79,7 +79,7 @@ export function settleScrollAnimations(): void {
 }
 
 type PageLoopOptions = {
-  /** False in the flat fallback (touch, reduced motion, narrow screens): the page just ends. */
+  /** False on touch or with reduced motion (see prefersPageLoop): the page just ends. */
   enabled: boolean
 }
 

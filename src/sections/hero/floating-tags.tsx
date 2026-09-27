@@ -22,6 +22,16 @@
  *   - "Android Studio" → Android (closest available icon in the package).
  *   - "SQL Server" → PostgreSQL (closest available SQL database icon).
  *
+ * Smaller screens get their own layouts (picked once on mount, like the
+ * sections' modes), because the desktop frame would cover the name there:
+ *   Tablet (< 1024px) — all 29 at 44px; the side columns start lower and the
+ *     top strip sits lower, clear of the social links and language switcher.
+ *   Phone (< 640px) — 10 at 36px, labels hidden: a row above the name and a
+ *     row below the call to action (only the lower row on short phones).
+ *   Short (under 1024px wide and 500px tall, a phone on its side) — none:
+ *     the name, tagline and call to action fill the screen.
+ * Touch works like the cursor: a finger pushes icons away, a tap blasts them.
+ *
  * All icons are aria-hidden — purely decorative.
  */
 
@@ -60,8 +70,10 @@ import {
   Anthropic,
   Cursor,
 } from "@dev.icons/react"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
+import { matchesMedia } from "@/lib/media"
 import { loopArrival } from "@/lib/page-loop"
+import { cn } from "@/lib/utils"
 import type { ComponentType, SVGProps } from "react"
 
 // ── Physics ────────────────────────────────────────────────────────────────────
@@ -152,6 +164,87 @@ const REST: [number, number][] = [
   [79, 93],
 ]
 
+// ── Tablet rest positions — same 29 slots, framed below the top corners ────────
+const REST_TABLET: [number, number][] = [
+  // Left column (7)
+  [2, 15],
+  [2, 27],
+  [2, 39],
+  [2, 51],
+  [2, 63],
+  [2, 75],
+  [2, 87],
+  // Right column (7)
+  [89, 15],
+  [89, 27],
+  [89, 39],
+  [89, 51],
+  [89, 63],
+  [89, 75],
+  [89, 87],
+  // Top strip (8)
+  [14, 7],
+  [23, 7],
+  [32, 7],
+  [41, 7],
+  [50, 7],
+  [59, 7],
+  [68, 7],
+  [77, 7],
+  // Bottom strip (7)
+  [14, 92],
+  [24, 92],
+  [34, 92],
+  [44, 92],
+  [54, 92],
+  [64, 92],
+  [74, 92],
+]
+
+// ── Phone rest positions — [logo index, leftPct, topPct], one row above the
+// name and one below the call to action ─────────────────────────────────────
+const REST_PHONE: [number, number, number][] = [
+  [0, 5, 13], // JavaScript
+  [1, 25, 13], // TypeScript
+  [7, 44, 13], // React
+  [6, 63, 13], // Sass
+  [12, 82, 13], // Redux
+  [15, 5, 86], // Docker
+  [9, 25, 86], // Flutter
+  [17, 44, 86], // Figma
+  [22, 63, 86], // Node.js
+  [14, 80, 86], // Git
+]
+
+type Layout = "desktop" | "tablet" | "phone" | "short-phone" | "none"
+
+function pickLayout(): Layout {
+  if (matchesMedia("(min-width: 1024px)", true)) return "desktop"
+  if (matchesMedia("(max-height: 500px)", false)) return "none"
+  if (matchesMedia("(min-width: 640px)", true)) return "tablet"
+  return matchesMedia("(max-height: 640px)", false) ? "short-phone" : "phone"
+}
+
+/** The logos to show in a layout, each with its rest position. */
+function placements(layout: Layout) {
+  if (layout === "none") return []
+  if (layout === "phone" || layout === "short-phone") {
+    return REST_PHONE.filter(([, , top]) => layout === "phone" || top > 50).map(
+      ([i, left, top]) => ({ ...LOGOS[i], left, top })
+    )
+  }
+  const rest = layout === "tablet" ? REST_TABLET : REST
+  return LOGOS.map((logo, i) => ({ ...logo, left: rest[i][0], top: rest[i][1] }))
+}
+
+const ICON_SIZE: Record<Layout, number> = {
+  desktop: 56,
+  tablet: 44,
+  phone: 36,
+  "short-phone": 36,
+  none: 0,
+}
+
 // ── State ──────────────────────────────────────────────────────────────────────
 type IconState = {
   el: HTMLDivElement
@@ -166,7 +259,11 @@ type IconState = {
 }
 
 export function FloatingTags() {
-  const iconRefs = useRef<(HTMLDivElement | null)[]>(new Array(LOGOS.length).fill(null))
+  // Screen size doesn't change mid-session in practice (a rotated tablet
+  // keeps its layout, which still fits)
+  const [layout] = useState(pickLayout)
+  const logos = placements(layout)
+  const iconRefs = useRef<(HTMLDivElement | null)[]>([])
   const statesRef = useRef<IconState[]>([])
   const mouseRef = useRef({ x: -9999, y: -9999 })
 
@@ -274,6 +371,18 @@ export function FloatingTags() {
     }
 
     window.addEventListener("mousemove", onMove)
+    // A finger pushes icons away like the cursor does, while it's down
+    const onTouch = (e: TouchEvent) => {
+      const touch = e.touches[0]
+      if (touch) mouseRef.current = { x: touch.clientX, y: touch.clientY }
+    }
+    const onTouchEnd = () => {
+      mouseRef.current = { x: -9999, y: -9999 }
+    }
+    window.addEventListener("touchstart", onTouch, { passive: true })
+    window.addEventListener("touchmove", onTouch, { passive: true })
+    window.addEventListener("touchend", onTouchEnd)
+    window.addEventListener("touchcancel", onTouchEnd)
     // capture: true — fires before any element handler can call stopPropagation,
     // so clicks absorbed by Lenis, the custom cursor, or interactive elements
     // still reach this listener.
@@ -283,13 +392,17 @@ export function FloatingTags() {
       active = false
       cancelAnimationFrame(rafId)
       window.removeEventListener("mousemove", onMove)
+      window.removeEventListener("touchstart", onTouch)
+      window.removeEventListener("touchmove", onTouch)
+      window.removeEventListener("touchend", onTouchEnd)
+      window.removeEventListener("touchcancel", onTouchEnd)
       window.removeEventListener("mousedown", onDown, { capture: true })
     }
   }, [])
 
   return (
     <>
-      {LOGOS.map(({ name, Icon }, i) => (
+      {logos.map(({ name, Icon, left, top }, i) => (
         <div
           key={name}
           ref={(el) => {
@@ -299,12 +412,21 @@ export function FloatingTags() {
           className="pointer-events-none absolute select-none will-change-transform"
           style={{
             // inline style: percentage rest position — cannot be a Tailwind class
-            left: `${REST[i][0]}%`,
-            top: `${REST[i][1]}%`,
+            left: `${left}%`,
+            top: `${top}%`,
           }}
         >
-          <Icon width={56} height={56} className="opacity-80" />
-          <span className="mt-1 block text-center font-support text-[10px] leading-tight tracking-wide text-white/50">
+          <Icon
+            width={ICON_SIZE[layout]}
+            height={ICON_SIZE[layout]}
+            className="opacity-80"
+          />
+          <span
+            className={cn(
+              "mt-1 block text-center font-support text-[10px] leading-tight tracking-wide text-white/50",
+              (layout === "phone" || layout === "short-phone") && "hidden"
+            )}
+          >
             {name}
           </span>
         </div>

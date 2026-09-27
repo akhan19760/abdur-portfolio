@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, afterEach } from "vitest"
-import { canHover, matchesMedia, prefersImmersive, prefersReducedMotion } from "./media"
+import {
+  canHover,
+  isCompact,
+  matchesMedia,
+  prefersImmersive,
+  prefersPageLoop,
+  prefersReducedMotion,
+} from "./media"
 
 function mockMatchMedia(matching: string[]) {
   window.matchMedia = vi.fn().mockImplementation((query: string) => ({
@@ -58,22 +65,49 @@ describe("media helpers", () => {
     })
   })
 
-  describe("prefersImmersive", () => {
-    const HOVER = "(hover: hover) and (pointer: fine)"
-    const WIDE = "(min-width: 1024px)"
+  const HOVER = "(hover: hover) and (pointer: fine)"
+  const WIDE = "(min-width: 1024px)"
+  const REDUCE = "(prefers-reduced-motion: reduce)"
 
-    it("is true for a wide screen with a mouse and no motion preference", () => {
+  describe("prefersImmersive", () => {
+    it("is true on any device without a reduced-motion preference", () => {
       mockMatchMedia([HOVER, WIDE])
+      expect(prefersImmersive()).toBe(true)
+      // A phone: touch, narrow
+      mockMatchMedia([])
       expect(prefersImmersive()).toBe(true)
     })
 
-    it("is false on touch, narrow screens or with reduced motion", () => {
+    it("is false with reduced motion", () => {
+      mockMatchMedia([HOVER, WIDE, REDUCE])
+      expect(prefersImmersive()).toBe(false)
+    })
+  })
+
+  describe("isCompact", () => {
+    it("is true below 1024px and false from 1024px up", () => {
+      mockMatchMedia([])
+      expect(isCompact()).toBe(true)
       mockMatchMedia([WIDE])
-      expect(prefersImmersive()).toBe(false)
+      expect(isCompact()).toBe(false)
+    })
+
+    it("assumes a wide screen without matchMedia", () => {
+      expect(isCompact()).toBe(false)
+    })
+  })
+
+  describe("prefersPageLoop", () => {
+    it("is true with a mouse and no reduced-motion preference", () => {
       mockMatchMedia([HOVER])
-      expect(prefersImmersive()).toBe(false)
-      mockMatchMedia([HOVER, WIDE, "(prefers-reduced-motion: reduce)"])
-      expect(prefersImmersive()).toBe(false)
+      expect(prefersPageLoop()).toBe(true)
+    })
+
+    it("is false on touch or with reduced motion", () => {
+      mockMatchMedia([WIDE])
+      expect(prefersPageLoop()).toBe(false)
+      mockMatchMedia([HOVER, REDUCE])
+      expect(prefersPageLoop()).toBe(false)
     })
   })
 })

@@ -19,10 +19,13 @@
  *            dark, a thin purple trail behind each wingtip.
  *
  * The paper keeps to the right of the view (PAPER_SCREEN_X), beside the text.
+ * In portrait (lib/stage-framing) it's centred in the top part instead, with
+ * the camera further back so it fits the narrower view, and the text below.
  */
 
 import type { FoldPhases } from "@/hooks/process"
 import { stepAt } from "@/hooks/process"
+import { paperScreen, portraitAmount } from "@/lib/stage-framing"
 import { FOLD_COUNT, FOLD_INDEX, KEEL_DEPTH } from "./paper-fold"
 import type { FoldId, Vec3 } from "./paper-fold"
 
@@ -49,11 +52,14 @@ function normalize(a: Vec3): Vec3 {
 /** Vertical field of view (radians). */
 export const PAPER_FOV = (35 * Math.PI) / 180
 /**
- * Where the paper sits across the view (0 = left edge): right of centre,
- * beside the step text. Work's sea sends the landing ring out from here
- * (sea-choreography's PAPER_SCREEN must match).
+ * Where the paper sits across the view (0 = left edge) in landscape: right
+ * of centre, beside the step text. (paperScreen in lib/stage-framing gives
+ * both coordinates for any view; Work's sea sends the landing ring out from
+ * the same spot.)
  */
-export const PAPER_SCREEN_X = 0.63
+export const PAPER_SCREEN_X = paperScreen(16 / 9).sx
+/** How much further back the camera is in the tallest portrait view. */
+const PORTRAIT_PULL_BACK = 2.15
 /** How far along the cursor's ray the light floats, as a share of the camera's distance. */
 const LAMP_REACH = 0.8
 
@@ -78,9 +84,14 @@ type Orbit = {
   azimuth: number
 }
 
-/** A camera circling `target`, turned so the target sits at PAPER_SCREEN_X. */
+/** A camera circling `target`, turned so the target sits at paperScreen. */
 export function orbitCamera(orbit: Orbit, aspect: number): PaperCamera {
-  const { target, distance, elevation: el, azimuth: az } = orbit
+  const { target, elevation: el, azimuth: az } = orbit
+  const portrait = portraitAmount(aspect)
+  // Portrait views are narrow: pull back so the paper still fits across
+  const distance =
+    orbit.distance * (aspect <= 1 ? 1.35 + (PORTRAIT_PULL_BACK - 1.35) * portrait : 1)
+  const place = paperScreen(aspect)
   const forward = vec(
     -Math.sin(az) * Math.cos(el),
     -Math.sin(el),
@@ -92,9 +103,12 @@ export function orbitCamera(orbit: Orbit, aspect: number): PaperCamera {
     right.z * forward.x - right.x * forward.z,
     right.x * forward.y - right.y * forward.x
   )
-  // Look a little left of the target so it stands right of centre
-  const shift = (2 * PAPER_SCREEN_X - 1) * distance * Math.tan(PAPER_FOV / 2) * aspect
-  const look = sub(target, scale(right, shift))
+  // Look off the target so it stands where paperScreen puts it: right of
+  // centre in landscape, up top in portrait
+  const t = Math.tan(PAPER_FOV / 2)
+  const shiftX = (2 * place.sx - 1) * distance * t * aspect
+  const shiftY = (1 - 2 * place.sy) * distance * t
+  const look = sub(sub(target, scale(right, shiftX)), scale(up, shiftY))
   return {
     position: sub(look, scale(forward, distance)),
     forward,

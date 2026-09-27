@@ -125,9 +125,10 @@ describe("ContactSection", () => {
   describe("touch", () => {
     beforeEach(() => setMedia())
 
-    it("uses the flat layout", () => {
+    it("still runs the wall (the compact layout), with the touch hint", () => {
       render(<ContactSection />)
-      expect(screen.getByRole("region")).toHaveAttribute("data-mode", "flat")
+      expect(screen.getByRole("region")).toHaveAttribute("data-mode", "immersive")
+      expect(screen.getByText(en.contact.hintTouch)).toBeInTheDocument()
     })
   })
 

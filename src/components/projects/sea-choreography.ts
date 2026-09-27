@@ -14,11 +14,17 @@
  *            look straight down at the water and the waves go still; the
  *            Process section's sheet of paper drifts down and lands on it
  *            (a ring goes out from under it), then the sea fades away.
+ *
+ * Framing (lib/stage-framing): in landscape the camera rests left of each
+ * screen, so it stands right of centre beside the text. In portrait it rests
+ * square on to the screen and further back, with the horizon higher, so the
+ * screen stands across the top of the view and the text fits underneath.
  */
 
 import type { SeaPhases } from "@/hooks/projects"
 import { SEA_EXIT } from "@/hooks/projects"
-import { clamp, mix, pitchForHorizon, smoothstep } from "./mirror-sea-utils"
+import { isPortrait, portraitAmount } from "@/lib/stage-framing"
+import { PANEL_WIDTH, clamp, mix, pitchForHorizon, smoothstep } from "./mirror-sea-utils"
 import type { Panel, SeaCamera } from "./mirror-sea-utils"
 
 /**
@@ -34,11 +40,35 @@ export const SITE_SPACING = 40
 export const SEA_FOV = (36 * Math.PI) / 180
 
 // ── Camera beside a project ──────────────────────────────────────────────────
-/** Where the horizon sits while you read (0 = top of the view). */
+/** Where the horizon sits while you read (0 = top of the view), in landscape. */
 export const HORIZON_Y = 0.35
+/** …and in a tall portrait view, where the screen stands across the top. */
+const PORTRAIT_HORIZON_Y = 0.26
 const HOLD_HEIGHT = 5.5
 const HOLD_DISTANCE = 32 // back from the screens
 const HOLD_OFFSET = 7 // to the left of the screen, so it stands right of centre
+const PORTRAIT_FILL = 0.86 // share of a portrait view's width the screen spans
+const PORTRAIT_SPACING = 24 // metres between screens in portrait, so a glide always shows one
+
+/** How the camera rests beside a project, for the view's shape. */
+function framing(aspect: number) {
+  if (!isPortrait(aspect)) {
+    return {
+      distance: HOLD_DISTANCE,
+      offset: HOLD_OFFSET,
+      horizon: HORIZON_Y,
+      spacing: SITE_SPACING,
+    }
+  }
+  // Back far enough for the screen to span PORTRAIT_FILL of the width
+  const fit = PANEL_WIDTH / PORTRAIT_FILL / (2 * Math.tan(SEA_FOV / 2) * aspect)
+  return {
+    distance: Math.max(HOLD_DISTANCE, fit),
+    offset: 0,
+    spacing: PORTRAIT_SPACING,
+    horizon: mix(HORIZON_Y, PORTRAIT_HORIZON_Y, Math.max(0.5, portraitAmount(aspect))),
+  }
+}
 
 // ── Handoff ──────────────────────────────────────────────────────────────────
 const START_HEIGHT = 1200 // high over the planet, where About left off
@@ -47,11 +77,10 @@ const START_CURVATURE = 1 / 6000 // curves the horizon like About's planet rim
 // ── Exit: down to the water for the Process section's sheet of paper ────────
 /**
  * Screens after the section ends at which Process's sheet lands on the water
- * (Process's PAPER_LANDING must match).
+ * (Process's PAPER_LANDING must match). Where on screen it lands is
+ * paperScreen (lib/stage-framing), shared with Process.
  */
 export const PAPER_LANDING = 1.05
-/** Where on screen it lands, 0–1 (Process's PAPER_SCREEN_X must match). */
-export const PAPER_SCREEN = { sx: 0.63, sy: 0.5 }
 const EXIT_HEIGHT = 4.2 // the camera sinks a little as it turns to look down
 const CALM_SWELL = 0.2 // how much of the waves is left once the water goes still
 const FADE_START = 1.15 // after the landing, the sea fades out under the sheet
@@ -61,19 +90,18 @@ const GLIDE_ROLL = 0.03 // radians of bank mid-glide
 const GLIDE_LIFT = 0.04 // radians the gaze lifts mid-glide
 const GLIDE_RISE = 1.2 // metres the camera rises mid-glide
 
-export const siteX = (index: number) => index * SITE_SPACING
-const holdX = (index: number) => siteX(index) - HOLD_OFFSET
-
-const HOLD_PITCH = pitchForHorizon(HORIZON_Y, SEA_FOV, HOLD_HEIGHT, 0)
+/** Where a project's screen stands along the water (x), for the view's shape. */
+export const siteX = (index: number, aspect = 16 / 9) => index * framing(aspect).spacing
 
 /** The camera resting beside a project. */
 export function holdCamera(index: number, aspect: number): SeaCamera {
+  const frame = framing(aspect)
   return {
-    x: holdX(index),
+    x: siteX(index, aspect) - frame.offset,
     y: HOLD_HEIGHT,
-    z: HOLD_DISTANCE,
+    z: frame.distance,
     yaw: 0,
-    pitch: HOLD_PITCH,
+    pitch: pitchForHorizon(frame.horizon, SEA_FOV, HOLD_HEIGHT, 0),
     roll: 0,
     fov: SEA_FOV,
     aspect,
@@ -105,6 +133,8 @@ const easeInOutSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2
 export function seaStateAt(u: number, phases: SeaPhases, aspect: number): SeaState {
   const count = phases.arrivals.length
   const last = count - 1
+  const frame = framing(aspect)
+  const holdX = (index: number) => siteX(index, aspect) - frame.offset
 
   // ── Sideways: resting beside a project, or gliding to the next ──────────
   let x = holdX(0)
@@ -135,7 +165,7 @@ export function seaStateAt(u: number, phases: SeaPhases, aspect: number): SeaSta
   const curvature = START_CURVATURE * (1 - smoothstep(0, 0.9, u))
   const horizon = mix(
     ABOUT_HORIZON_Y - Math.max(0, u),
-    HORIZON_Y,
+    frame.horizon,
     smoothstep(0.28, 0.55, u)
   )
   const level = pitchForHorizon(horizon, SEA_FOV, height, curvature) - GLIDE_LIFT * glide
@@ -147,7 +177,7 @@ export function seaStateAt(u: number, phases: SeaPhases, aspect: number): SeaSta
   const camera: SeaCamera = {
     x,
     y: mix(height, EXIT_HEIGHT, lookDown),
-    z: HOLD_DISTANCE,
+    z: frame.distance,
     yaw: 0,
     pitch: mix(level, Math.PI / 2, lookDown),
     roll: -GLIDE_ROLL * glide,
@@ -160,7 +190,7 @@ export function seaStateAt(u: number, phases: SeaPhases, aspect: number): SeaSta
   //    sink again as the camera turns down for the paper ──
   const sink = 1 - smoothstep(-0.1, 0.45, exit)
   const panels = phases.arrivals.map((arrival, i) => ({
-    x: siteX(i),
+    x: siteX(i, aspect),
     yaw: 0,
     rise: smoothstep(phases.riseStarts[i], arrival, u) * sink,
   }))

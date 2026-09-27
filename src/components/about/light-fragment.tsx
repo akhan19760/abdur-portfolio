@@ -36,7 +36,7 @@ export function LightFragment({
       onClick={find}
       onFocus={find}
       className={cn(
-        "group flex max-w-[15rem] items-start gap-2.5 p-2 text-start",
+        "group flex max-w-[15rem] items-start gap-2.5 p-2 text-start max-lg:text-[10px]",
         "font-mono text-[11px] leading-snug",
         "transition-colors duration-300 hover:bg-accent/10",
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",

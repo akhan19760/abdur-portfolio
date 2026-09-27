@@ -47,11 +47,11 @@ describe("LoopSection", () => {
     media.matching = new Set()
   })
 
-  describe("flat mode (touch, reduced motion, narrow)", () => {
+  describe("without the loop (touch, reduced motion)", () => {
     for (const [name, queries] of [
       ["touch", []],
+      ["touch, wide", [WIDE]],
       ["reduced motion", [HOVER, WIDE, REDUCE]],
-      ["narrow", [HOVER]],
     ] as const) {
       it(`isn't there: the page ends at Contact (${name})`, () => {
         media.matching = new Set(queries)
@@ -59,6 +59,12 @@ describe("LoopSection", () => {
         expect(container).toBeEmptyDOMElement()
       })
     }
+  })
+
+  it("loops in a narrow window too, as long as there's a mouse", () => {
+    media.matching = new Set([HOVER])
+    const { container } = render(<LoopSection />)
+    expect(container).not.toBeEmptyDOMElement()
   })
 
   describe("immersive mode", () => {

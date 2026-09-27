@@ -82,7 +82,7 @@ export function stepAt(u: number, phases: FoldPhases): number {
 }
 
 type FoldScrollOptions = {
-  /** False in the flat fallback (touch, reduced motion, narrow screens). */
+  /** False in the flat fallback (reduced motion). */
   enabled: boolean
   /** Called with the timeline position (screens) every time it renders. */
   onProgress?: (units: number) => void
@@ -112,8 +112,8 @@ const VISIBLE_OPACITY = 0.5 // below this a step is treated as "off"
  *   pointer events); they stay in the reading order.
  * - Keyboard focus moving into a step that isn't showing scrolls straight
  *   to it, so a focused element is never invisible.
- * - Callers pass `enabled: false` for touch, reduced motion and narrow
- *   screens; everything then stays in normal flow and nothing animates.
+ * - Callers pass `enabled: false` with reduced motion (every other device,
+ *   phones included, runs it with a compact layout); everything then stays in normal flow and nothing animates.
  */
 export function useFoldScroll<T extends HTMLElement = HTMLElement>({
   enabled,

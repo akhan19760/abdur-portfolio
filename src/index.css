@@ -59,6 +59,12 @@
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   short: — screens with little height, mainly phones on their side. Layouts
+   that stack several things in one screen (the Hero) tighten up under it.
+───────────────────────────────────────────────────────────────────────────── */
+@custom-variant short (@media (max-height: 500px));
+
+/* ─────────────────────────────────────────────────────────────────────────────
    Cursor position — CustomCursor writes these on :root every frame the cursor
    moves. Registered as NON-inherited: a plain custom property on :root is
    inherited by every element, so each write made the browser recompute the
@@ -268,6 +274,14 @@
     padding: 0;
   }
 
+  /* clip, not hidden: nothing may widen the page sideways on phones (a wider
+     layout zooms the whole site out), and clip doesn't create a scroll
+     container, so sticky stages keep working */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   html {
     font-size: 16px;
     scroll-behavior: smooth;
@@ -280,9 +294,7 @@
     background-color: var(--color-base);
     color: var(--color-text);
     font-family: var(--font-sans);
-    overflow-x: hidden;
     min-height: 100dvh;
-    cursor: none; /* custom cursor active — hides OS cursor on the page body */
   }
 
   /* Text selected with the cursor: brand purple instead of the browser's blue.
@@ -293,15 +305,17 @@
   }
 
   /*
-    Suppress browser cursor overrides on interactive elements.
-    <a>, <button>, inputs etc. apply cursor: pointer / text by default,
-    which would show the OS cursor again even when body is cursor: none.
-    !important is necessary here to beat specificity from UA stylesheet.
+    The custom cursor replaces the OS cursor on mouse/trackpad devices only
+    (it doesn't render on touch). <a>, <button>, inputs etc. apply
+    cursor: pointer / text by default, which would show the OS cursor again,
+    so !important is needed to beat the UA stylesheet.
   */
-  *,
-  *::before,
-  *::after {
-    cursor: none !important;
+  @media (hover: hover) and (pointer: fine) {
+    *,
+    *::before,
+    *::after {
+      cursor: none !important;
+    }
   }
 
   /* ── prefers-reduced-motion — required per accessibility skill (WCAG 2.2) ── */

@@ -119,10 +119,11 @@ describe("ProjectsSection", () => {
   describe("touch", () => {
     beforeEach(() => setMedia())
 
-    it("uses the flat layout", () => {
+    it("still runs the sea (the compact layout), with the touch hint", () => {
       render(<ProjectsSection />)
-      expect(screen.getByRole("region")).toHaveAttribute("data-mode", "flat")
+      expect(screen.getByRole("region")).toHaveAttribute("data-mode", "immersive")
       expect(screen.getAllByRole("article")).toHaveLength(projects.length)
+      expect(screen.getByText(en.work.hintTouch)).toBeInTheDocument()
     })
   })
 

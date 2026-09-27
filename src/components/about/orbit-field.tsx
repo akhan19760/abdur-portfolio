@@ -61,7 +61,11 @@ function SatelliteButton({
   onCatch,
 }: SatelliteButtonProps) {
   // Readouts sit on the outer side of each dock: left docks read leftward.
-  const readoutLeft = animate && DOCKS[index] && DOCKS[index].x < 0
+  // Compact screens have no room outside the docks, so there the readout
+  // sits above an upper dock (below a lower one) and runs toward the middle.
+  const dock = DOCKS[index]
+  const readoutLeft = animate && dock && dock.x < 0
+  const readoutAbove = animate && dock && dock.y < 0
   const shown = caught || !animate
   const name = [`${satellite.label}: ${satellite.value}`, satellite.detail]
     .filter(Boolean)
@@ -132,14 +136,23 @@ function SatelliteButton({
           animate
             ? cn(
                 "absolute top-1/2 -translate-y-1/2",
-                readoutLeft ? "right-full mr-4 text-right" : "left-full ml-4 text-left"
+                readoutLeft ? "right-full mr-4 text-right" : "left-full ml-4 text-left",
+                "max-lg:mx-0 max-lg:w-[42vw] max-lg:translate-y-0 max-lg:whitespace-normal",
+                // Loose satellites cross the middle; their labels would pile up there
+                !shown && "max-lg:hidden",
+                readoutLeft
+                  ? "max-lg:left-0 max-lg:right-auto max-lg:text-left"
+                  : "max-lg:left-auto max-lg:right-0 max-lg:text-right",
+                readoutAbove
+                  ? "max-lg:top-auto max-lg:bottom-full max-lg:mb-2"
+                  : "max-lg:top-full max-lg:mt-2"
               )
             : "absolute left-full top-1/2 ml-4 -translate-y-1/2 text-left"
         )}
       >
         <span
           className={cn(
-            "block font-mono text-[10px] tracking-[0.3em] text-accent-soft",
+            "block font-mono text-[10px] tracking-[0.3em] text-accent-soft max-lg:text-[9px] max-lg:tracking-[0.2em]",
             !shown && "opacity-[calc(0.5_+_var(--light,0)_*_0.5)]"
           )}
         >
@@ -147,7 +160,7 @@ function SatelliteButton({
         </span>
         <span
           className={cn(
-            "block font-display text-2xl leading-tight text-text transition-opacity duration-700",
+            "block font-display text-2xl leading-tight text-text transition-opacity duration-700 max-lg:text-lg",
             shown ? "opacity-100" : "opacity-0"
           )}
         >

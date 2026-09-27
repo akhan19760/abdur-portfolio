@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest"
 import { wallPhases } from "@/hooks/contact"
-import { PIN_GRID } from "./pin-field"
+import { PIN_GRID, PORTRAIT_PIN_GRID } from "./pin-field"
 import {
+  PORTRAIT_VIEW_COLUMNS,
   VIEW_COLUMNS,
   WALL_EXIT_END,
   WALL_FOV,
@@ -9,6 +10,7 @@ import {
   holdDistance,
   letteringBox,
   lookAtCamera,
+  pinGridFor,
   projectToScreen,
   toCell,
   wallPoint,
@@ -99,6 +101,43 @@ describe("letteringBox", () => {
       expect(box.width).toBeLessThanOrEqual(PIN_GRID.cols - 4)
       expect(box.width).toBeGreaterThan(box.height)
     }
+  })
+})
+
+describe("portrait views", () => {
+  const PHONES = [390 / 844, 390 / 664, 810 / 1080]
+
+  it("use the tall wall, and see only pins that are on it", () => {
+    for (const aspect of PHONES) {
+      const grid = pinGridFor(aspect)
+      expect(grid).toEqual(PORTRAIT_PIN_GRID)
+      const d = holdDistance(aspect)
+      expect(2 * d * t * aspect).toBeLessThanOrEqual(grid.cols)
+      expect(2 * d * t).toBeLessThanOrEqual(grid.rows)
+    }
+  })
+
+  it("keep the letters big: no more than PORTRAIT_VIEW_COLUMNS pins across", () => {
+    for (const aspect of PHONES) {
+      expect(2 * holdDistance(aspect) * t * aspect).toBeLessThanOrEqual(
+        PORTRAIT_VIEW_COLUMNS + 1e-9
+      )
+    }
+  })
+
+  it("stack the words in the top part of the view", () => {
+    for (const aspect of PHONES) {
+      const box = letteringBox(aspect)
+      expect(box.lines).toBe(2)
+      expect(box.col).toBeCloseTo((PORTRAIT_PIN_GRID.cols - 1) / 2)
+      expect(box.row).toBeLessThan((PORTRAIT_PIN_GRID.rows - 1) / 2)
+      expect(box.row - box.height / 2).toBeGreaterThan(0)
+    }
+  })
+
+  it("use the wide wall and one line in landscape", () => {
+    expect(pinGridFor(WIDE)).toEqual(PIN_GRID)
+    expect(letteringBox(WIDE).lines).toBe(1)
   })
 })
 

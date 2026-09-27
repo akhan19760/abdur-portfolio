@@ -35,7 +35,7 @@
  * This module pulls in three.js, so the section loads it with React.lazy and
  * it is NOT re-exported from the about components barrel, to keep it in its
  * own chunk. Decorative only: aria-hidden, no pointer events. Only mounted in
- * depth mode (never on touch, with reduced motion, or on narrow screens).
+ * depth mode (every device, unless reduced motion is on).
  * Verified manually in-browser (R3F, per the `testing` skill).
  */
 

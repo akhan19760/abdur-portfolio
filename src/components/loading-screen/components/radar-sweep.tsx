@@ -6,7 +6,8 @@ export function RadarSweep({
   radarCanvasRef: RefObject<HTMLCanvasElement | null>
 }) {
   return (
-    <div className="absolute z-20" style={{ right: "5%", bottom: "5%" }}>
+    // Hidden on phones, where it would sit on top of the terminal log
+    <div className="absolute z-20 hidden sm:block" style={{ right: "5%", bottom: "5%" }}>
       <canvas
         ref={radarCanvasRef}
         className="block rounded-full"

@@ -61,11 +61,11 @@ import type { Group, PerspectiveCamera } from "three"
 import { cn } from "@/lib/utils"
 import { onPing } from "@/lib/ping"
 import { PLANE_ARRIVAL, trackPlane } from "@/lib/paper-plane"
+import { paperScreen } from "@/lib/stage-framing"
 import type { FoldPhases } from "@/hooks/process"
 import {
   PAPER_FOV,
   PAPER_PIVOT,
-  PAPER_SCREEN_X,
   clamp,
   flightPath,
   lampPosition,
@@ -118,7 +118,11 @@ const AIM = {
 const ROLL = { duration: 0.95, hop: 0.22 }
 const DUST = { count: 260, x: 2.8, yMin: 0.05, yMax: 2.6, z: 2.6, push: 1.6 }
 /** Default spot for the light before the cursor has moved (0–1 across/down). */
-const RESTING_LIGHT = { sx: PAPER_SCREEN_X, sy: 0.4 }
+// Where the light rests with no cursor (or finger): a little above the paper
+const restingLight = (aspect: number) => {
+  const place = paperScreen(aspect)
+  return { sx: place.sx, sy: place.sy - 0.1 }
+}
 
 type FoldingPaperProps = {
   /** The timeline position (screens) straight from the scroll (useFoldScroll). */
@@ -528,7 +532,7 @@ function PaperScene({ wrapperRef, readUnits, phases, notes }: PaperSceneProps) {
 
       // ── The light ──
       const pointer = cursorOnScreen()
-      const cursor = pointer ?? RESTING_LIGHT
+      const cursor = pointer ?? restingLight(aspect)
       const lamp = lampPosition(cam, cursor.sx, cursor.sy)
       ;(uniforms.uLamp.value as Vector3).set(lamp.x, lamp.y, lamp.z)
       uniforms.uTime.value = now

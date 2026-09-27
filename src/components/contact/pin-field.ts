@@ -22,6 +22,11 @@
 
 /** The wall's size, in pins. */
 export const PIN_GRID = { cols: 150, rows: 96 } as const
+/**
+ * The wall on a portrait screen: taller than wide like the view, and with
+ * fewer pins (a phone does the springs and shading for every one of them).
+ */
+export const PORTRAIT_PIN_GRID = { cols: 84, rows: 136 } as const
 
 /** How far a letter's pins stand out from the wall. */
 export const RELIEF_HEIGHT = 2.2

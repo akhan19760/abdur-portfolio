@@ -34,6 +34,32 @@ function setFont(ctx: CanvasRenderingContext2D, size: number) {
 }
 
 /**
+ * Splits words over `count` lines, as evenly as it can by length (e.g.
+ * "SAY HELLO" over two lines is "SAY" / "HELLO"). Never more lines than words.
+ */
+export function splitLines(text: string, count: number): string[] {
+  const words = text.split(/\s+/).filter(Boolean)
+  if (count <= 1 || words.length <= 1) return [words.join(" ")]
+  if (count >= words.length) return words
+  // Greedy: fill each line up to an even share of the characters
+  const target = words.join(" ").length / count
+  const lines: string[] = []
+  let current: string[] = []
+  for (const word of words) {
+    const next = [...current, word].join(" ")
+    const linesLeft = count - lines.length
+    if (current.length > 0 && next.length > target && linesLeft > 1) {
+      lines.push(current.join(" "))
+      current = [word]
+    } else {
+      current.push(word)
+    }
+  }
+  lines.push(current.join(" "))
+  return lines
+}
+
+/**
  * Averages a canvas's alpha over each cell: `cols` × `rows` cells of
  * `samples` × `samples` pixels (RGBA data, row by row from the top).
  */
@@ -81,18 +107,28 @@ export function drawLettering(
 
   const words = text.trim().toUpperCase()
   if (!words) return new Float32Array(cols * rows)
+  const lines = splitLines(words, box.lines)
 
   // Measure at a reference size, then scale to fit the box both ways
   const reference = 100
   setFont(ctx, reference)
-  const m = ctx.measureText(words)
-  const ascent = m.actualBoundingBoxAscent || reference * 0.72
-  const descent = m.actualBoundingBoxDescent || 0
-  const inkWidth = (m.actualBoundingBoxLeft || 0) + (m.actualBoundingBoxRight || m.width)
+  const metrics = lines.map((line) => ctx.measureText(line))
+  const ascent = Math.max(
+    ...metrics.map((m) => m.actualBoundingBoxAscent || reference * 0.72)
+  )
+  const descent = Math.max(...metrics.map((m) => m.actualBoundingBoxDescent || 0))
+  const inkWidth = Math.max(
+    ...metrics.map(
+      (m) => (m.actualBoundingBoxLeft || 0) + (m.actualBoundingBoxRight || m.width)
+    )
+  )
+  // Stacked lines sit this far apart, baseline to baseline, per unit of ink height
+  const leading = 1.3
+  const inkHeight = (ascent + descent) * (1 + leading * (lines.length - 1))
   const stroke = STROKE * s
   const fit = Math.min(
     (box.width * s - stroke) / Math.max(1, inkWidth),
-    (box.height * s - stroke) / Math.max(1, ascent + descent)
+    (box.height * s - stroke) / Math.max(1, inkHeight)
   )
   const size = reference * fit
 
@@ -106,9 +142,13 @@ export function drawLettering(
   // Letter spacing trails the last letter too; shift back by half of it
   const x = (box.col + 0.5) * s + (size * TRACKING) / 2
   // Centre the ink (not the em box) on the box's middle
-  const y = (box.row + 0.5) * s + ((ascent - descent) * fit) / 2
-  ctx.fillText(words, x, y)
-  ctx.strokeText(words, x, y)
+  const step = (ascent + descent) * fit * leading
+  const first =
+    (box.row + 0.5) * s + ((ascent - descent) * fit) / 2 - (step * (lines.length - 1)) / 2
+  lines.forEach((line, i) => {
+    ctx.fillText(line, x, first + step * i)
+    ctx.strokeText(line, x, first + step * i)
+  })
 
   const image = ctx.getImageData(0, 0, canvas.width, canvas.height)
   return cellCoverage(image.data, canvas.width, cols, rows, s)

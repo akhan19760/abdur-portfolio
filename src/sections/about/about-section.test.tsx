@@ -173,10 +173,11 @@ describe("AboutSection", () => {
   describe("touch", () => {
     beforeEach(() => setMedia())
 
-    it("uses flat mode with the touch hint", () => {
+    it("still dives (the compact layout), with the touch hints", () => {
       render(<AboutSection />)
-      expect(screen.getByRole("region")).toHaveAttribute("data-mode", "flat")
+      expect(screen.getByRole("region")).toHaveAttribute("data-mode", "depth")
       expect(screen.getByText(en.about.hintTouch)).toBeInTheDocument()
+      expect(screen.getByText(en.about.status.hintTouch)).toBeInTheDocument()
     })
 
     it("starts with the story traced and the case files decrypted", () => {

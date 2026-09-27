@@ -22,17 +22,18 @@
  *      step list and a one-line hint
  *
  * Two modes, decided once on mount:
- * - immersive: hover-capable pointer, no reduced-motion preference, ≥1024px
- *   wide. A tall section; useFoldScroll shows each step's text in turn and
- *   the paper reads the same scroll position.
- * - flat: everything else. The steps are a plain numbered list, each with a
+ * - immersive: every device without a reduced-motion preference. In portrait
+ *   the paper folds in the top part of the view with the step's text below
+ *   (lib/stage-framing). A tall section; useFoldScroll shows each step's text
+ *   in turn and the paper reads the same scroll position.
+ * - flat: reduced motion. The steps are a plain numbered list, each with a
  *   small drawing of the paper at that step, and no WebGL.
  */
 
 import { Suspense, lazy, useCallback, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
-import { prefersImmersive } from "@/lib/media"
+import { canHover, prefersImmersive } from "@/lib/media"
 import { ErrorBoundary } from "@/components/layout"
 import { StepDetails, StepNav } from "@/components/process"
 import { useLightProximity } from "@/hooks/cursor"
@@ -48,6 +49,7 @@ export function ProcessSection() {
 
   // Input type and motion preference don't change mid-session in practice.
   const [immersive] = useState(prefersImmersive)
+  const [pointer] = useState(canHover)
 
   const steps = t("process.steps", { returnObjects: true }) as ProcessStep[]
   const notes = t("process.notes", { returnObjects: true }) as string[]
@@ -74,7 +76,7 @@ export function ProcessSection() {
       id="process"
       aria-labelledby="process-heading"
       data-mode={immersive ? "immersive" : "flat"}
-      className={cn("relative", immersive ? "z-10" : "py-28")}
+      className={cn("relative", immersive ? "z-10" : "py-20 sm:py-28")}
       // Derived from the timeline (foldPhases), so the scroll length can't drift from it
       style={immersive ? { height: `${phases.sectionVh}vh` } : undefined}
     >
@@ -100,8 +102,8 @@ export function ProcessSection() {
           data-fold-hud={immersive ? "" : undefined}
           className={cn(
             immersive
-              ? "absolute start-10 top-10"
-              : "relative mx-auto mb-16 max-w-4xl px-6"
+              ? "absolute start-5 top-5 lg:start-10 lg:top-10"
+              : "relative mx-auto mb-10 max-w-4xl px-6 sm:mb-16"
           )}
         >
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent-soft">
@@ -110,8 +112,10 @@ export function ProcessSection() {
           <h2
             id="process-heading"
             className={cn(
-              "mt-3 font-sans uppercase tracking-[0.6em] text-text",
-              immersive ? "text-2xl" : "text-5xl"
+              "mt-3 font-sans uppercase text-text",
+              immersive
+                ? "text-lg tracking-[0.45em] lg:text-2xl lg:tracking-[0.6em]"
+                : "text-3xl tracking-[0.35em] sm:text-5xl sm:tracking-[0.6em]"
             )}
           >
             {t("process.heading")}
@@ -137,7 +141,10 @@ export function ProcessSection() {
 
         {immersive && (
           <>
-            <div data-fold-hud className="absolute bottom-10 start-[max(9rem,10vw)]">
+            <div
+              data-fold-hud
+              className="absolute bottom-10 start-[max(9rem,10vw)] max-lg:bottom-4 max-lg:start-4"
+            >
               <StepNav
                 steps={steps}
                 active={active}
@@ -148,9 +155,9 @@ export function ProcessSection() {
             </div>
             <p
               data-fold-hud
-              className="absolute bottom-10 end-10 max-w-[17rem] text-end font-support text-[11px] leading-relaxed text-text/55"
+              className="absolute bottom-10 end-10 max-w-[17rem] text-end font-support text-[11px] leading-relaxed text-text/55 max-lg:start-5 max-lg:end-auto max-lg:bottom-16 max-lg:max-w-[80%] max-lg:text-start max-lg:text-[10px]"
             >
-              {t("process.hint")}
+              {pointer ? t("process.hint") : t("process.hintTouch")}
             </p>
           </>
         )}
