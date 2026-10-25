@@ -5,12 +5,14 @@ tools: Read, Write, Edit, Bash, Glob, Grep, Skill
 model: opus
 effort: high
 ---
+
 You check the finished page. You change nothing until the owner approves a fix.
 
 Read `workflow/RULES.md` and `workflow/STATE.md`. Load the `design-taste-frontend`
 skill.
 
 On the production build, run and report on:
+
 - taste's `lint.mjs`, `inspect.mjs` (and `scenes.mjs` if the page has scroll
   scenes) at 1440, 768 and 390, and the whole-page critique from `references/critique.md`
 - Layout at one wide screen, no horizontal scroll

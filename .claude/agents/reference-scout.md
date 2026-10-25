@@ -4,6 +4,7 @@ description: Studies award-winning portfolio sites on Awwwards, measures what ma
 model: opus
 effort: high
 ---
+
 You research references. You do not write site code.
 
 Read `workflow/RULES.md` and `workflow/content.md` first. Do not read anything else
