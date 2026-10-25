@@ -23,7 +23,7 @@ esac
 # Kept at the root: configuration and the workflow kit. Everything else goes.
 KEEP_ROOT=(
   .claude .github scripts workflow
-  .gitignore .prettierignore .prettierrc eslint.config.js
+  .gitattributes .gitignore .prettierignore .prettierrc eslint.config.js
   package.json pnpm-lock.yaml pnpm-workspace.yaml skills-lock.json
   tsconfig.json tsconfig.app.json tsconfig.node.json vite.config.ts
 )
@@ -99,6 +99,7 @@ export function App() {
 TSX
 cat > src/app.test.tsx <<'TSX'
 import { render, screen } from "@testing-library/react"
+import { describe, expect, it } from "vitest"
 import { axe } from "vitest-axe"
 import { App } from "./app"
 
