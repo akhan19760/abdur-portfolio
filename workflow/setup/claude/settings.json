@@ -1,0 +1,8 @@
+{
+  "model": "opus",
+  "effortLevel": "high",
+  "maxEffortLevel": "xhigh",
+  "permissions": {
+    "deny": ["Read(../**)", "Edit(../**)", "Write(../**)"]
+  }
+}
