@@ -40,7 +40,7 @@
         }
       ],
       "strongestIdea": "The name splits across the hero and reassembles as you scroll.",
-      "borrow": "Split the name the same way, but let the cursor-light reveal each half.",
+      "borrow": "Split the name the same way, but let the halves meet as you scroll.",
       "risk": "The split headline needs care to stay readable at 390px."
     },
     {
