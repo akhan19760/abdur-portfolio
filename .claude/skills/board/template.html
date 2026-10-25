@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><!-- board:title --></title>
+    <!-- board:fonts -->
+    <style>
+      :root {
+        --face:
+          system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+          sans-serif;
+        --ground: #eef0ec;
+        --surface: #ffffff;
+        --surface-2: #e3e6e0;
+        --ink: #111311;
+        --ink-2: #4a504a;
+        --accent: #0b57d0;
+        --accent-ink: #ffffff;
+        --accent-soft: #dce7fb;
+        --pass: #1c6a37;
+        --waive: #8a4600;
+        --size-sample: 40px;
+        --size-1: 32px;
+        --size-2: 24px;
+        --size-3: 16px;
+        --size-4: 14px;
+        --margin: 32px;
+        --gap: 24px;
+      }
+      @media (max-width: 720px) {
+        :root {
+          --size-sample: 28px;
+          --size-1: 28px;
+          --size-2: 22px;
+          --margin: 16px;
+          --gap: 16px;
+        }
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        padding-bottom: 96px;
+        background: var(--ground);
+        color: var(--ink);
+        font-family: var(--face);
+        font-size: var(--size-3);
+        line-height: 1.5;
+      }
+      h1,
+      h2,
+      h3,
+      p,
+      ul,
+      ol,
+      dl,
+      dd,
+      figure,
+      fieldset {
+        margin: 0;
+      }
+      h1 {
+        font-size: var(--size-1);
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+      }
+      h2 {
+        font-size: var(--size-2);
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+      }
+      h3 {
+        font-size: var(--size-3);
+        line-height: 1.4;
+      }
+      a {
+        color: var(--accent);
+        text-underline-offset: 3px;
+      }
+      a:hover {
+        color: var(--ink);
+      }
+      :focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+      }
+      .page {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 48px var(--margin) 0;
+      }
+      .top {
+        display: grid;
+        gap: 16px;
+        margin-bottom: 48px;
+      }
+      .top p {
+        max-width: 72ch;
+      }
+
+      /* Overview */
+      .overview ol,
+      .overview ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .overview a {
+        display: block;
+        padding: 8px 14px;
+        background: var(--surface);
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .overview a:hover {
+        background: var(--surface-2);
+      }
+      .overview .recommended-mark {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      /* Pictures */
+      .shot {
+        position: relative;
+        z-index: 1;
+        display: block;
+        background: var(--surface-2);
+      }
+      .shot img {
+        width: 100%;
+        height: auto;
+      }
+      .shot:hover img {
+        opacity: 0.92;
+      }
+
+      /* Finalists */
+      .cards {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        gap: 48px;
+      }
+      .card > article {
+        display: grid;
+        gap: var(--gap);
+        padding: var(--margin);
+        background: var(--surface);
+      }
+      .card:has(input:checked) > article {
+        background: var(--accent-soft);
+      }
+      .card-head {
+        display: grid;
+        gap: 4px;
+      }
+      .card-meta {
+        color: var(--ink-2);
+      }
+      .recommended {
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .card-body {
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 40px;
+        align-items: start;
+      }
+      .moments {
+        display: grid;
+        gap: 20px;
+      }
+      .moment {
+        display: grid;
+        gap: 8px;
+      }
+      .moment-shots {
+        display: grid;
+        grid-template-columns: minmax(0, 4fr) minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+      }
+      figcaption {
+        font-size: var(--size-4);
+        color: var(--ink-2);
+      }
+      .facts {
+        display: grid;
+        gap: 20px;
+      }
+      .facts > div {
+        display: grid;
+        gap: 4px;
+      }
+      .type-list {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        gap: 2px;
+      }
+      .type-role {
+        font-weight: 600;
+      }
+      .scores {
+        border-collapse: collapse;
+        width: 100%;
+        font-variant-numeric: tabular-nums;
+      }
+      .scores th,
+      .scores td {
+        text-align: left;
+        padding: 4px 12px 4px 0;
+        font-weight: 400;
+      }
+      .scores td {
+        text-align: right;
+        white-space: nowrap;
+      }
+      .scores thead th {
+        color: var(--ink-2);
+        font-size: var(--size-4);
+      }
+      .scores tfoot th,
+      .scores tfoot td {
+        font-weight: 700;
+        padding-top: 8px;
+      }
+      .pick,
+      .option-pick {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 18px;
+        font-weight: 600;
+      }
+      .pick {
+        padding: 0 0 0 20px;
+        background: var(--surface-2);
+      }
+      .pick label {
+        flex: 1;
+        padding: 16px 20px 16px 0;
+      }
+      .card:has(input:checked) .pick {
+        background: var(--accent);
+        color: var(--accent-ink);
+      }
+      .card:has(input:disabled) .pick {
+        color: var(--ink-2);
+      }
+      input[type="checkbox"],
+      input[type="radio"] {
+        width: 22px;
+        height: 22px;
+        margin: 0;
+        flex: none;
+        accent-color: var(--accent);
+      }
+      label {
+        cursor: pointer;
+      }
+
+      /* Swatches */
+      .swatches {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .swatch {
+        display: grid;
+        gap: 2px;
+        width: 112px;
+        font-size: var(--size-4);
+        font-variant-numeric: tabular-nums;
+      }
+      .swatch-chip {
+        height: 56px;
+        margin-bottom: 6px;
+      }
+      .swatch-hex {
+        font-weight: 600;
+      }
+
+      /* Direction */
+      .row {
+        margin-bottom: 64px;
+      }
+      fieldset {
+        border: 0;
+        padding: 0;
+        min-width: 0;
+        display: grid;
+        gap: var(--gap);
+      }
+      legend {
+        padding: 0;
+        margin-bottom: var(--gap);
+      }
+      .options {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--gap);
+        align-items: start;
+      }
+      .option {
+        display: grid;
+        gap: 16px;
+        align-content: start;
+        padding: 24px;
+        background: var(--surface);
+        cursor: pointer;
+      }
+      .option:has(input:checked) {
+        background: var(--accent-soft);
+      }
+      .option-text {
+        display: grid;
+        gap: 8px;
+      }
+      .lead {
+        font-weight: 600;
+      }
+      .verdict.passes {
+        color: var(--pass);
+      }
+      .verdict.waives {
+        color: var(--waive);
+      }
+      .preview.pair {
+        display: grid;
+        grid-template-columns: minmax(0, 4fr) minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+      }
+      .preview.pair img {
+        max-height: 480px;
+        object-fit: cover;
+        object-position: top;
+      }
+      .type-preview {
+        display: grid;
+        gap: 16px;
+      }
+      .type-preview .shot img {
+        max-height: 240px;
+        object-fit: cover;
+        object-position: top;
+      }
+      .type-sample {
+        font-size: var(--size-sample);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        overflow-wrap: anywhere;
+      }
+      .font-pair {
+        display: grid;
+        gap: 8px;
+      }
+      .font-pair dt {
+        color: var(--ink-2);
+        font-size: var(--size-4);
+      }
+      .font-pair dd {
+        font-weight: 600;
+      }
+      .note {
+        display: grid;
+        gap: 6px;
+        max-width: 72ch;
+      }
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        font: inherit;
+        color: var(--ink);
+        background: var(--surface);
+        border: 2px solid var(--surface-2);
+        border-radius: 0;
+      }
+      textarea:focus-visible {
+        border-color: var(--accent);
+      }
+
+      /* Answers */
+      .answers {
+        display: grid;
+        gap: 12px;
+        max-width: 72ch;
+        margin-top: 64px;
+      }
+      .copy-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 20px;
+      }
+      .answers textarea {
+        min-height: 160px;
+        font-variant-numeric: tabular-nums;
+      }
+      button {
+        font: inherit;
+        font-weight: 600;
+        padding: 14px 24px;
+        border: 0;
+        border-radius: 0;
+        background: var(--accent);
+        color: var(--accent-ink);
+        cursor: pointer;
+      }
+      button:hover {
+        background: #0a49b0;
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+
+      @media (max-width: 960px) {
+        .card-body,
+        .options {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      @media (max-width: 720px) {
+        .page {
+          padding-top: 32px;
+        }
+        .option {
+          padding: 16px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        button:active {
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="top">
+        <h1><!-- board:title --></h1>
+        <p>
+          <!-- board:intro -->
+          When you are done, <a href="#answers-heading">copy your answers</a> at the end.
+        </p>
+        <nav class="overview" aria-label="On this board"><!-- board:overview --></nav>
+      </header>
+      <main>
+        <form id="board" data-board="board" novalidate>
+          <!-- board:content -->
+          <section class="answers" aria-labelledby="answers-heading">
+            <h2 id="answers-heading">Your answers</h2>
+            <div class="note" data-only="finalists">
+              <label for="note-board"
+                >Anything to tell Claude about these sites, if any</label
+              >
+              <textarea id="note-board" rows="2"></textarea>
+            </div>
+            <div class="copy-row">
+              <button type="button" id="copy">Copy my answers</button>
+              <p id="status" role="status" aria-live="polite"></p>
+            </div>
+            <label for="answers">The block to paste back to Claude</label>
+            <textarea id="answers" readonly rows="8"></textarea>
+          </section>
+        </form>
+      </main>
+    </div>
+    <script>
+      ;(() => {
+        const form = document.getElementById("board")
+        const board = form.dataset.board
+        const status = document.getElementById("status")
+        const out = document.getElementById("answers")
+        const say = (text) => {
+          status.textContent = text
+        }
+        form.querySelectorAll("[data-only]").forEach((el) => {
+          if (el.dataset.only !== board) el.remove()
+        })
+
+        const listNames = (names) =>
+          names.length < 2
+            ? names.join("")
+            : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`
+
+        function finalists() {
+          const boxes = [...form.querySelectorAll('input[name="finalist"]')]
+          const chosen = boxes.filter((b) => b.checked)
+          boxes.forEach((b) => {
+            b.disabled = !b.checked && chosen.length >= 2
+          })
+          return { boxes, chosen }
+        }
+
+        function rows() {
+          const all = [...form.querySelectorAll("section.row")]
+          const missing = all.filter((r) => !r.querySelector("input:checked"))
+          return { all, missing }
+        }
+
+        function update() {
+          if (board === "finalists") {
+            const { chosen } = finalists()
+            const names = chosen.map((b) => b.dataset.name)
+            if (chosen.length === 0) say("Choose two sites.")
+            else if (chosen.length === 1) say(`Chosen: ${names[0]}. Choose one more.`)
+            else say(`Chosen: ${listNames(names)}. Ready to copy.`)
+          } else {
+            const { all, missing } = rows()
+            say(
+              missing.length === 0
+                ? `All ${all.length} rows chosen. Ready to copy.`
+                : `${all.length - missing.length} of ${all.length} rows chosen.`
+            )
+          }
+        }
+
+        function collect() {
+          if (board === "finalists") {
+            const { boxes, chosen } = finalists()
+            if (chosen.length !== 2) {
+              return {
+                error: `Choose exactly two sites before copying. You have chosen ${chosen.length}.`,
+                focus: boxes.find((b) => !b.checked && !b.disabled) ?? boxes[0],
+              }
+            }
+            return {
+              answers: {
+                board,
+                chosen: chosen.map((b) => b.value),
+                note: document.getElementById("note-board").value.trim(),
+              },
+            }
+          }
+          const { all, missing } = rows()
+          if (missing.length) {
+            const names = missing.map((r) => r.querySelector("legend").textContent.trim())
+            return {
+              error: `No choice yet for ${listNames(names)}.`,
+              focus: missing[0].querySelector("input"),
+            }
+          }
+          const choices = {}
+          for (const r of all) {
+            const picked = r.querySelector("input:checked")
+            choices[r.dataset.row] = {
+              site: picked.value,
+              from: picked.dataset.from,
+              note: r.querySelector("textarea").value.trim(),
+            }
+          }
+          return { answers: { board, choices } }
+        }
+
+        async function copy() {
+          const result = collect()
+          if (result.error) {
+            say(result.error)
+            result.focus?.focus()
+            return
+          }
+          const text = JSON.stringify(result.answers, null, 2)
+          out.value = text
+          try {
+            await navigator.clipboard.writeText(text)
+            say(
+              "Copied. Paste it back to Claude. The same block is in Your answers at the end."
+            )
+          } catch {
+            out.focus()
+            out.select()
+            let copied = false
+            try {
+              copied = document.execCommand("copy")
+            } catch {
+              copied = false
+            }
+            say(
+              copied
+                ? "Copied. Paste it back to Claude."
+                : "Your browser blocked copying. The block is selected in Your answers: copy it with Ctrl+C or Cmd+C."
+            )
+          }
+        }
+
+        // A click anywhere on an option card chooses it, except on its links.
+        form.addEventListener("click", (e) => {
+          const option = e.target.closest(".option")
+          if (!option || e.target.closest("a, input, label, textarea, button")) return
+          const radio = option.querySelector('input[type="radio"]')
+          if (radio.checked) return
+          radio.checked = true
+          radio.dispatchEvent(new Event("change", { bubbles: true }))
+        })
+        form.addEventListener("change", update)
+        form.addEventListener("submit", (e) => e.preventDefault())
+        document.getElementById("copy").addEventListener("click", copy)
+        update()
+      })()
+    </script>
+  </body>
+</html>

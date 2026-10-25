@@ -1,0 +1,317 @@
+{
+  "sites": {
+    "A": {
+      "id": "alder",
+      "name": "Alder (fixture)",
+      "url": "https://alder.test"
+    },
+    "B": {
+      "id": "cedar",
+      "name": "Cedar (fixture)",
+      "url": "https://cedar.test"
+    }
+  },
+  "sections": ["about", "work", "contact"],
+  "rows": [
+    {
+      "id": "type",
+      "recommended": "A",
+      "reason": "One grotesk at a very large size carries the name best.",
+      "options": {
+        "A": {
+          "summary": "One tight grotesk at a very large size.",
+          "twist": "Set the name at 12vw with tighter tracking.",
+          "verdict": {
+            "passes": true
+          },
+          "type": {
+            "referenceFont": "Neue Fixture Grotesk",
+            "usedFont": "Inter Tight",
+            "licence": "OFL-1.1",
+            "sample": "Abdur Rahim builds for the web",
+            "shot": "alder/section-01-1440.jpg"
+          }
+        },
+        "B": {
+          "summary": "A soft serif for headings with a plain sans for text.",
+          "twist": "Use the serif only for project titles.",
+          "verdict": {
+            "passes": true
+          },
+          "type": {
+            "referenceFont": "Fraunces",
+            "usedFont": "Fraunces",
+            "licence": "OFL-1.1",
+            "sample": "Abdur Rahim builds for the web",
+            "shot": "cedar/section-01-1440.jpg"
+          }
+        }
+      }
+    },
+    {
+      "id": "palette",
+      "recommended": "B",
+      "reason": "A dark ground lets the screenshots of the work carry the colour.",
+      "options": {
+        "A": {
+          "summary": "Deep green ground, pale ink, one acid accent.",
+          "twist": "Swap the acid accent for a warmer lime.",
+          "verdict": {
+            "passes": true
+          },
+          "palette": [
+            {
+              "hex": "#1f2a24",
+              "role": "ground"
+            },
+            {
+              "hex": "#e9efe6",
+              "role": "ink"
+            },
+            {
+              "hex": "#c8f169",
+              "role": "accent"
+            }
+          ]
+        },
+        "B": {
+          "summary": "Night blue ground, white ink, sky-blue accent.",
+          "twist": "Keep the blue for links only.",
+          "verdict": {
+            "passes": true
+          },
+          "palette": [
+            {
+              "hex": "#0f1724",
+              "role": "ground"
+            },
+            {
+              "hex": "#f2f4f8",
+              "role": "ink"
+            },
+            {
+              "hex": "#5aa9ff",
+              "role": "accent"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "hero",
+      "options": {
+        "A": {
+          "summary": "The name splits across the screen.",
+          "twist": "Reveal each half with the cursor-light.",
+          "verdict": {
+            "passes": true
+          },
+          "shots": {
+            "desktop": "alder/section-01-1440.jpg",
+            "mobile": "alder/section-01-390.jpg"
+          }
+        },
+        "B": {
+          "summary": "A full-bleed picture with the name over it.",
+          "twist": "Use a real picture of the work, not a stock one.",
+          "verdict": {
+            "passes": true
+          },
+          "shots": {
+            "desktop": "cedar/section-01-1440.jpg",
+            "mobile": "cedar/section-01-390.jpg"
+          }
+        }
+      },
+      "recommended": "A",
+      "reason": "It belongs to the owner: the name itself is the hero."
+    },
+    {
+      "id": "section:about",
+      "options": {
+        "A": {
+          "summary": "Two columns: a portrait and a short story.",
+          "twist": "Replace the portrait with a picture of the desk.",
+          "verdict": {
+            "passes": true
+          },
+          "shots": {
+            "desktop": "alder/section-02-1440.jpg",
+            "mobile": "alder/section-02-390.jpg"
+          }
+        },
+        "B": {
+          "summary": "A single large statement.",
+          "twist": "Cut it to 25 words.",
+          "verdict": {
+            "passes": true
+          },
+          "shots": {
+            "desktop": "cedar/section-02-1440.jpg",
+            "mobile": "cedar/section-02-390.jpg"
+          }
+        }
+      },
+      "recommended": "B",
+      "reason": "A short statement reads faster than two columns."
+    },
+    {
+      "id": "section:work",
+      "options": {
+        "A": {
+          "summary": "A grid of project tiles.",
+          "twist": "Make the tiles uneven, by project size.",
+          "verdict": {
+            "passes": false,
+            "rule": "No rows of identical cards",
+            "why": "the grid repeats the same tile for every project"
+          },
+          "shots": {
+            "desktop": "alder/section-03-1440.jpg",
+            "mobile": "alder/section-03-390.jpg"
+          }
+        },
+        "B": {
+          "summary": "A pinned horizontal rail.",
+          "twist": "Move in depth instead of sideways.",
+          "verdict": {
+            "passes": true
+          },
+          "shots": {
+            "desktop": "cedar/section-03-1440.jpg",
+            "mobile": "cedar/section-03-390.jpg"
+          }
+        }
+      },
+      "recommended": "B",
+      "reason": "The rail shows one project at a time, at full size."
+    },
+    {
+      "id": "section:contact",
+      "options": {
+        "A": {
+          "summary": "A big email address.",
+          "twist": "Copy the address on click.",
+          "verdict": {
+            "passes": true
+          },
+          "shots": {
+            "desktop": "alder/section-04-1440.jpg",
+            "mobile": "alder/section-04-390.jpg"
+          }
+        },
+        "B": {
+          "summary": "A short form.",
+          "twist": "Drop the form and keep the address.",
+          "verdict": {
+            "passes": true
+          },
+          "shots": {
+            "desktop": "cedar/section-04-1440.jpg",
+            "mobile": "cedar/section-04-390.jpg"
+          }
+        }
+      },
+      "recommended": "A",
+      "reason": "The address is the action; a form adds work."
+    },
+    {
+      "id": "footer",
+      "options": {
+        "A": {
+          "summary": "The name again at full width.",
+          "twist": "Set it in the accent colour.",
+          "verdict": {
+            "passes": true
+          },
+          "shots": {
+            "desktop": "alder/section-05-1440.jpg",
+            "mobile": "alder/section-05-390.jpg"
+          }
+        },
+        "B": {
+          "summary": "A sitemap in three columns.",
+          "twist": "Cut it to the name and two links.",
+          "verdict": {
+            "passes": true
+          },
+          "shots": {
+            "desktop": "cedar/section-05-1440.jpg",
+            "mobile": "cedar/section-05-390.jpg"
+          }
+        }
+      },
+      "recommended": "A",
+      "reason": "A designed close, not a sitemap."
+    },
+    {
+      "id": "motion",
+      "recommended": "A",
+      "reason": "Fewer, bigger moves suit a portfolio.",
+      "options": {
+        "A": {
+          "summary": "Slow staggered entrances, one signature split.",
+          "twist": "Run the split on scroll, not on load.",
+          "verdict": {
+            "passes": true
+          }
+        },
+        "B": {
+          "summary": "Everything slides sideways.",
+          "twist": "Keep the slide to the work rail only.",
+          "verdict": {
+            "passes": true
+          }
+        }
+      }
+    },
+    {
+      "id": "scenes",
+      "recommended": "B",
+      "reason": "The pinned rail is the one scene worth building.",
+      "options": {
+        "A": {
+          "summary": "No scroll scenes.",
+          "twist": "Add one at the work section.",
+          "verdict": {
+            "passes": true
+          }
+        },
+        "B": {
+          "summary": "One pinned rail for the work.",
+          "twist": "Fly through it in depth.",
+          "verdict": {
+            "passes": true
+          },
+          "shots": {
+            "desktop": "cedar/section-03-1440.jpg",
+            "mobile": "cedar/section-03-390.jpg"
+          }
+        }
+      }
+    },
+    {
+      "id": "live",
+      "recommended": "A",
+      "reason": "It uses the owner’s real content: the projects.",
+      "options": {
+        "A": {
+          "summary": "Pick a project and the page recolours to it.",
+          "twist": "Use each project’s own colour.",
+          "verdict": {
+            "passes": true
+          }
+        },
+        "B": {
+          "summary": "A clock showing the owner’s local time.",
+          "twist": "Show whether the owner is at work right now.",
+          "verdict": {
+            "passes": false,
+            "rule": "One live thing from the idea",
+            "why": "a clock belongs to every portfolio, not this one"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "sites": [
+    {
+      "id": "alder",
+      "name": "Alder (fixture)",
+      "url": "https://alder.test",
+      "scores": {
+        "fit": 5,
+        "stack": 4,
+        "distinct": 4,
+        "mobile": 4,
+        "perf": 4
+      },
+      "type": [
+        {
+          "role": "Display",
+          "family": "Neue Fixture Grotesk",
+          "size": "96px",
+          "weight": "500"
+        },
+        {
+          "role": "Text",
+          "family": "Fixture Text",
+          "size": "18px",
+          "weight": "400"
+        }
+      ],
+      "colours": [
+        {
+          "hex": "#1f2a24",
+          "role": "ground"
+        },
+        {
+          "hex": "#e9efe6",
+          "role": "ink"
+        },
+        {
+          "hex": "#c8f169",
+          "role": "accent"
+        }
+      ],
+      "strongestIdea": "The name splits across the hero and reassembles as you scroll.",
+      "borrow": "Split the name the same way, but let the cursor-light reveal each half.",
+      "risk": "The split headline needs care to stay readable at 390px."
+    },
+    {
+      "id": "cedar",
+      "name": "Cedar (fixture)",
+      "url": "https://cedar.test",
+      "scores": {
+        "fit": 4,
+        "stack": 4,
+        "distinct": 5,
+        "mobile": 3,
+        "perf": 4
+      },
+      "type": [
+        {
+          "role": "Display",
+          "family": "Fraunces",
+          "size": "88px",
+          "weight": "400"
+        },
+        {
+          "role": "Text",
+          "family": "Fixture Text",
+          "size": "18px",
+          "weight": "400"
+        }
+      ],
+      "colours": [
+        {
+          "hex": "#0f1724",
+          "role": "ground"
+        },
+        {
+          "hex": "#f2f4f8",
+          "role": "ink"
+        },
+        {
+          "hex": "#5aa9ff",
+          "role": "accent"
+        }
+      ],
+      "strongestIdea": "Projects sit on a horizontal rail that pins while you scroll.",
+      "borrow": "Keep the pinned rail, with a depth move instead of a slide.",
+      "risk": "Pinned rails are easy to get wrong on touch screens."
+    },
+    {
+      "id": "birch",
+      "name": "Birch (fixture)",
+      "url": "https://birch.test",
+      "scores": {
+        "fit": 3,
+        "stack": 5,
+        "distinct": 3,
+        "mobile": 4,
+        "perf": 5
+      },
+      "type": [
+        {
+          "role": "Display",
+          "family": "Instrument Sans",
+          "size": "72px",
+          "weight": "600"
+        },
+        {
+          "role": "Text",
+          "family": "Fixture Text",
+          "size": "18px",
+          "weight": "400"
+        }
+      ],
+      "colours": [
+        {
+          "hex": "#f4f1ea",
+          "role": "ground"
+        },
+        {
+          "hex": "#1b1b1b",
+          "role": "ink"
+        },
+        {
+          "hex": "#d2452c",
+          "role": "accent"
+        }
+      ],
+      "strongestIdea": "A plain index of work with large type and nothing else.",
+      "borrow": "The index, set at a far larger size.",
+      "risk": "Too quiet to carry a portfolio on its own."
+    },
+    {
+      "id": "dogwood",
+      "name": "Dogwood (fixture)",
+      "url": "https://dogwood.test",
+      "scores": {
+        "fit": 2,
+        "stack": 4,
+        "distinct": 2,
+        "mobile": 5,
+        "perf": 4
+      },
+      "type": [
+        {
+          "role": "Display",
+          "family": "Fixture Serif",
+          "size": "56px",
+          "weight": "400"
+        },
+        {
+          "role": "Text",
+          "family": "Fixture Text",
+          "size": "18px",
+          "weight": "400"
+        }
+      ],
+      "colours": [
+        {
+          "hex": "#fbeee8",
+          "role": "ground"
+        },
+        {
+          "hex": "#2a1a14",
+          "role": "ink"
+        },
+        {
+          "hex": "#2b6f5e",
+          "role": "accent"
+        }
+      ],
+      "strongestIdea": "A calm reading layout that works well on phones.",
+      "borrow": "The reading measure, for the about section.",
+      "risk": "Little that would make the page memorable."
+    },
+    {
+      "id": "elm",
+      "name": "Elm (fixture)",
+      "url": "https://elm.test",
+      "scores": {
+        "fit": 3,
+        "stack": 3,
+        "distinct": 4,
+        "mobile": 3,
+        "perf": 3
+      },
+      "type": [
+        {
+          "role": "Display",
+          "family": "Fixture Mono Display",
+          "size": "64px",
+          "weight": "400"
+        },
+        {
+          "role": "Text",
+          "family": "Fixture Text",
+          "size": "18px",
+          "weight": "400"
+        }
+      ],
+      "colours": [
+        {
+          "hex": "#e9e9e4",
+          "role": "ground"
+        },
+        {
+          "hex": "#111111",
+          "role": "ink"
+        },
+        {
+          "hex": "#ff5a1f",
+          "role": "accent"
+        }
+      ],
+      "strongestIdea": "Every section changes the whole page colour as it arrives.",
+      "borrow": "Colour by chapter, taken from each project.",
+      "risk": "Heavy scripts slow the first screen."
+    }
+  ],
+  "recommended": ["alder", "cedar"]
+}

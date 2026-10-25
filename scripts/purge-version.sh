@@ -56,8 +56,8 @@ rm -rf .taste-skill
 # This version's blank state files.
 cp workflow/templates/DIRECTION.template.md workflow/DIRECTION.md
 cp workflow/templates/STATE.template.md workflow/STATE.md
-mkdir -p workflow/refs workflow/feedback
-touch workflow/refs/.gitkeep workflow/feedback/.gitkeep
+mkdir -p workflow/refs workflow/feedback workflow/boards
+touch workflow/refs/.gitkeep workflow/feedback/.gitkeep workflow/boards/.gitkeep
 cp workflow/templates/CLAUDE.version.md CLAUDE.md
 
 # A blank app that builds, lints and passes one test.
