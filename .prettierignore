@@ -4,5 +4,6 @@ coverage
 pnpm-lock.yaml
 .claude/skills/design-taste-frontend/
 .claude/skills/**/*.md
+.claude/skills/board/reference/
 CLAUDE.md
 README.md

@@ -77,7 +77,11 @@ async function axe(page) {
       runOnly: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"],
     })
     return r.violations.map(
-      (v) => `${v.id} (${v.impact}): ${v.help}, ${v.nodes.length} element(s)`
+      (v) =>
+        `${v.id} (${v.impact}): ${v.help}, ${v.nodes.length} element(s): ${v.nodes
+          .slice(0, 3)
+          .map((n) => n.target.join(" "))
+          .join(", ")}`
     )
   })
 }
@@ -146,15 +150,22 @@ for (const board of ["finalists", "direction"]) {
       // Keyboard: arrow keys move within a row's radio group.
       await page.keyboard.press("Space")
       await page.keyboard.press("ArrowRight")
-      // A click on an option's text chooses that option.
-      await page.click("#desc-palette-A p")
+      // A click on an option's mock chooses that option.
+      await page.click('[data-option="palette-A"] .mock')
       if (!(await page.isChecked("#opt-palette-A")))
-        fail(`${tag}: clicking an option card did not choose it`)
-      for (const row of data.direction.rows.slice(1)) {
+        fail(`${tag}: clicking an option's mock did not choose it`)
+      const choiceRows = data.direction.rows.filter((r) => r.id !== "extras")
+      for (const row of choiceRows.slice(1)) {
         await page.check(`input[data-row="${row.id}"][value="${row.recommended}"]`)
       }
       await page.fill(`textarea[data-row="motion"]`, "Keep it slow.")
+      // Extras take several: one by its control, one by its mock.
+      const extras = data.direction.rows.find((r) => r.id === "extras").options
+      await page.check(`#opt-x-${extras[0].id}`)
+      await page.click(`[data-option="extras-${extras[2].id}"] .mock`)
       const got = await answers(page)
+      if (got.extras?.picked?.join() !== [extras[0].id, extras[2].id].join())
+        fail(`${tag}: copied the wrong extras: ${got.extras?.picked}`)
       const problems = validateAnswers("direction", got, data.direction)
       if (problems.length)
         fail(`${tag}: copied answers are not valid: ${problems.join("; ")}`)

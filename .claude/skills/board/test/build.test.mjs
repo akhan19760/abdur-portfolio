@@ -14,10 +14,12 @@ import {
   checkDirection,
   checkFinalists,
   checkImages,
+  checkMock,
   directionRowIds,
   esc,
   googleFontsHref,
   imageSrc,
+  rowLetters,
   validateAnswers,
   weightedScore,
 } from "../build.mjs"
@@ -29,6 +31,7 @@ const outFile = join(here, "out", "board.html")
 const script = join(here, "..", "build.mjs")
 const load = (board) =>
   JSON.parse(readFileSync(join(fixtures, "boards", `${board}.json`), "utf8"))
+const row = (data, id) => data.rows.find((r) => r.id === id)
 
 describe("finalists data", () => {
   it("accepts the fixture", () => {
@@ -52,13 +55,15 @@ describe("finalists data", () => {
     )
   })
 
-  it("rejects scores outside 0 to 5 and bad colours", () => {
+  it("rejects scores outside 0 to 5, bad colours and bad measurements", () => {
     const data = load("finalists")
     data.sites[0].scores.fit = 7
     data.sites[1].colours[0].hex = "red"
+    data.sites[2].measured = [{ label: "Layout" }]
     const problems = checkFinalists(data)
     assert.ok(problems.includes("sites[0].scores.fit: expected a number from 0 to 5"))
     assert.ok(problems.includes("sites[1].colours[0].hex: expected #rrggbb"))
+    assert.ok(problems.includes("sites[2].measured: expected a list of { label, value }"))
   })
 
   it("reports a missing picture by its path", () => {
@@ -97,7 +102,15 @@ describe("direction data", () => {
     ])
   })
 
-  it("needs a row for every category and no others", () => {
+  it("gives every row its own letter, never A or B", () => {
+    const ids = [...directionRowIds(["about", "approach", "work", "contact"]), "extras"]
+    const letters = Object.values(rowLetters(ids))
+    assert.equal(new Set(letters).size, ids.length)
+    assert.ok(!letters.includes("A") && !letters.includes("B"))
+    assert.equal(rowLetters(ids)["section:work"], "W")
+  })
+
+  it("needs a row for every category, no others, and extras only last", () => {
     const data = load("direction")
     data.rows = data.rows.filter((r) => r.id !== "motion")
     data.rows.push({ ...data.rows[0], id: "section:blog" })
@@ -106,12 +119,29 @@ describe("direction data", () => {
     assert.ok(
       problems.some((p) => p.startsWith('rows: "section:blog" is not a board row'))
     )
+    const moved = load("direction")
+    moved.rows.unshift(moved.rows.pop())
+    assert.ok(
+      checkDirection(moved).some((p) => p.startsWith("rows: expected this order"))
+    )
   })
 
-  it("needs a reason for taste's recommendation and a named rule for a waiver", () => {
+  it("needs the study: both sites' measurements, principles and what to avoid", () => {
     const data = load("direction")
-    data.rows[0].reason = ""
-    data.rows[1].options.A.verdict = { passes: false }
+    delete data.sites.B.study.motion
+    data.study.avoid = []
+    const problems = checkDirection(data)
+    assert.ok(problems.includes("sites.B.study.motion: missing"))
+    assert.ok(
+      problems.includes("study.avoid: expected a list of what taste says to avoid")
+    )
+  })
+
+  it("needs a reason for taste's pick, a named rule for a waiver, and a Feels like line", () => {
+    const data = load("direction")
+    row(data, "type").reason = ""
+    row(data, "palette").options.A.verdict = { passes: false }
+    delete row(data, "hero").options.B.feelsLike
     const problems = checkDirection(data)
     assert.ok(problems.includes('rows "type".reason: missing'))
     assert.ok(
@@ -119,29 +149,119 @@ describe("direction data", () => {
         'rows "palette" option A.verdict: a waived rule needs "rule" and "why"'
       )
     )
+    assert.ok(problems.includes('rows "hero" option B.feelsLike: missing'))
+  })
+
+  it("draws layout rows in the row's look, so only the layout differs", () => {
+    const data = load("direction")
+    row(data, "hero").options.A.palette = row(data, "palette").options.A.palette
+    delete row(data, "footer").look.font
+    const problems = checkDirection(data)
+    assert.ok(
+      problems.includes(
+        `rows "hero" option A.palette: this row takes its palette from the row's look`
+      )
+    )
+    assert.ok(
+      problems.includes('rows "footer".look.font: missing, expected { display, text }')
+    )
+  })
+
+  it("lets the type row vary only the fonts, and the palette row only the palette", () => {
+    const data = load("direction")
+    row(data, "type").options.B.palette = row(data, "palette").options.A.palette
+    row(data, "palette").look.palette = row(data, "palette").options.A.palette
+    const problems = checkDirection(data)
+    assert.ok(
+      problems.includes(
+        `rows "type" option B.palette: this row takes its palette from the row's look`
+      )
+    )
+    assert.ok(
+      problems.includes(
+        'rows "palette".look.palette: each option sets its own palette in this row'
+      )
+    )
   })
 
   it("needs section shots at both widths, from that site's folder", () => {
     const data = load("direction")
-    const hero = data.rows.find((r) => r.id === "hero")
-    delete hero.options.A.shots.mobile
-    hero.options.B.shots.desktop = "alder/section-01-1440.jpg"
+    delete row(data, "hero").options.A.shots.mobile
+    row(data, "hero").options.B.shots.desktop = "alder/section-01-1440.jpg"
+    delete row(data, "section:work").options.A.shots
     const problems = checkDirection(data)
     assert.ok(
+      problems.includes('rows "hero" option A.shots: give both desktop and mobile')
+    )
+    assert.ok(problems.some((p) => p.includes("is not in that site's folder (cedar/)")))
+    assert.ok(
       problems.includes(
-        'rows "hero" option A.shots: needs desktop and mobile section shots'
+        'rows "section:work" option A.shots: needs the desktop and mobile shots from the site'
       )
     )
-    assert.ok(problems.some((p) => p.includes("is not in site B's folder")))
+  })
+
+  it("checks the extras: unique ids, a site for each, and the row's look", () => {
+    const data = load("direction")
+    const extras = row(data, "extras").options
+    extras[1].id = extras[0].id
+    extras[2].from = "C"
+    extras[3].font = row(data, "type").options.A.font
+    const problems = checkDirection(data)
+    assert.ok(
+      problems.includes(`rows "extras" option 2.id: "${extras[0].id}" is used twice`)
+    )
+    assert.ok(problems.includes('rows "extras" option 3.from: expected "A" or "B"'))
+    assert.ok(
+      problems.includes(
+        `rows "extras" option 4: extras take their fonts and palette from the row's look`
+      )
+    )
+  })
+})
+
+describe("mocks", () => {
+  it("accepts drawn HTML with its own styles", () => {
+    assert.deepEqual(
+      checkMock(
+        '<style>.x{color:var(--o-ac)}</style><div class="x disp">Abdur Rahim</div>',
+        "m"
+      ),
+      []
+    )
+  })
+
+  for (const [html, what] of [
+    ["<script>alert(1)</script>", "a script"],
+    ['<div onclick="x()">a</div>', "an event handler"],
+    ['<a href="javascript:x()">a</a>', "a javascript: link"],
+    ['<div style="background:url(a.png)"></div>', "a url()"],
+    ["<style>@import 'x.css';</style>", "an @import"],
+    ['<img alt="" src="a.png">', "an embedded file"],
+    ["<p>see https://example.com</p>", "an outside address"],
+  ]) {
+    it(`rejects ${what}`, () =>
+      assert.ok(checkMock(html, "m").includes(`m: must not contain ${what}`)))
+  }
+
+  it("rejects a missing mock", () => {
+    const data = load("direction")
+    delete row(data, "motion").options.A.mock
+    assert.ok(
+      checkDirection(data).includes(
+        'rows "motion" option A.mock: missing, expected an HTML fragment'
+      )
+    )
   })
 })
 
 describe("font licences (RULES.md rule 5)", () => {
   const withLicence = (licence) => {
     const data = load("direction")
-    if (licence === undefined) delete data.rows[0].options.A.type.licence
-    else data.rows[0].options.A.type.licence = licence
-    return checkDirection(data).filter((p) => p.includes("type.licence"))
+    const font = row(data, "type").options.A.font.display
+    if (licence === undefined) delete font.licence
+    else font.licence = licence
+    return checkDirection(data).filter((p) => p.includes("licence"))
   }
 
   for (const licence of OPEN_LICENCES) {
@@ -154,22 +274,45 @@ describe("font licences (RULES.md rule 5)", () => {
 
   it("rejects a missing licence", () => assert.equal(withLicence(undefined).length, 1))
 
-  it("shows the reference font and the font that is used", () => {
-    const html = buildPage("direction", load("direction"), { refsDir, outFile })
-    assert.match(html, /On the reference<\/dt><dd>Neue Fixture Grotesk<\/dd>/)
-    assert.match(
-      html,
-      /the closest open-licence font<\/dt><dd>Inter Tight, OFL-1\.1<\/dd>/
+  it("checks the fonts of every row's look too", () => {
+    const data = load("direction")
+    row(data, "motion").look.font = {
+      ...row(data, "motion").look.font,
+      text: { family: "Fixture Text", licence: "Commercial" },
+    }
+    assert.ok(
+      checkDirection(data).some((p) =>
+        p.startsWith('rows "motion".look.font.text.licence')
+      )
     )
-    assert.match(html, /Used as is<\/dt><dd>Fraunces, OFL-1\.1<\/dd>/)
   })
 
-  it("loads only the used fonts, only from Google Fonts", () => {
-    assert.equal(
-      googleFontsHref(["Inter Tight", "Fraunces"]),
-      "https://fonts.googleapis.com/css2?family=Inter+Tight&family=Fraunces&display=swap"
+  it("names the reference's fonts and the fonts that are used", () => {
+    const html = buildPage("direction", load("direction"), { refsDir, outFile })
+    assert.match(
+      html,
+      /On Alder \(fixture\): Neue Fixture Grotesk and Fixture Text\. Used here: <b>Archivo<\/b> and <b>Inter<\/b> \(OFL-1\.1\), the closest open-licence fonts\./
     )
-    assert.equal(googleFontsHref([]), null)
+  })
+
+  it("loads the board's face and every mock face in one Google Fonts request", () => {
+    const href = googleFontsHref([
+      { family: "Archivo", axes: "wght@100..900" },
+      { family: "Inter" },
+      { family: "Archivo", axes: "wght@100..900" },
+    ])
+    assert.equal(
+      href,
+      "https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..700&family=Archivo:wght@100..900&family=Inter&display=swap"
+    )
+    assert.throws(
+      () =>
+        googleFontsHref([
+          { family: "Inter", axes: "wght@400" },
+          { family: "Inter", axes: "wght@700" },
+        ]),
+      BoardError
+    )
     const html = buildPage("direction", load("direction"), { refsDir, outFile })
     const outside = [...html.matchAll(/(?:href|src)="(https?:[^"]+)"/g)]
       .map((m) => new URL(m[1].replace(/&amp;/g, "&")).host)
@@ -197,20 +340,58 @@ describe("rendering", () => {
     assert.ok(!/src="[A-Za-z]:|src="\//.test(html), "no absolute picture paths")
   })
 
-  it("draws five cards, ranked, with the scout's two marked", () => {
+  it("draws five study cards, ranked, with the scout's two marked", () => {
     const html = buildPage("finalists", load("finalists"), { refsDir, outFile })
-    assert.equal(html.match(/<li class="card/g).length, 5)
-    assert.equal(html.match(/The scout recommends this site\./g).length, 2)
-    assert.ok(html.includes("Ranked 1 of 5, weighted score 4.25 of 5."))
+    assert.equal(html.match(/<li class="site/g).length, 5)
+    assert.equal(html.match(/<span class="rec">Recommended<\/span>/g).length, 2)
+    assert.ok(html.includes("ranked 1 of 5 · weighted score <b>4.25</b> of 5"))
     assert.equal(html.match(/<input type="checkbox" name="finalist"/g).length, 5)
   })
 
-  it("draws one radio group per direction row, with taste's pick marked", () => {
+  it("codes options by site and row, and marks taste's pick", () => {
     const data = load("direction")
     const html = buildPage("direction", data, { refsDir, outFile })
-    assert.equal(html.match(/<fieldset>/g).length, data.rows.length)
-    assert.equal(html.match(/Taste recommends this:/g).length, data.rows.length)
-    assert.ok(html.includes('Needs the rule "No rows of identical cards" waived'))
+    const choiceRows = data.rows.filter((r) => r.id !== "extras")
+    assert.equal(html.match(/<input type="radio"/g).length, choiceRows.length * 2)
+    assert.ok(
+      html.includes('<span class="code">A1</span>') &&
+        html.includes(`<span class="code">B${choiceRows.length}</span>`)
+    )
+    assert.equal(
+      html.match(/Taste recommends this:/g).length,
+      choiceRows.length + row(data, "extras").options.filter((o) => o.recommended).length
+    )
+    assert.ok(html.includes("Taste: needs “No rows of identical cards” waived"))
+    assert.ok(html.includes("<b>Taste's set</b>A1 · B2 · A3"))
+  })
+
+  it("draws each mock in its look, with the reference small beneath", () => {
+    const html = buildPage("direction", load("direction"), { refsDir, outFile })
+    assert.match(
+      html,
+      /<div class="mock" style="--o-bg:#0f1724;[^"]*--disp:&#39;Archivo&#39;, Impact, sans-serif;/
+    )
+    assert.match(html, /<figcaption>As seen on Cedar \(fixture\)<\/figcaption>/)
+  })
+
+  it("draws the extras as checkboxes, coded X1 onwards", () => {
+    const data = load("direction")
+    const html = buildPage("direction", data, { refsDir, outFile })
+    assert.equal(
+      html.match(/<input type="checkbox" name="extras"/g).length,
+      row(data, "extras").options.length
+    )
+    assert.ok(html.includes('data-code="X1"'))
+  })
+
+  it("draws the study: both sites, the principles and what to avoid", () => {
+    const data = load("direction")
+    const html = buildPage("direction", data, { refsDir, outFile })
+    assert.ok(html.includes("What makes the two sites feel expensive"))
+    assert.equal(html.match(/<article class="ref">/g).length, 2)
+    const principles = html.match(/<ol class="principles">([\s\S]*?)<\/ol>/)[1]
+    assert.equal(principles.match(/<li><b>/g).length, data.study.principles.length)
+    assert.ok(html.includes("What taste says to avoid"))
   })
 
   it("escapes text from the data", () => {
@@ -232,17 +413,6 @@ describe("rendering", () => {
     assert.ok(!html.includes('href="javascript:'))
   })
 
-  it("writes colour values beside the swatch, never on it", () => {
-    const data = load("finalists")
-    data.sites[0].colours = [{ hex: "#777777", role: "mid grey" }]
-    const html = buildPage("finalists", data, { refsDir, outFile })
-    assert.ok(
-      html.includes(
-        '<span class="swatch-chip" style="background:#777777"></span><span class="swatch-hex">#777777</span>'
-      )
-    )
-  })
-
   it("refuses data with problems, listing all of them", () => {
     const data = load("finalists")
     data.sites[0].risk = ""
@@ -257,10 +427,19 @@ describe("rendering", () => {
 describe("answers", () => {
   const finalists = load("finalists")
   const direction = load("direction")
+  const choiceRows = direction.rows.filter((r) => r.id !== "extras")
   const allChoices = () =>
     Object.fromEntries(
-      direction.rows.map((r) => [r.id, { site: "A", from: "alder", note: "" }])
+      choiceRows.map((r, i) => [
+        r.id,
+        { site: "A", from: "alder", code: `A${i + 1}`, note: "" },
+      ])
     )
+  const answers = (choices = allChoices(), extras = { picked: [], note: "" }) => ({
+    board: "direction",
+    choices,
+    extras,
+  })
 
   it("accepts two finalists", () => {
     assert.deepEqual(
@@ -295,41 +474,52 @@ describe("answers", () => {
     assert.ok(problems.includes('board: expected "finalists", found "direction"'))
   })
 
-  it("accepts one choice for every direction row", () => {
+  it("accepts one choice for every row, and any number of extras", () => {
+    assert.deepEqual(validateAnswers("direction", answers(), direction), [])
+    const ids = row(direction, "extras").options.map((o) => o.id)
     assert.deepEqual(
-      validateAnswers(
-        "direction",
-        { board: "direction", choices: allChoices() },
-        direction
-      ),
+      validateAnswers("direction", answers(undefined, { picked: ids }), direction),
       []
     )
   })
 
-  it("rejects a missing row, an extra row and a site that is not A or B", () => {
+  it("rejects a missing row, an extra row, a site that is not A or B, and a wrong code", () => {
     const choices = allChoices()
     delete choices.motion
     choices["section:blog"] = { site: "A" }
     choices.type = { site: "C" }
-    const problems = validateAnswers(
-      "direction",
-      { board: "direction", choices },
-      direction
-    )
+    choices.palette = { site: "B", code: "B7" }
+    const problems = validateAnswers("direction", answers(choices), direction)
     assert.ok(problems.includes('choices: no choice for "motion"'))
     assert.ok(problems.includes('choices: "section:blog" is not a row on the board'))
     assert.ok(problems.includes('choices "type".site: expected "A" or "B"'))
+    assert.ok(problems.includes('choices "palette".code: expected B2, found B7'))
   })
 
   it("rejects a choice whose site id does not match its letter", () => {
     const choices = allChoices()
     choices.palette = { site: "B", from: "alder" }
+    const problems = validateAnswers("direction", answers(choices), direction)
+    assert.ok(problems.includes('choices "palette": site B is cedar, not "alder"'))
+  })
+
+  it("rejects unknown or repeated extras, and missing extras", () => {
+    const ids = row(direction, "extras").options.map((o) => o.id)
     const problems = validateAnswers(
       "direction",
-      { board: "direction", choices },
+      answers(undefined, { picked: [ids[0], ids[0], "confetti"] }),
       direction
     )
-    assert.ok(problems.includes('choices "palette": site B is cedar, not "alder"'))
+    assert.ok(problems.includes("extras.picked: an extra is listed twice"))
+    assert.ok(problems.includes('extras.picked: "confetti" is not on the board'))
+    const none = validateAnswers(
+      "direction",
+      { board: "direction", choices: allChoices() },
+      direction
+    )
+    assert.ok(
+      none.includes("extras: missing, expected { picked: [...] } (it may be empty)")
+    )
   })
 })
 

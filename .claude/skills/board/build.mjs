@@ -6,7 +6,8 @@
 //
 // Defaults: --data workflow/boards/<board>.json, --out workflow/boards/<board>.html,
 // --refs workflow/refs. The page is one self-contained HTML file; pictures load
-// from the refs folder by a path relative to the page. No dependencies.
+// from the refs folder by a path relative to the page, fonts from Google Fonts.
+// The look follows reference/lootledger-board.html. No dependencies.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, join, relative, resolve, sep } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
@@ -27,32 +28,31 @@ export const CRITERIA = [
 // RULES.md rule 5: only these licences let a font be used.
 export const OPEN_LICENCES = ["OFL-1.1", "Apache-2.0", "UFL-1.0", "MIT", "CC0-1.0"]
 
+// The board's own face, as on the reference.
+const CHROME_FONT = { family: "Schibsted Grotesk", axes: "wght@400..700" }
+
 const MOMENTS = [
   { key: "hero", label: "Hero" },
   { key: "middle", label: "Middle" },
   { key: "footer", label: "Footer" },
 ]
 const WIDTHS = [
-  { key: "desktop", width: 1440, label: "Desktop" },
-  { key: "mobile", width: 390, label: "Phone" },
+  { key: "desktop", width: 1440 },
+  { key: "mobile", width: 390 },
 ]
-const ROW_KINDS = {
-  type: "type",
-  palette: "palette",
-  hero: "shots",
-  footer: "shots",
-  motion: "motion",
-  scenes: "motion",
-  live: "motion",
-}
-const ROW_TITLES = {
-  type: "Type",
-  palette: "Palette",
-  hero: "Hero",
-  footer: "Footer",
-  motion: "Motion",
-  scenes: "Scroll scenes",
-  live: "The one live thing",
+const PALETTE_ROLES = ["bg", "fg", "accent", "ink", "soft"]
+
+// The fixed rows. `compares` names the one thing an option may set for itself;
+// everything else comes from the row's look, so only that thing differs.
+const FIXED_ROWS = {
+  type: { letter: "T", title: "Type", compares: "font" },
+  palette: { letter: "P", title: "Palette", compares: "palette" },
+  hero: { letter: "H", title: "Hero, the first screen", layout: true },
+  footer: { letter: "F", title: "Footer, the finale", layout: true },
+  motion: { letter: "M", title: "Motion" },
+  scenes: { letter: "S", title: "Scroll scenes" },
+  live: { letter: "L", title: "The one live thing" },
+  extras: { letter: "X", title: "Extras (pick any)" },
 }
 
 export class BoardError extends Error {
@@ -72,6 +72,7 @@ export function esc(value) {
 }
 
 const isText = (v) => typeof v === "string" && v.trim() !== ""
+const isHex = (v) => /^#[0-9a-f]{6}$/i.test(v ?? "")
 const slugId = (s) => String(s).replace(/[^a-z0-9-]+/gi, "-")
 
 // A picture's src: its path inside the refs folder, made relative to the page.
@@ -89,7 +90,7 @@ export function isOpenLicence(licence) {
   return OPEN_LICENCES.includes(licence)
 }
 
-// Every row of the direction board, in order: the fixed rows around one row per section.
+// The choice rows of the direction board, in order: the fixed ones around one per section.
 export function directionRowIds(sections) {
   return [
     "type",
@@ -103,21 +104,96 @@ export function directionRowIds(sections) {
   ]
 }
 
-function rowKind(id) {
-  return id.startsWith("section:") ? "shots" : ROW_KINDS[id]
+function rowInfo(id) {
+  if (id.startsWith("section:")) {
+    const role = id.slice("section:".length)
+    return {
+      title: role.charAt(0).toUpperCase() + role.slice(1).replace(/-/g, " "),
+      layout: true,
+    }
+  }
+  return FIXED_ROWS[id]
 }
 
-function rowTitle(row) {
-  if (isText(row.title)) return row.title
-  if (row.id.startsWith("section:")) {
-    const role = row.id.slice("section:".length)
-    return role.charAt(0).toUpperCase() + role.slice(1).replace(/-/g, " ")
+// One letter per row: the fixed ones, then each section's first free letter
+// (never A or B, which name the sites).
+export function rowLetters(ids) {
+  const used = new Set([
+    "A",
+    "B",
+    ...ids.filter((id) => FIXED_ROWS[id]).map((id) => FIXED_ROWS[id].letter),
+  ])
+  const letters = {}
+  for (const id of ids) {
+    if (FIXED_ROWS[id]) {
+      letters[id] = FIXED_ROWS[id].letter
+      continue
+    }
+    const role = id
+      .slice("section:".length)
+      .toUpperCase()
+      .replace(/[^A-Z]/g, "")
+    const pick = [...role, ..."CDEGIJKNOQRUVWYZ"].find((c) => !used.has(c)) ?? "?"
+    used.add(pick)
+    letters[id] = pick
   }
-  return ROW_TITLES[row.id]
+  return letters
 }
 
 // ---------------------------------------------------------------------------
-// Data checks. Each returns a list of problems; an empty list means the data is usable.
+// Data checks. Each returns a list of problems; an empty list means usable.
+
+function checkFont(f, at) {
+  const p = []
+  if (!f || typeof f !== "object") return [`${at}: missing`]
+  if (!isText(f.family)) p.push(`${at}.family: missing`)
+  if (f.axes !== undefined && !/^[a-z,]+@[0-9.,;]+$/i.test(f.axes)) {
+    p.push(`${at}.axes: expected Google Fonts axes, like "wght@400..900"`)
+  }
+  if (!isOpenLicence(f.licence)) {
+    p.push(
+      `${at}.licence: "${f.licence ?? ""}" is not an open licence. Use one of ${OPEN_LICENCES.join(", ")}; ` +
+        `when a reference's font is not open, use the closest open-licence font instead (RULES.md rule 5)`
+    )
+  }
+  return p
+}
+
+function checkFonts(font, at) {
+  if (!font || typeof font !== "object")
+    return [`${at}: missing, expected { display, text }`]
+  return [
+    ...checkFont(font.display, `${at}.display`),
+    ...checkFont(font.text, `${at}.text`),
+  ]
+}
+
+function checkPalette(palette, at) {
+  if (!palette || typeof palette !== "object")
+    return [`${at}: missing, expected ${PALETTE_ROLES.join(", ")}`]
+  return PALETTE_ROLES.filter((r) => !isHex(palette[r])).map(
+    (r) => `${at}.${r}: expected #rrggbb`
+  )
+}
+
+// Mocks are drawn, not loaded: no scripts, handlers, links out or pictures.
+const FORBIDDEN_IN_MOCKS = [
+  [/<script/i, "a script"],
+  [/\son[a-z]+\s*=/i, "an event handler"],
+  [/javascript:/i, "a javascript: link"],
+  [/https?:\/\//i, "an outside address"],
+  [/@import/i, "an @import"],
+  [/url\(/i, "a url()"],
+  [/<(img|iframe|object|embed|link|video|audio|source)\b/i, "an embedded file"],
+  [/\ssrc\s*=/i, "a src attribute"],
+]
+
+export function checkMock(html, at) {
+  if (!isText(html)) return [`${at}: missing, expected an HTML fragment`]
+  return FORBIDDEN_IN_MOCKS.filter(([re]) => re.test(html)).map(
+    ([, what]) => `${at}: must not contain ${what}`
+  )
+}
 
 export function checkFinalists(data) {
   const p = []
@@ -150,9 +226,17 @@ export function checkFinalists(data) {
       p.push(`${at}.colours: expected a list of swatches`)
     else
       s.colours.forEach((c, j) => {
-        if (!/^#[0-9a-f]{6}$/i.test(c?.hex ?? ""))
-          p.push(`${at}.colours[${j}].hex: expected #rrggbb`)
+        if (!isHex(c?.hex)) p.push(`${at}.colours[${j}].hex: expected #rrggbb`)
       })
+    if (
+      s?.measured !== undefined &&
+      !(
+        Array.isArray(s.measured) &&
+        s.measured.every((m) => isText(m?.label) && isText(m?.value))
+      )
+    ) {
+      p.push(`${at}.measured: expected a list of { label, value }`)
+    }
   })
   const rec = data?.recommended
   if (!Array.isArray(rec) || rec.length !== 2 || rec[0] === rec[1]) {
@@ -165,62 +249,118 @@ export function checkFinalists(data) {
   return p
 }
 
+function checkStudy(data) {
+  const p = []
+  for (const letter of ["A", "B"]) {
+    const s = data.sites?.[letter]?.study
+    const at = `sites.${letter}.study`
+    if (!s) {
+      p.push(`${at}: missing, expected { type, colours, layout, motion }`)
+      continue
+    }
+    for (const f of ["type", "layout", "motion"])
+      if (!isText(s[f])) p.push(`${at}.${f}: missing`)
+    if (
+      !Array.isArray(s.colours) ||
+      s.colours.length === 0 ||
+      s.colours.some((c) => !isHex(c?.hex))
+    ) {
+      p.push(`${at}.colours: expected a list of { hex, name }`)
+    }
+    if (
+      s.more !== undefined &&
+      !(
+        Array.isArray(s.more) && s.more.every((m) => isText(m?.label) && isText(m?.value))
+      )
+    ) {
+      p.push(`${at}.more: expected a list of { label, value }`)
+    }
+  }
+  const st = data.study
+  if (
+    !Array.isArray(st?.principles) ||
+    st.principles.length === 0 ||
+    st.principles.some((x) => !isText(x?.title) || !isText(x?.text))
+  ) {
+    p.push("study.principles: expected a list of { title, text }")
+  }
+  if (
+    !Array.isArray(st?.avoid) ||
+    st.avoid.length === 0 ||
+    st.avoid.some((x) => !isText(x))
+  ) {
+    p.push("study.avoid: expected a list of what taste says to avoid")
+  }
+  return p
+}
+
+function checkVerdict(v, at) {
+  if (!v || typeof v.passes !== "boolean")
+    return [
+      `${at}.verdict: expected { "passes": true } or { "passes": false, "rule", "why" }`,
+    ]
+  if (!v.passes && (!isText(v.rule) || !isText(v.why)))
+    return [`${at}.verdict: a waived rule needs "rule" and "why"`]
+  return []
+}
+
+function checkShots(shots, at, required, folder) {
+  const p = []
+  if (shots === undefined)
+    return required
+      ? [`${at}.shots: needs the desktop and mobile shots from the site`]
+      : []
+  if (!isText(shots?.desktop) || !isText(shots?.mobile))
+    return [`${at}.shots: give both desktop and mobile`]
+  for (const f of [shots.desktop, shots.mobile]) {
+    if (folder && !f.startsWith(`${folder}/`))
+      p.push(`${at}: picture "${f}" is not in that site's folder (${folder}/)`)
+  }
+  return p
+}
+
 function checkOption(row, letter, o, sites) {
   const p = []
   const at = `rows "${row.id}" option ${letter}`
   if (!o || typeof o !== "object") return [`${at}: missing`]
-  if (!isText(o.summary)) p.push(`${at}.summary: missing`)
-  if (!isText(o.twist)) p.push(`${at}.twist: missing`)
-  const v = o.verdict
-  if (!v || typeof v.passes !== "boolean")
-    p.push(
-      `${at}.verdict: expected { "passes": true } or { "passes": false, "rule", "why" }`
-    )
-  else if (!v.passes && (!isText(v.rule) || !isText(v.why)))
-    p.push(`${at}.verdict: a waived rule needs "rule" and "why"`)
-  const kind = rowKind(row.id)
-  if (kind === "type") {
-    const t = o.type
-    if (!t) p.push(`${at}.type: missing`)
-    else {
-      if (!isText(t.referenceFont)) p.push(`${at}.type.referenceFont: missing`)
-      if (!isText(t.usedFont)) p.push(`${at}.type.usedFont: missing`)
-      if (!isOpenLicence(t.licence)) {
-        p.push(
-          `${at}.type.licence: "${t.licence ?? ""}" is not an open licence. Use one of ${OPEN_LICENCES.join(", ")}, ` +
-            `and name the closest open-licence alternative as usedFont when the reference font is not open (RULES.md rule 5)`
-        )
-      }
+  for (const f of ["name", "summary", "twist", "feelsLike"])
+    if (!isText(o[f])) p.push(`${at}.${f}: missing`)
+  p.push(...checkVerdict(o.verdict, at))
+  p.push(...checkMock(o.mock, `${at}.mock`))
+  const info = rowInfo(row.id)
+  if (info.compares === "font") {
+    p.push(...checkFonts(o.font, `${at}.font`))
+    if (!isText(o.type?.reference?.display) || !isText(o.type?.reference?.text)) {
+      p.push(`${at}.type.reference: needs the site's display and text fonts`)
     }
-  }
-  if (kind === "palette") {
-    if (!Array.isArray(o.palette) || o.palette.length === 0)
-      p.push(`${at}.palette: expected a list of swatches`)
-    else
-      o.palette.forEach((c, j) => {
-        if (!/^#[0-9a-f]{6}$/i.test(c?.hex ?? ""))
-          p.push(`${at}.palette[${j}].hex: expected #rrggbb`)
-      })
-  }
-  if (kind === "shots" && (!isText(o.shots?.desktop) || !isText(o.shots?.mobile))) {
-    p.push(`${at}.shots: needs desktop and mobile section shots`)
-  }
-  if (
-    o.shots &&
-    kind !== "shots" &&
-    (!isText(o.shots.desktop) || !isText(o.shots.mobile))
-  ) {
-    p.push(`${at}.shots: give both desktop and mobile, or leave shots out`)
-  }
-  if (sites) {
-    for (const file of [o.shots?.desktop, o.shots?.mobile, o.type?.shot]) {
-      if (isText(file) && !file.startsWith(`${sites[letter]?.id}/`)) {
-        p.push(
-          `${at}: picture "${file}" is not in site ${letter}'s folder (${sites[letter]?.id}/)`
-        )
-      }
-    }
-  }
+  } else if (o.font !== undefined)
+    p.push(`${at}.font: this row takes its fonts from the row's look`)
+  if (info.compares === "palette") p.push(...checkPalette(o.palette, `${at}.palette`))
+  else if (o.palette !== undefined)
+    p.push(`${at}.palette: this row takes its palette from the row's look`)
+  p.push(...checkShots(o.shots, at, !!info.layout, sites?.[letter]?.id))
+  return p
+}
+
+function checkExtras(row, sites) {
+  const p = []
+  if (!Array.isArray(row.options) || row.options.length === 0)
+    return ['rows "extras".options: expected a list of extras']
+  const ids = new Set()
+  row.options.forEach((o, i) => {
+    const at = `rows "extras" option ${i + 1}`
+    if (!/^[a-z0-9-]+$/.test(o?.id ?? "")) p.push(`${at}.id: expected a slug`)
+    else if (ids.has(o.id)) p.push(`${at}.id: "${o.id}" is used twice`)
+    else ids.add(o.id)
+    if (o?.from !== "A" && o?.from !== "B") p.push(`${at}.from: expected "A" or "B"`)
+    for (const f of ["name", "summary", "twist", "feelsLike"])
+      if (!isText(o?.[f])) p.push(`${at}.${f}: missing`)
+    p.push(...checkVerdict(o?.verdict, at))
+    p.push(...checkMock(o?.mock, `${at}.mock`))
+    if (o?.font !== undefined || o?.palette !== undefined)
+      p.push(`${at}: extras take their fonts and palette from the row's look`)
+    p.push(...checkShots(o?.shots, at, false, sites?.[o?.from]?.id))
+  })
   return p
 }
 
@@ -234,6 +374,7 @@ export function checkDirection(data) {
   }
   if (sites?.A?.id && sites.A.id === sites?.B?.id)
     p.push("sites: A and B must be different sites")
+  if (sites?.A && sites?.B) p.push(...checkStudy(data))
   const sections = data?.sections
   if (!Array.isArray(sections) || sections.some((s) => !/^[a-z0-9-]+$/.test(s))) {
     p.push(
@@ -246,18 +387,38 @@ export function checkDirection(data) {
   const rows = Array.isArray(data?.rows) ? data.rows : []
   const want = directionRowIds(sections)
   const have = rows.map((r) => r?.id)
+  const allowed = [...want, "extras"]
   want
     .filter((id) => !have.includes(id))
     .forEach((id) => p.push(`rows: no row for "${id}"`))
   have
-    .filter((id) => !want.includes(id))
+    .filter((id) => !allowed.includes(id))
     .forEach((id) =>
-      p.push(`rows: "${id}" is not a board row (rows are ${want.join(", ")})`)
+      p.push(`rows: "${id}" is not a board row (rows are ${allowed.join(", ")})`)
     )
-  if (p.length === 0 && have.join() !== want.join())
-    p.push(`rows: expected this order: ${want.join(", ")}`)
+  const expected = have.includes("extras") ? [...want, "extras"] : want
+  if (p.length === 0 && have.join() !== expected.join())
+    p.push(`rows: expected this order: ${expected.join(", ")}`)
   for (const row of rows) {
-    if (!want.includes(row?.id)) continue
+    if (!allowed.includes(row?.id)) continue
+    const info = rowInfo(row.id)
+    if (!isText(row.purpose))
+      p.push(`rows "${row.id}".purpose: missing, one line on what the row decides`)
+    const look = row.look ?? {}
+    if (info.compares !== "font")
+      p.push(...checkFonts(look.font, `rows "${row.id}".look.font`))
+    else if (look.font !== undefined)
+      p.push(`rows "${row.id}".look.font: each option sets its own fonts in this row`)
+    if (info.compares !== "palette")
+      p.push(...checkPalette(look.palette, `rows "${row.id}".look.palette`))
+    else if (look.palette !== undefined)
+      p.push(
+        `rows "${row.id}".look.palette: each option sets its own palette in this row`
+      )
+    if (row.id === "extras") {
+      p.push(...checkExtras(row, sites))
+      continue
+    }
     if (row.recommended !== "A" && row.recommended !== "B")
       p.push(`rows "${row.id}".recommended: expected "A" or "B"`)
     if (!isText(row.reason)) p.push(`rows "${row.id}".reason: missing`)
@@ -273,12 +434,10 @@ function imagesOf(board, data) {
       MOMENTS.flatMap((m) => WIDTHS.map((w) => `${s.id}/${m.key}-${w.width}.png`))
     )
   }
-  return data.rows.flatMap((r) =>
-    ["A", "B"].flatMap((l) => {
-      const o = r.options[l]
-      return [o.shots?.desktop, o.shots?.mobile, o.type?.shot].filter(isText)
-    })
+  const options = data.rows.flatMap((r) =>
+    r.id === "extras" ? r.options : [r.options.A, r.options.B]
   )
+  return options.flatMap((o) => [o.shots?.desktop, o.shots?.mobile]).filter(isText)
 }
 
 export function checkImages(board, data, refsDir) {
@@ -288,222 +447,366 @@ export function checkImages(board, data, refsDir) {
 }
 
 // ---------------------------------------------------------------------------
-// Rendering.
+// Fonts.
 
-// A chip of each colour with its value and role beside it, in the page's own
-// ink: a mid-tone colour has no label ink that reads at 4.5:1 on it.
-function swatches(list) {
-  return `<ul class="swatches">${list
-    .map(
-      (c) =>
-        `<li class="swatch"><span class="swatch-chip" style="background:${esc(c.hex)}"></span><span class="swatch-hex">${esc(
-          c.hex.toLowerCase()
-        )}</span>${isText(c.role) ? `<span class="swatch-role">${esc(c.role)}</span>` : ""}</li>`
-    )
-    .join("")}</ul>`
+function fontsOf(data) {
+  const out = []
+  for (const row of data.rows) {
+    if (row.look?.font) out.push(row.look.font.display, row.look.font.text)
+    if (row.id !== "extras")
+      for (const l of ["A", "B"])
+        if (row.options[l].font)
+          out.push(row.options[l].font.display, row.options[l].font.text)
+  }
+  return out
 }
 
-function siteLink(url) {
+// One Google Fonts request for the board's face and every face the mocks use.
+export function googleFontsHref(specs) {
+  const byFamily = new Map()
+  for (const f of [CHROME_FONT, ...specs]) {
+    const prev = byFamily.get(f.family)
+    if (prev !== undefined && prev !== (f.axes ?? "")) {
+      throw new BoardError([
+        `fonts: "${f.family}" is asked for with two different axes ("${prev}" and "${f.axes ?? ""}")`,
+      ])
+    }
+    byFamily.set(f.family, f.axes ?? "")
+  }
+  const query = [...byFamily]
+    .map(
+      ([family, axes]) =>
+        `family=${encodeURIComponent(family.trim()).replace(/%20/g, "+")}${axes ? `:${axes}` : ""}`
+    )
+    .join("&")
+  return `https://fonts.googleapis.com/css2?${query}&display=swap`
+}
+
+const fontStack = (f, fallback) => `'${f.family.replace(/'/g, "")}', ${fallback}`
+
+function lookVars(font, palette) {
+  return [
+    `--o-bg:${palette.bg}`,
+    `--o-fg:${palette.fg}`,
+    `--o-ac:${palette.accent}`,
+    `--o-ink:${palette.ink}`,
+    `--o-2:${palette.soft}`,
+    `--disp:${fontStack(font.display, "Impact, sans-serif")}`,
+    `--dw:${font.display.weight ?? 700}`,
+    `--ds:${font.display.stretch ?? "100%"}`,
+    `--ui:${fontStack(font.text, "system-ui, sans-serif")}`,
+    `--tw:${font.text.weight ?? 400}`,
+  ].join(";")
+}
+
+// ---------------------------------------------------------------------------
+// Rendering.
+
+function swatch(hex) {
+  return `<span class="sw" style="background:${esc(hex)}"></span>`
+}
+
+function siteLink(url, text) {
   let parsed
   try {
     parsed = new URL(url)
   } catch {
-    return esc(url)
+    return esc(text ?? url)
   }
-  if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return esc(url)
-  return `<a href="${esc(parsed.href)}" rel="noreferrer">${esc(parsed.host + parsed.pathname.replace(/\/$/, ""))}</a>`
+  if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return esc(text ?? url)
+  return `<a href="${esc(parsed.href)}" rel="noreferrer">${esc(text ?? parsed.host + parsed.pathname.replace(/\/$/, ""))}</a>`
 }
 
-function picture(src, alt, cls) {
-  return `<a class="shot ${cls}" href="${src}" target="_blank" rel="noreferrer"><img src="${src}" alt="${esc(alt)}" decoding="async"></a>`
+function shotPair(shots, paths, siteName, what) {
+  return WIDTHS.map(
+    (w) =>
+      `<a class="shot ${w.key}" href="${imageSrc(shots[w.key], paths)}" target="_blank" rel="noreferrer"><img src="${imageSrc(
+        shots[w.key],
+        paths
+      )}" alt="${esc(`${siteName}, ${what} at ${w.width} pixels wide`)}" decoding="async"></a>`
+  ).join("")
 }
 
-function renderFinalistCard(site, rank, recommended, paths) {
+function top({ kicker, title, intro, how }) {
+  return `<header class="top">
+    <span class="kicker">${esc(kicker)}</span>
+    <h1>${esc(title)}</h1>
+    <p>${intro}</p>
+    <div class="how">${how.map((h) => `<span>${h}</span>`).join("")}</div>
+  </header>`
+}
+
+function renderSiteCard(site, rank, recommended, paths) {
   const id = slugId(site.id)
   const total = weightedScore(site.scores)
   const moments = MOMENTS.map(
     (m) => `<figure class="moment">
-      <div class="moment-shots">${WIDTHS.map((w) =>
-        picture(
-          imageSrc(`${site.id}/${m.key}-${w.width}.png`, paths),
-          `${site.name}, ${m.label.toLowerCase()} at ${w.width} pixels wide`,
-          w.key
-        )
-      ).join("")}</div>
-      <figcaption>${m.label}, desktop and phone</figcaption>
+      <div class="moment-shots">${shotPair(
+        {
+          desktop: `${site.id}/${m.key}-1440.png`,
+          mobile: `${site.id}/${m.key}-390.png`,
+        },
+        paths,
+        site.name,
+        m.label.toLowerCase()
+      )}</div>
+      <figcaption>${m.label}, at 1440 and 390</figcaption>
     </figure>`
   ).join("")
   const type = site.type
     .map(
       (t) =>
-        `<li><span class="type-role">${esc(t.role)}</span> ${esc(t.family)}${
-          [t.size, t.weight].filter(Boolean).length
-            ? `, ${esc([t.size, t.weight].filter(Boolean).join(" at weight "))}`
-            : ""
-        }</li>`
+        `${esc(t.role)}: ${esc(t.family)}${[t.size, t.weight].filter(Boolean).length ? `, ${esc([t.size, t.weight].filter(Boolean).join(" at "))}` : ""}`
     )
+    .join("<br>")
+  const colours = site.colours
+    .map(
+      (c) =>
+        `${swatch(c.hex)}${esc(c.hex.toLowerCase())}${isText(c.role) ? ` ${esc(c.role)}` : ""}`
+    )
+    .join(" · ")
+  const measured = (site.measured ?? [])
+    .map((m) => `<dt>${esc(m.label)}</dt><dd>${esc(m.value)}</dd>`)
     .join("")
   const scores = CRITERIA.map(
     (c) =>
       `<tr><th scope="row">${esc(c.label)}</th><td>${c.weight}%</td><td>${esc(site.scores[c.key])} of 5</td></tr>`
   ).join("")
-  return `<li class="card${recommended ? " is-recommended" : ""}" id="site-${id}">
-  <article aria-labelledby="site-${id}-name">
-    <div class="card-head">
-      <h2 id="site-${id}-name">${esc(site.name)}</h2>
-      <p class="card-meta">${siteLink(site.url)}. Ranked ${rank} of 5, weighted score ${total.toFixed(2)} of 5.</p>
-      ${recommended ? `<p class="recommended">The scout recommends this site.</p>` : ""}
+  return `<li class="site${recommended ? " is-recommended" : ""}" id="site-${id}">
+  <article class="ref" aria-labelledby="site-${id}-name">
+    <div class="site-head">
+      <div class="opt-meta"><span class="code">${rank}</span><h3 id="site-${id}-name">${esc(site.name)}</h3>${
+        recommended ? `<span class="rec">Recommended</span>` : ""
+      }</div>
+      <p class="site-line">${siteLink(site.url)} · ranked ${rank} of 5 · weighted score <b>${total.toFixed(2)}</b> of 5</p>
     </div>
-    <div class="card-body">
+    <div class="site-body">
       <div class="moments">${moments}</div>
       <div class="facts">
-        <div><h3 id="site-${id}-idea">Strongest idea</h3><p>${esc(site.strongestIdea)}</p></div>
-        <div><h3 id="site-${id}-borrow">Borrow, with a twist</h3><p>${esc(site.borrow)}</p></div>
-        <div><h3 id="site-${id}-risk">Risk</h3><p>${esc(site.risk)}</p></div>
-        <div><h3 id="site-${id}-type">Type, measured</h3><ul class="type-list">${type}</ul></div>
-        <div><h3 id="site-${id}-colour">Colour, measured</h3>${swatches(site.colours)}</div>
-        <div><h3 id="site-${id}-scores">Scores</h3>
-          <table class="scores"><thead><tr><th scope="col">Criterion</th><th scope="col">Weight</th><th scope="col">Score</th></tr></thead>
-          <tbody>${scores}</tbody><tfoot><tr><th scope="row">Weighted</th><td>100%</td><td>${total.toFixed(2)} of 5</td></tr></tfoot></table>
-        </div>
+        <dl>
+          <dt>Strongest idea</dt><dd>${esc(site.strongestIdea)}</dd>
+          <dt>Borrow, with a twist</dt><dd>${esc(site.borrow)}</dd>
+          <dt>Risk</dt><dd>${esc(site.risk)}</dd>
+          <dt>Type</dt><dd>${type}</dd>
+          <dt>Colour</dt><dd>${colours}</dd>
+          ${measured}
+        </dl>
+        <table class="scores"><caption>Scores</caption><thead><tr><th scope="col">Criterion</th><th scope="col">Weight</th><th scope="col">Score</th></tr></thead>
+        <tbody>${scores}</tbody><tfoot><tr><th scope="row">Weighted</th><td>100%</td><td>${total.toFixed(2)} of 5</td></tr></tfoot></table>
       </div>
     </div>
-    <div class="pick">
-      <input type="checkbox" name="finalist" id="pick-${id}" value="${esc(site.id)}" data-name="${esc(site.name)}">
-      <label for="pick-${id}">Choose ${esc(site.name)}</label>
-    </div>
+    <label class="choose"><input type="checkbox" name="finalist" id="pick-${id}" value="${esc(site.id)}" data-name="${esc(
+      site.name
+    )}"><span>Choose ${esc(site.name)}</span></label>
   </article>
 </li>`
 }
 
 export function renderFinalists(data, paths) {
+  const header = top({
+    kicker: data.kicker ?? "Portfolio · references · choose two",
+    title: "Pick the two sites this version learns from.",
+    intro:
+      "The scout's five finalists, best first, each measured from the live site: <b>screenshots at desktop and phone width</b>, type, colour and <b>the weighted scores</b>. Choose any two. Every later choice on the direction board comes from one of them.",
+    how: [
+      "Pictures open full size in a new tab",
+      "The scout's two picks are marked Recommended",
+      `When you are done, <a href="#answers-h">copy your answers</a> at the end`,
+    ],
+  })
   const cards = data.sites
-    .map((s, i) => renderFinalistCard(s, i + 1, data.recommended.includes(s.id), paths))
+    .map((s, i) => renderSiteCard(s, i + 1, data.recommended.includes(s.id), paths))
     .join("\n")
+  const set = data.recommended
+    .map((id) => data.sites.find((s) => s.id === id).name)
+    .join(" · ")
   return {
     title: "Choose two references",
-    intro:
-      "Five sites the scout found, best first. Pick any two: every later choice on the direction board comes from one of them. Pictures open full size in a new tab.",
-    overview: `<ol>${data.sites
-      .map(
-        (s) =>
-          `<li><a href="#site-${slugId(s.id)}">${esc(s.name)}, ${weightedScore(s.scores).toFixed(2)}${
-            data.recommended.includes(s.id)
-              ? `<span class="recommended-mark">, recommended</span>`
-              : ""
-          }</a></li>`
-      )
-      .join("")}</ol>`,
-    body: `<ol class="cards">${cards}</ol>`,
     fonts: [],
+    body: `${header}
+  <section class="study" aria-labelledby="study-h">
+    <span class="kicker">The scout's finalists</span>
+    <h2 id="study-h">Five sites, measured</h2>
+    <div class="recset"><span><b>Scout's two</b>${esc(set)}</span></div>
+    <ol class="sites">${cards}</ol>
+  </section>`,
   }
 }
 
 function verdictLine(v) {
   return v.passes
-    ? `<p class="verdict passes">Passes taste's rules.</p>`
-    : `<p class="verdict waives">Needs the rule "${esc(v.rule)}" waived: ${esc(v.why)}</p>`
+    ? `<p class="taste pass">Taste: passes its rules.</p>`
+    : `<p class="taste waive">Taste: needs “${esc(v.rule)}” waived, because ${esc(v.why)}</p>`
 }
 
-function renderPreview(row, o, siteName, paths) {
-  const kind = rowKind(row.id)
-  if (kind === "type") {
-    const t = o.type
-    const same = t.referenceFont.trim().toLowerCase() === t.usedFont.trim().toLowerCase()
-    const shot = isText(t.shot)
-      ? picture(
-          imageSrc(t.shot, paths),
-          `${t.referenceFont} as set on ${siteName}`,
-          "desktop"
-        )
-      : ""
-    return `<div class="preview type-preview">
-      <p class="type-sample" style="font-family:'${esc(t.usedFont.replace(/'/g, ""))}', var(--face)">${esc(
-        t.sample || "Abdur Rahim, software engineer"
-      )}</p>
-      <dl class="font-pair">
-        <div><dt>On the reference</dt><dd>${esc(t.referenceFont)}</dd></div>
-        <div><dt>${same ? "Used as is" : "Used instead, the closest open-licence font"}</dt><dd>${esc(t.usedFont)}, ${esc(
-          t.licence
-        )}</dd></div>
-      </dl>
-      ${shot}
-    </div>`
-  }
-  if (kind === "palette") return `<div class="preview">${swatches(o.palette)}</div>`
+function mockBlock(o, look, label) {
+  const shape = o.mockShape === "wide" || o.mockShape === "tall" ? ` ${o.mockShape}` : ""
+  return `<div class="mock${shape}" style="${esc(lookVars(look.font, look.palette))}" role="img" aria-label="${esc(label)}">${o.mock}</div>`
+}
+
+function seenOn(o, site, paths, what) {
   if (!o.shots) return ""
-  return `<div class="preview pair">${WIDTHS.map((w) =>
-    picture(
-      imageSrc(o.shots[w.key], paths),
-      `${siteName}, ${rowTitle(row).toLowerCase()} at ${w.width} pixels wide`,
-      w.key
-    )
-  ).join("")}</div>`
+  return `<figure class="seen"><div class="seen-shots">${shotPair(o.shots, paths, site.name, what)}</div><figcaption>As seen on ${esc(
+    site.name
+  )}</figcaption></figure>`
 }
 
-function renderRow(row, data, paths) {
+function optionText(o, recommendedReason) {
+  return `<p>${esc(o.summary)}</p>
+      <p class="twist"><b>Twist:</b> ${esc(o.twist)}</p>
+      <p class="feels">Feels like: ${esc(o.feelsLike)}</p>
+      ${verdictLine(o.verdict)}
+      ${recommendedReason ? `<p class="taste rec-why">Taste recommends this: ${esc(recommendedReason)}</p>` : ""}`
+}
+
+function renderChoiceRow(row, number, letter, data, paths) {
   const id = slugId(row.id)
-  const title = rowTitle(row)
+  const info = rowInfo(row.id)
+  const title = row.title ?? info.title
   const options = ["A", "B"]
-    .map((letter) => {
-      const o = row.options[letter]
-      const site = data.sites[letter]
-      const oid = `${id}-${letter}`
-      const recommended = row.recommended === letter
-      return `<div class="option${recommended ? " is-recommended" : ""}">
-        <div class="option-pick">
-          <input type="radio" name="row-${id}" id="opt-${oid}" value="${letter}" data-row="${esc(row.id)}" data-from="${esc(
-            site.id
-          )}" aria-describedby="desc-${oid}">
-          <label for="opt-${oid}">${esc(site.name)}</label>
-        </div>
-        ${renderPreview(row, o, site.name, paths)}
-        <div class="option-text" id="desc-${oid}">
-          <p>${esc(o.summary)}</p>
-          <p><span class="lead">Twist:</span> ${esc(o.twist)}</p>
-          ${verdictLine(o.verdict)}
-          ${recommended ? `<p class="recommended">Taste recommends this: ${esc(row.reason)}</p>` : ""}
-        </div>
-      </div>`
+    .map((l) => {
+      const o = row.options[l]
+      const site = data.sites[l]
+      const code = `${l}${number}`
+      const look = {
+        font: info.compares === "font" ? o.font : row.look.font,
+        palette: info.compares === "palette" ? o.palette : row.look.palette,
+      }
+      const recommended = row.recommended === l
+      const fontNote =
+        info.compares === "font"
+          ? `<p class="fontpair">On ${esc(site.name)}: ${esc(o.type.reference.display)} and ${esc(o.type.reference.text)}. Used here: <b>${esc(
+              o.font.display.family
+            )}</b> and <b>${esc(o.font.text.family)}</b> (${esc(
+              [...new Set([o.font.display.licence, o.font.text.licence])].join(", ")
+            )})${
+              o.type.reference.display.toLowerCase() ===
+              o.font.display.family.toLowerCase()
+                ? ""
+                : ", the closest open-licence fonts"
+            }.</p>`
+          : ""
+      return `<article class="opt${recommended ? " is-recommended" : ""}" data-option="${id}-${l}">
+        ${mockBlock(o, look, `${o.name}, drawn in ${look.font.display.family}: ${o.summary}`)}
+        ${seenOn(o, site, paths, title.toLowerCase())}
+        <div class="opt-meta"><span class="code">${code}</span><h3 id="name-${id}-${l}">${esc(o.name)}</h3><span class="from">${esc(
+          site.name
+        )}</span>${recommended ? `<span class="rec">Recommended</span>` : ""}</div>
+        <div class="opt-text" id="desc-${id}-${l}">${fontNote}${optionText(o, recommended ? row.reason : null)}</div>
+        <label class="choose"><input type="radio" name="row-${id}" id="opt-${id}-${l}" value="${l}" data-row="${esc(
+          row.id
+        )}" data-from="${esc(site.id)}" data-code="${code}" aria-describedby="name-${id}-${l} desc-${id}-${l}"><span>Choose ${code}</span></label>
+      </article>`
     })
     .join("")
-  return `<section class="row" id="row-${id}" data-row="${esc(row.id)}">
-  <fieldset>
-    <legend><h2>${esc(title)}</h2></legend>
-    <div class="options">${options}</div>
-    <div class="note">
-      <label for="note-${id}">Note on ${esc(title.toLowerCase())}, if any</label>
-      <textarea id="note-${id}" name="note-${id}" data-row="${esc(row.id)}" rows="2"></textarea>
-    </div>
-  </fieldset>
-</section>`
+  return `<section class="row" id="row-${id}" data-row="${esc(row.id)}" data-kind="choice" aria-labelledby="row-${id}-h">
+    <div class="row-h"><span class="letter">${letter}</span><h2 id="row-${id}-h">${esc(title)}</h2><p>${esc(row.purpose)}</p></div>
+    <div class="opts" role="radiogroup" aria-labelledby="row-${id}-h">${options}</div>
+    <div class="row-note"><label for="note-${id}">Note on ${esc(title.toLowerCase())}, if any</label><textarea id="note-${id}" data-row="${esc(
+      row.id
+    )}" rows="2"></textarea></div>
+  </section>`
+}
+
+function renderExtrasRow(row, data, paths) {
+  const title = row.title ?? FIXED_ROWS.extras.title
+  const options = row.options
+    .map((o, i) => {
+      const site = data.sites[o.from]
+      const code = `X${i + 1}`
+      const oid = slugId(o.id)
+      return `<article class="opt${o.recommended ? " is-recommended" : ""}" data-option="extras-${oid}">
+        ${mockBlock(o, row.look, `${o.name}: ${o.summary}`)}
+        ${seenOn(o, site, paths, o.name.toLowerCase())}
+        <div class="opt-meta"><span class="code">${code}</span><h3 id="name-x-${oid}">${esc(o.name)}</h3><span class="from">${esc(
+          site.name
+        )}</span>${o.recommended ? `<span class="rec">Recommended</span>` : ""}</div>
+        <div class="opt-text" id="desc-x-${oid}">${optionText(o, o.recommended ? (o.reason ?? null) : null)}</div>
+        <label class="choose"><input type="checkbox" name="extras" id="opt-x-${oid}" value="${esc(o.id)}" data-code="${code}" data-from="${esc(
+          site.id
+        )}" aria-describedby="name-x-${oid} desc-x-${oid}"><span>Add ${code}</span></label>
+      </article>`
+    })
+    .join("")
+  return `<section class="row" id="row-extras" data-row="extras" data-kind="extras" aria-labelledby="row-extras-h">
+    <div class="row-h"><span class="letter">X</span><h2 id="row-extras-h">${esc(title)}</h2><p>${esc(row.purpose)}</p></div>
+    <div class="opts" role="group" aria-labelledby="row-extras-h">${options}</div>
+    <div class="row-note"><label for="note-extras">Note on the extras, if any</label><textarea id="note-extras" data-row="extras" rows="2"></textarea></div>
+  </section>`
+}
+
+function renderStudy(data) {
+  const card = (letter) => {
+    const site = data.sites[letter]
+    const s = site.study
+    const colours = s.colours
+      .map((c) => `${swatch(c.hex)}${esc(c.name ?? c.hex.toLowerCase())}`)
+      .join(" · ")
+    const more = (s.more ?? [])
+      .map((m) => `<dt>${esc(m.label)}</dt><dd>${esc(m.value)}</dd>`)
+      .join("")
+    return `<article class="ref">
+      <h3>${esc(site.name)}${site.url ? ` <span class="ref-url">${siteLink(site.url)}</span>` : ""}</h3>
+      <dl>
+        <dt>Type</dt><dd>${esc(s.type)}</dd>
+        <dt>Colour</dt><dd>${colours}</dd>
+        <dt>Layout</dt><dd>${esc(s.layout)}</dd>
+        <dt>Motion</dt><dd>${esc(s.motion)}</dd>
+        ${more}
+      </dl>
+    </article>`
+  }
+  const principles = data.study.principles
+    .map((x) => `<li><b>${esc(x.title)}</b><span>${esc(x.text)}</span></li>`)
+    .join("")
+  const avoid = data.study.avoid.map((x) => `<li>${esc(x)}</li>`).join("")
+  return `<section class="study" aria-labelledby="study-h">
+    <span class="kicker">The homework</span>
+    <h2 id="study-h">${esc(data.study.title ?? "What makes the two sites feel expensive")}</h2>
+    <div class="refs">${card("A")}${card("B")}</div>
+    <ol class="principles">${principles}</ol>
+    <div class="verdict"><span class="kicker">What taste says to avoid</span><ul>${avoid}</ul></div>
+  </section>`
 }
 
 export function renderDirection(data, paths) {
-  const fonts = [
-    ...new Set(
-      data.rows.flatMap((r) =>
-        ["A", "B"].map((l) => r.options[l].type?.usedFont).filter(isText)
-      )
-    ),
-  ]
+  const choiceRows = data.rows.filter((r) => r.id !== "extras")
+  const letters = rowLetters(data.rows.map((r) => r.id))
+  const rows = data.rows
+    .map((r) =>
+      r.id === "extras"
+        ? renderExtrasRow(r, data, paths)
+        : renderChoiceRow(r, choiceRows.indexOf(r) + 1, letters[r.id], data, paths)
+    )
+    .join("\n")
+  const extras = data.rows.find((r) => r.id === "extras")
+  const set = [
+    ...choiceRows.map((r, i) => `${r.recommended}${i + 1}`),
+    ...(extras
+      ? extras.options.map((o, i) => (o.recommended ? `X${i + 1}` : null)).filter(Boolean)
+      : []),
+  ].join(" · ")
+  const header = top({
+    kicker:
+      data.kicker ??
+      `Portfolio · ${data.sites.A.name} and ${data.sites.B.name} · choose before I build`,
+    title: "Pick the portfolio this version becomes.",
+    intro: `Each row below is one decision. Every option is drawn live in its <b>real fonts and colours</b>, filled with <b>your real content</b>, with the reference it comes from shown small beneath it. Pick one per row, from ${esc(
+      data.sites.A.name
+    )} (A) or ${esc(data.sites.B.name)} (B); the extras row takes several.`,
+    how: [
+      "Codes name the site and the row: A3 is site A's option in row 3",
+      "Taste's verdict sits under every option; the choice is yours",
+      `When you are done, <a href="#answers-h">copy your answers</a> at the end`,
+    ],
+  })
   return {
     title: "Choose the direction",
-    intro: `One choice per row, from ${data.sites.A.name} or ${data.sites.B.name}. Taste's verdict and recommendation sit under each option; the choice is yours. Add a note to any row.`,
-    overview: `<ul>${data.rows
-      .map((r) => `<li><a href="#row-${slugId(r.id)}">${esc(rowTitle(r))}</a></li>`)
-      .join("")}</ul>`,
-    body: data.rows.map((r) => renderRow(r, data, paths)).join("\n"),
-    fonts,
+    fonts: fontsOf(data),
+    body: `${header}
+  ${renderStudy(data).replace("</section>", `<div class="recset" aria-label="Taste's set"><span><b>Taste's set</b>${esc(set)}</span></div></section>`)}
+  ${rows}`,
   }
-}
-
-export function googleFontsHref(families) {
-  if (families.length === 0) return null
-  const query = families
-    .map((f) => `family=${encodeURIComponent(f.trim()).replace(/%20/g, "+")}`)
-    .join("&")
-  return `https://fonts.googleapis.com/css2?${query}&display=swap`
 }
 
 export function buildPage(board, data, { refsDir, outFile, template }) {
@@ -514,15 +817,12 @@ export function buildPage(board, data, { refsDir, outFile, template }) {
   const paths = { refsDir, outFile }
   const page =
     board === "finalists" ? renderFinalists(data, paths) : renderDirection(data, paths)
-  const href = googleFontsHref(page.fonts)
-  const fontLinks = href
-    ? `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="${esc(href)}">`
-    : ""
+  const fontLinks = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="${esc(
+    googleFontsHref(page.fonts)
+  )}">`
   const fill = {
     "<!-- board:title -->": esc(page.title),
     "<!-- board:fonts -->": fontLinks,
-    "<!-- board:intro -->": esc(page.intro),
-    "<!-- board:overview -->": page.overview,
     "<!-- board:content -->": page.body,
   }
   let html = template ?? readFileSync(join(here, "template.html"), "utf8")
@@ -558,28 +858,47 @@ export function validateAnswers(board, answers, data) {
   if (!choices || typeof choices !== "object" || Array.isArray(choices)) {
     return [...p, "choices: expected one entry per row, keyed by row id"]
   }
-  const want = data.rows.map((r) => r.id)
+  const choiceRows = data.rows.filter((r) => r.id !== "extras")
+  const want = choiceRows.map((r) => r.id)
   want
     .filter((id) => !(id in choices))
     .forEach((id) => p.push(`choices: no choice for "${id}"`))
   Object.keys(choices)
     .filter((id) => !want.includes(id))
     .forEach((id) => p.push(`choices: "${id}" is not a row on the board`))
-  for (const id of want) {
-    const c = choices[id]
-    if (!c) continue
+  choiceRows.forEach((row, i) => {
+    const c = choices[row.id]
+    if (!c) return
     if (c.site !== "A" && c.site !== "B") {
-      p.push(`choices "${id}".site: expected "A" or "B"`)
-      continue
+      p.push(`choices "${row.id}".site: expected "A" or "B"`)
+      return
     }
     if (c.from !== undefined && c.from !== data.sites[c.site].id) {
       p.push(
-        `choices "${id}": site ${c.site} is ${data.sites[c.site].id}, not "${c.from}"`
+        `choices "${row.id}": site ${c.site} is ${data.sites[c.site].id}, not "${c.from}"`
       )
     }
+    if (c.code !== undefined && c.code !== `${c.site}${i + 1}`)
+      p.push(`choices "${row.id}".code: expected ${c.site}${i + 1}, found ${c.code}`)
     if (c.note !== undefined && typeof c.note !== "string")
-      p.push(`choices "${id}".note: expected text`)
-  }
+      p.push(`choices "${row.id}".note: expected text`)
+  })
+  const extras = data.rows.find((r) => r.id === "extras")
+  if (answers.extras !== undefined) {
+    if (!extras) p.push("extras: this board has no extras row")
+    else if (!Array.isArray(answers.extras?.picked))
+      p.push("extras.picked: expected a list of extra ids")
+    else {
+      const ids = extras.options.map((o) => o.id)
+      const picked = answers.extras.picked
+      if (new Set(picked).size !== picked.length)
+        p.push("extras.picked: an extra is listed twice")
+      picked
+        .filter((id) => !ids.includes(id))
+        .forEach((id) => p.push(`extras.picked: "${id}" is not on the board`))
+    }
+  } else if (extras)
+    p.push("extras: missing, expected { picked: [...] } (it may be empty)")
   return p
 }
 

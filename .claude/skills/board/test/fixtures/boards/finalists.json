@@ -41,7 +41,21 @@
       ],
       "strongestIdea": "The name splits across the hero and reassembles as you scroll.",
       "borrow": "Split the name the same way, but let the halves meet as you scroll.",
-      "risk": "The split headline needs care to stay readable at 390px."
+      "risk": "The split headline needs care to stay readable at 390px.",
+      "measured": [
+        {
+          "label": "Layout",
+          "value": "Name split across the first screen, uneven project grid, name-again footer"
+        },
+        {
+          "label": "Motion",
+          "value": "Slow staggered entrances, one split of the name on scroll"
+        },
+        {
+          "label": "Built with",
+          "value": "Astro, GSAP"
+        }
+      ]
     },
     {
       "id": "cedar",
@@ -84,7 +98,21 @@
       ],
       "strongestIdea": "Projects sit on a horizontal rail that pins while you scroll.",
       "borrow": "Keep the pinned rail, with a depth move instead of a slide.",
-      "risk": "Pinned rails are easy to get wrong on touch screens."
+      "risk": "Pinned rails are easy to get wrong on touch screens.",
+      "measured": [
+        {
+          "label": "Layout",
+          "value": "Statement with a project list, a pinned project rail, a short form"
+        },
+        {
+          "label": "Motion",
+          "value": "Sideways slides on the rail, quick fades elsewhere"
+        },
+        {
+          "label": "Built with",
+          "value": "Next.js, Lenis"
+        }
+      ]
     },
     {
       "id": "birch",
@@ -127,7 +155,21 @@
       ],
       "strongestIdea": "A plain index of work with large type and nothing else.",
       "borrow": "The index, set at a far larger size.",
-      "risk": "Too quiet to carry a portfolio on its own."
+      "risk": "Too quiet to carry a portfolio on its own.",
+      "measured": [
+        {
+          "label": "Layout",
+          "value": "A plain index of work in large type, one column"
+        },
+        {
+          "label": "Motion",
+          "value": "Almost none: hover underlines"
+        },
+        {
+          "label": "Built with",
+          "value": "Eleventy"
+        }
+      ]
     },
     {
       "id": "dogwood",
@@ -170,7 +212,21 @@
       ],
       "strongestIdea": "A calm reading layout that works well on phones.",
       "borrow": "The reading measure, for the about section.",
-      "risk": "Little that would make the page memorable."
+      "risk": "Little that would make the page memorable.",
+      "measured": [
+        {
+          "label": "Layout",
+          "value": "A calm reading column with images between paragraphs"
+        },
+        {
+          "label": "Motion",
+          "value": "Gentle fades as sections arrive"
+        },
+        {
+          "label": "Built with",
+          "value": "WordPress"
+        }
+      ]
     },
     {
       "id": "elm",
@@ -213,7 +269,21 @@
       ],
       "strongestIdea": "Every section changes the whole page colour as it arrives.",
       "borrow": "Colour by chapter, taken from each project.",
-      "risk": "Heavy scripts slow the first screen."
+      "risk": "Heavy scripts slow the first screen.",
+      "measured": [
+        {
+          "label": "Layout",
+          "value": "Every section a full screen in its own colour"
+        },
+        {
+          "label": "Motion",
+          "value": "Colour changes between chapters, timed to scroll"
+        },
+        {
+          "label": "Built with",
+          "value": "Nuxt, GSAP"
+        }
+      ]
     }
   ],
   "recommended": ["alder", "cedar"]
