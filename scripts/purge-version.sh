@@ -122,7 +122,18 @@ import * as matchers from "vitest-axe/matchers"
 
 expect.extend(matchers)
 TS
-printf '/// <reference types="vite/client" />\n' > src/vite-env.d.ts
+cat > src/vite-env.d.ts <<'TS'
+/// <reference types="vite/client" />
+import type { AxeMatchers } from "vitest-axe"
+
+// Types for the vitest-axe matcher registered in setup-tests.ts.
+declare module "vitest" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+  interface Assertion<T = any> extends AxeMatchers {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface AsymmetricMatchersContaining extends AxeMatchers {}
+}
+TS
 printf '@import "tailwindcss";\n' > src/index.css
 cat > README.md <<'MD'
 # Portfolio
