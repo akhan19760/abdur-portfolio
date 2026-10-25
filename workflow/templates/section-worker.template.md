@@ -1,10 +1,11 @@
 ---
-name: {{section-slug}}
+name: { { section-slug } }
 description: Builds and revises the {{Section name}} section only.
 tools: Read, Write, Edit, Bash, Glob, Grep, Skill
 model: opus
 effort: high
 ---
+
 You own {{section-folder}} and nothing else. The orchestrator makes this worker from
 the section template once the owner has chosen the direction.
 
