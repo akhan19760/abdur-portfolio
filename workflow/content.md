@@ -4,6 +4,7 @@ Drawn from the current site, facts only. Wording is plain and neutral on purpose
 Correct anything that is wrong or out of date. Nothing here is a theme or a tagline.
 
 ## Person
+
 - Name: Abdur Rahim (confirmed by the owner)
 - Role: Frontend Developer
 - Location: Karachi, Pakistan
@@ -13,18 +14,22 @@ Correct anything that is wrong or out of date. Nothing here is a theme or a tagl
 - Availability: open to work, full-time or contract, remote or on-site
 
 ## Contact
+
 - Email: kabdurrahim706@gmail.com
 - GitHub: https://github.com/akhan19760
 - LinkedIn: https://linkedin.com/in/khanabdur
 
 ## Experience
+
 - Qatar Datamation Systems, 2025 to now: Software Consultant, frontend and full stack
 - Veraqor, 2023 to 2025: Software Developer, frontend engineer
 
 ## Education
+
 - Institute of Business Administration, Karachi, 2019 to 2023: BS Computer Science
 
 ## Projects
+
 Each project below needs a link and a screenshot, which are still missing.
 
 1. SCEAI Platform, 2023 to now, frontend engineer
@@ -47,6 +52,7 @@ Each project below needs a link and a screenshot, which are still missing.
    - Stack: React, TypeScript, OpenAI, Stripe, Firebase, Material UI, ECharts
 
 ## Story beats (facts only)
+
 - Computer science degree at IBA Karachi, started 2019
 - First shipped work: a learning platform for Kazakhstan's Ministry of Education
 - Moved from Next.js to TanStack Start mid-project on AccurateSpend
