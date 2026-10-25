@@ -27,3 +27,6 @@ references/
 dist
 tsconfig.app.tsbuildinfo
 tsconfig.node.tsbuildinfo
+
+# Taste skill working folder (per version; the skill itself in .claude/skills is committed)
+.taste-skill/
