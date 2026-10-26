@@ -142,10 +142,20 @@ The portfolio of Abdur Rahim. Built with the workflow in `workflow/`.
 MD
 
 # Isolation for agents working in this folder. Local settings stay out of git.
+# The allow rules cover the commands the workflow runs routinely, so an
+# interactive session does not ask about each one; deny rules still win.
 cat > .claude/settings.local.json <<'JSON'
 {
   "permissions": {
     "blockReadsOutsideWorkingDirectories": true,
+    "allow": [
+      "Bash(node scripts/*)",
+      "Bash(node .claude/skills/*)",
+      "Bash(pnpm build *)",
+      "Bash(pnpm test *)",
+      "Bash(pnpm preview *)",
+      "Bash(pnpm lint *)"
+    ],
     "deny": [
       "Bash(git show *)",
       "Bash(git cat-file *)",

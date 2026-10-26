@@ -21,7 +21,9 @@ configuration and the workflow kit, and commits:
 - blank `DIRECTION.md` and `STATE.md`, and empty `refs/`, `feedback/` and `boards/`
 - a blank app shell that builds and passes one test
 - `.claude/settings.local.json` (not committed), which blocks reads outside the
-  folder and git commands that could show old code
+  folder and git commands that could show old code, and allows the commands the
+  workflow runs routinely (`node scripts/*`, `node .claude/skills/*`, and
+  `pnpm build`, `test`, `preview` and `lint`)
 
 `leak-scan.mjs` compares the new folder with every earlier version branch and fails
 on any colour, font name, copy string or distinctive file name carried over.
