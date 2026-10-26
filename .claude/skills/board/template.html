@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title><!-- board:title --></title>
+    <!-- board:fonts -->
+    <style>
+      /* The board's look follows reference/lootledger-board.html: a dark ground,
+         one chrome face, a huge headline, rows with a letter badge, and options
+         drawn as live mocks in their own fonts and colours. */
+      :root {
+        color-scheme: dark;
+        --bg: #0c0c0e;
+        --panel: #141417;
+        --line: #26262b;
+        --fg: #ebe9e4;
+        --muted: #8f8d88;
+        --soft: #c9c7c1;
+        --chrome: "Schibsted Grotesk", "Segoe UI", system-ui, sans-serif;
+        --bad: #ff5b4d;
+        --good: #8fd16a;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font: 400 16px/1.55 var(--chrome);
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        padding-block: 0 96px;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 1320px;
+        margin: 0 auto;
+      }
+      h1,
+      h2,
+      h3,
+      p,
+      ul,
+      ol,
+      dl,
+      figure {
+        margin: 0;
+      }
+      ul,
+      ol {
+        padding: 0;
+        list-style: none;
+      }
+      a {
+        color: inherit;
+        text-underline-offset: 3px;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+      }
+      :focus-visible {
+        outline: 2px solid var(--fg);
+        outline-offset: 3px;
+      }
+
+      /* ---------- board chrome ---------- */
+      .top {
+        padding-block: 72px 40px;
+        display: grid;
+        gap: 28px;
+        border-bottom: 1px solid var(--line);
+      }
+      .top h1 {
+        font: 700 clamp(2.6rem, 7vw, 5.6rem) / 0.92 var(--chrome);
+        letter-spacing: -0.035em;
+        text-wrap: balance;
+        max-width: 14ch;
+      }
+      .top p {
+        max-width: 64ch;
+        color: var(--muted);
+        font-size: 1.06rem;
+      }
+      .top p b {
+        color: var(--fg);
+        font-weight: 600;
+      }
+      .how {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 22px;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+      .how span::before {
+        content: "";
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        background: var(--fg);
+        margin-right: 8px;
+        vertical-align: 1px;
+      }
+      .kicker {
+        font: 600 0.74rem/1 var(--chrome);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .study {
+        padding-block: 56px;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        gap: 36px;
+      }
+      .study h2,
+      .row-h h2,
+      .answers h2 {
+        font: 700 clamp(1.8rem, 3.6vw, 2.8rem) / 1 var(--chrome);
+        letter-spacing: -0.025em;
+      }
+      .refs {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+        gap: 16px;
+      }
+      .ref {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        padding: 24px;
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+      .ref h3 {
+        font: 700 1.25rem/1.1 var(--chrome);
+      }
+      .ref-url {
+        font: 400 0.9rem/1 var(--chrome);
+        color: var(--muted);
+        margin-left: 6px;
+      }
+      .ref dl {
+        display: grid;
+        grid-template-columns: 7.5rem 1fr;
+        gap: 8px 14px;
+        font-size: 0.92rem;
+      }
+      .ref dt {
+        color: var(--muted);
+      }
+      .ref dd {
+        margin: 0;
+        min-width: 0;
+      }
+      .sw {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        vertical-align: -1px;
+        margin-right: 4px;
+        border: 1px solid #fff3;
+      }
+      /* Separators sit on the items, so a short last row leaves plain ground. */
+      .principles {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        border-top: 1px solid var(--line);
+        border-left: 1px solid var(--line);
+      }
+      .principles li {
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 22px;
+        display: grid;
+        gap: 8px;
+        align-content: start;
+      }
+      .principles b {
+        font: 700 1.02rem/1.25 var(--chrome);
+      }
+      .principles span {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+      .verdict {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        padding: 26px;
+        display: grid;
+        gap: 14px;
+      }
+      .verdict ul {
+        display: grid;
+        gap: 8px;
+        font-size: 0.95rem;
+      }
+      .verdict li {
+        padding-left: 18px;
+        position: relative;
+        max-width: 80ch;
+      }
+      .verdict li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.62em;
+        width: 8px;
+        height: 2px;
+        background: var(--bad);
+      }
+      .recset {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .recset span {
+        border: 1px solid var(--line);
+        padding: 6px 10px;
+        font-size: 0.86rem;
+      }
+      .recset b {
+        font-weight: 700;
+        margin-right: 6px;
+      }
+
+      /* ---------- rows and options ---------- */
+      .row {
+        padding-block: 64px 8px;
+        display: grid;
+        gap: 28px;
+      }
+      .row-h {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 6px 18px;
+        align-items: baseline;
+        border-top: 1px solid var(--line);
+        padding-top: 28px;
+      }
+      .row-h .letter {
+        font: 700 0.8rem/1 var(--chrome);
+        letter-spacing: 0.14em;
+        color: var(--bg);
+        background: var(--fg);
+        padding: 6px 8px;
+        align-self: center;
+      }
+      .row-h p {
+        grid-column: 2;
+        color: var(--muted);
+        max-width: 70ch;
+      }
+      .opts {
+        display: grid;
+        gap: 40px 24px;
+        grid-template-columns: minmax(0, 1fr);
+      }
+      @media (min-width: 820px) {
+        .opts {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      .opt {
+        display: grid;
+        gap: 12px;
+        align-content: start;
+        min-width: 0;
+        cursor: pointer;
+      }
+      .opt-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .code {
+        font: 700 0.78rem/1 var(--chrome);
+        letter-spacing: 0.08em;
+        border: 1px solid var(--fg);
+        padding: 5px 7px;
+      }
+      .opt h3,
+      .site h3 {
+        font: 700 1.28rem/1.1 var(--chrome);
+        letter-spacing: -0.01em;
+      }
+      .from {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .rec {
+        font: 600 0.7rem/1 var(--chrome);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        background: var(--fg);
+        color: var(--bg);
+        padding: 5px 8px;
+      }
+      .opt-text {
+        display: grid;
+        gap: 8px;
+      }
+      .opt p {
+        color: var(--soft);
+        font-size: 0.95rem;
+        max-width: 62ch;
+      }
+      .opt p b {
+        color: var(--fg);
+      }
+      .opt p.feels {
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+      .opt p.taste {
+        font-size: 0.86rem;
+        padding-left: 18px;
+        position: relative;
+      }
+      .opt p.taste::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.62em;
+        width: 8px;
+        height: 2px;
+        background: var(--good);
+      }
+      .opt p.taste.waive::before {
+        background: var(--bad);
+      }
+      .opt p.rec-why::before {
+        background: var(--fg);
+      }
+      .opt p.fontpair {
+        color: var(--fg);
+      }
+
+      /* "As seen on": the reference's own screenshots, small */
+      .seen {
+        display: grid;
+        gap: 6px;
+      }
+      .seen-shots {
+        display: flex;
+        gap: 6px;
+        align-items: flex-start;
+      }
+      .seen .shot img {
+        height: 84px;
+        width: auto;
+        object-fit: cover;
+        object-position: top;
+        outline: 1px solid var(--line);
+      }
+      .seen .shot.desktop img {
+        max-width: 160px;
+      }
+      .seen .shot.mobile img {
+        max-width: 48px;
+      }
+      .seen figcaption {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      /* Choosing */
+      .choose {
+        justify-self: start;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid var(--line);
+        padding: 9px 14px;
+        font: 600 0.86rem/1 var(--chrome);
+        letter-spacing: 0.04em;
+        cursor: pointer;
+      }
+      .choose:hover {
+        border-color: var(--fg);
+      }
+      .choose input {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        accent-color: var(--fg);
+      }
+      .choose:has(input:checked) {
+        background: var(--fg);
+        color: var(--bg);
+        border-color: var(--fg);
+      }
+      .choose:has(input:checked) input {
+        accent-color: var(--bg);
+      }
+      .choose:has(input:disabled) {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .opt:has(input:checked) .mock {
+        outline: 2px solid var(--fg);
+        outline-offset: 4px;
+      }
+      .row-note {
+        display: grid;
+        gap: 6px;
+        max-width: 72ch;
+      }
+      .row-note label,
+      .answers label {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        font: 400 0.95rem/1.5 var(--chrome);
+        color: var(--fg);
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 0;
+      }
+      textarea:focus-visible {
+        border-color: var(--fg);
+      }
+
+      /* ---------- finalists ---------- */
+      .sites {
+        display: grid;
+        gap: 24px;
+      }
+      .site .ref {
+        gap: 22px;
+      }
+      .site-head {
+        display: grid;
+        gap: 8px;
+      }
+      .site-line {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      .site-line b {
+        color: var(--fg);
+      }
+      .site-body {
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 32px;
+        align-items: start;
+      }
+      .moments {
+        display: grid;
+        gap: 16px;
+      }
+      .moment {
+        display: grid;
+        gap: 6px;
+      }
+      .moment-shots {
+        display: grid;
+        grid-template-columns: minmax(0, 4fr) minmax(0, 1fr);
+        gap: 8px;
+        align-items: start;
+      }
+      .moment-shots img {
+        width: 100%;
+        outline: 1px solid var(--line);
+      }
+      .moment figcaption {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+      .facts {
+        display: grid;
+        gap: 22px;
+      }
+      .scores {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.92rem;
+        font-variant-numeric: tabular-nums;
+      }
+      .scores caption {
+        text-align: left;
+        color: var(--muted);
+        padding-bottom: 6px;
+      }
+      .scores th,
+      .scores td {
+        text-align: left;
+        padding: 6px 10px 6px 0;
+        font-weight: 400;
+        border-top: 1px solid var(--line);
+      }
+      .scores thead th {
+        color: var(--muted);
+        border-top: 0;
+      }
+      .scores td {
+        text-align: right;
+        white-space: nowrap;
+      }
+      .scores tfoot th,
+      .scores tfoot td {
+        font-weight: 700;
+      }
+      .site:has(input:checked) .ref {
+        border-color: var(--fg);
+      }
+
+      /* ---------- answers ---------- */
+      .answers {
+        margin-top: 72px;
+        padding-top: 28px;
+        border-top: 1px solid var(--line);
+        display: grid;
+        gap: 16px;
+        max-width: 80ch;
+      }
+      .copy-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 20px;
+      }
+      button {
+        font: 700 0.95rem/1 var(--chrome);
+        letter-spacing: 0.04em;
+        padding: 14px 22px;
+        border: 0;
+        border-radius: 0;
+        background: var(--fg);
+        color: var(--bg);
+        cursor: pointer;
+      }
+      button:hover {
+        background: #fff;
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+      #status {
+        color: var(--soft);
+      }
+      #answers {
+        min-height: 160px;
+        font-variant-numeric: tabular-nums;
+      }
+      .end {
+        margin-top: 56px;
+        padding-top: 28px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.9rem;
+        display: grid;
+        gap: 6px;
+      }
+
+      /* ---------- mock kit ----------
+         A mock is drawn in its option's look, given as variables on .mock:
+         --o-bg, --o-fg, --o-ac (accent), --o-ink (text on accent), --o-2 (soft),
+         --disp, --dw, --ds (display face, weight, width), --ui, --tw (text face).
+         Sizes are in cqw, so a mock scales with its card. */
+      .mock {
+        position: relative;
+        overflow: hidden;
+        container-type: inline-size;
+        aspect-ratio: 16 / 10;
+        max-width: 100%;
+        isolation: isolate;
+        outline: 1px solid var(--line);
+        background: var(--o-bg, #111);
+        color: var(--o-fg, #eee);
+        font: var(--tw, 400) 2cqw/1.4 var(--ui, system-ui);
+      }
+      .mock.wide {
+        aspect-ratio: 16 / 6;
+      }
+      .mock.tall {
+        aspect-ratio: 16 / 11;
+      }
+      .mock .disp {
+        font-family: var(--disp);
+        font-weight: var(--dw);
+        font-stretch: var(--ds);
+        line-height: 0.9;
+        letter-spacing: -0.01em;
+      }
+      .mock .up {
+        text-transform: uppercase;
+      }
+      .mock .ui {
+        font-family: var(--ui);
+      }
+      .mock .abs {
+        position: absolute;
+      }
+      .mock .lbl {
+        font: 600 1.25cqw/1.2 var(--ui);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .mock .dim {
+        color: color-mix(in oklab, var(--o-fg) 62%, transparent);
+      }
+      .mock .ac {
+        color: var(--o-ac);
+      }
+      .mock .on-ac {
+        background: var(--o-ac);
+        color: var(--o-ink);
+      }
+      .mock .on-soft {
+        background: var(--o-2);
+      }
+      /* Type specimen */
+      .mock .spec {
+        position: absolute;
+        inset: 0;
+        padding: 4.5% 5%;
+        display: grid;
+        align-content: space-between;
+      }
+      .mock .spec .l1 {
+        font-size: 9cqw;
+      }
+      .mock .spec .l2 {
+        font-size: 4.2cqw;
+      }
+      .mock .spec .para {
+        font-size: 2.3cqw;
+        line-height: 1.45;
+        max-width: 72cqw;
+      }
+      .mock .spec .abc {
+        font-family: var(--disp);
+        font-weight: var(--dw);
+        font-size: 2.2cqw;
+        letter-spacing: 0.04em;
+        color: color-mix(in oklab, var(--o-fg) 70%, transparent);
+      }
+      /* Palette blocks */
+      .mock .pal {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: 1.7fr 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+      .mock .pal > div {
+        padding: 3.4cqw;
+        display: grid;
+        align-content: space-between;
+      }
+      .mock .pal .base {
+        grid-row: span 2;
+        background: var(--o-bg);
+        color: var(--o-fg);
+      }
+      .mock .pal .acc {
+        background: var(--o-ac);
+        color: var(--o-ink);
+      }
+      .mock .pal .soft {
+        background: var(--o-2);
+        color: var(--o-fg);
+      }
+      .mock .pal .hex {
+        font: 600 1.4cqw/1.3 var(--ui);
+        letter-spacing: 0.02em;
+        opacity: 0.85;
+      }
+      .mock .pal .big {
+        font: var(--dw) 8cqw/0.88 var(--disp);
+        font-stretch: var(--ds);
+      }
+      .mock .btn {
+        justify-self: start;
+        background: var(--o-ac);
+        color: var(--o-ink);
+        font: 700 1.6cqw/1 var(--ui);
+        padding: 1.3cqw 2cqw;
+        letter-spacing: 0.02em;
+      }
+      .mock .chip {
+        justify-self: start;
+        border: 1px solid currentColor;
+        font: 600 1.3cqw/1 var(--ui);
+        padding: 0.8cqw 1.1cqw;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .mock .stack {
+        display: grid;
+        gap: 1.6cqw;
+      }
+
+      .reduced-note {
+        display: none;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mock *,
+        .mock *::before,
+        .mock *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+        .reduced-note {
+          display: block;
+        }
+        button:active {
+          transform: none;
+        }
+      }
+      @media (max-width: 819px) {
+        .site-body {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      @media (max-width: 560px) {
+        .top {
+          padding-block: 48px 32px;
+        }
+        .ref dl {
+          grid-template-columns: 1fr;
+        }
+        .ref dt {
+          margin-top: 6px;
+        }
+        .row {
+          padding-block: 48px 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <main>
+        <form id="board" data-board="board" novalidate>
+          <!-- board:content -->
+          <section class="answers" aria-labelledby="answers-h">
+            <span class="kicker">Done?</span>
+            <h2 id="answers-h">Your answers</h2>
+            <div class="row-note" data-only="finalists">
+              <label for="note-board"
+                >Anything to tell Claude about these sites, if any</label
+              >
+              <textarea id="note-board" rows="2"></textarea>
+            </div>
+            <div class="copy-row">
+              <button type="button" id="copy">Copy my answers</button>
+              <p id="status" role="status" aria-live="polite"></p>
+            </div>
+            <label for="answers">The block to paste back to Claude</label>
+            <textarea id="answers" readonly rows="8"></textarea>
+          </section>
+        </form>
+      </main>
+      <footer class="end">
+        <span
+          >Built by the board skill. Fonts load from Google Fonts; pictures are the
+          scout's screenshots.</span
+        >
+        <span class="reduced-note"
+          >Your system asks for reduced motion, so the motion demos are paused.</span
+        >
+      </footer>
+    </div>
+    <script>
+      ;(() => {
+        const form = document.getElementById("board")
+        const board = form.dataset.board
+        const status = document.getElementById("status")
+        const out = document.getElementById("answers")
+        const say = (text) => {
+          status.textContent = text
+        }
+        form.querySelectorAll("[data-only]").forEach((el) => {
+          if (el.dataset.only !== board) el.remove()
+        })
+
+        const listNames = (names) =>
+          names.length < 2
+            ? names.join("")
+            : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`
+
+        function finalists() {
+          const boxes = [...form.querySelectorAll('input[name="finalist"]')]
+          const chosen = boxes.filter((b) => b.checked)
+          boxes.forEach((b) => {
+            b.disabled = !b.checked && chosen.length >= 2
+          })
+          return { boxes, chosen }
+        }
+
+        function rows() {
+          const all = [...form.querySelectorAll('section.row[data-kind="choice"]')]
+          const missing = all.filter((r) => !r.querySelector("input:checked"))
+          return { all, missing }
+        }
+
+        function update() {
+          if (board === "finalists") {
+            const { chosen } = finalists()
+            const names = chosen.map((b) => b.dataset.name)
+            if (chosen.length === 0) say("Choose two sites.")
+            else if (chosen.length === 1) say(`Chosen: ${names[0]}. Choose one more.`)
+            else say(`Chosen: ${listNames(names)}. Ready to copy.`)
+          } else {
+            const { all, missing } = rows()
+            say(
+              missing.length === 0
+                ? `All ${all.length} rows chosen. Ready to copy.`
+                : `${all.length - missing.length} of ${all.length} rows chosen.`
+            )
+          }
+        }
+
+        function collect() {
+          if (board === "finalists") {
+            const { boxes, chosen } = finalists()
+            if (chosen.length !== 2) {
+              return {
+                error: `Choose exactly two sites before copying. You have chosen ${chosen.length}.`,
+                focus: boxes.find((b) => !b.checked && !b.disabled) ?? boxes[0],
+              }
+            }
+            return {
+              answers: {
+                board,
+                chosen: chosen.map((b) => b.value),
+                note: document.getElementById("note-board").value.trim(),
+              },
+            }
+          }
+          const { all, missing } = rows()
+          if (missing.length) {
+            const names = missing.map((r) => r.querySelector("h2").textContent.trim())
+            return {
+              error: `No choice yet for ${listNames(names)}.`,
+              focus: missing[0].querySelector("input"),
+            }
+          }
+          const choices = {}
+          for (const r of all) {
+            const picked = r.querySelector("input:checked")
+            choices[r.dataset.row] = {
+              site: picked.value,
+              from: picked.dataset.from,
+              code: picked.dataset.code,
+              note: r.querySelector("textarea").value.trim(),
+            }
+          }
+          const answers = { board, choices }
+          const extras = form.querySelector('section.row[data-kind="extras"]')
+          if (extras) {
+            const picked = [...extras.querySelectorAll("input:checked")]
+            answers.extras = {
+              picked: picked.map((i) => i.value),
+              codes: picked.map((i) => i.dataset.code),
+              note: extras.querySelector("textarea").value.trim(),
+            }
+          }
+          return { answers }
+        }
+
+        async function copy() {
+          const result = collect()
+          if (result.error) {
+            say(result.error)
+            result.focus?.focus()
+            return
+          }
+          const text = JSON.stringify(result.answers, null, 2)
+          out.value = text
+          try {
+            await navigator.clipboard.writeText(text)
+            say("Copied. Paste it back to Claude. The same block is below.")
+          } catch {
+            out.focus()
+            out.select()
+            let copied = false
+            try {
+              copied = document.execCommand("copy")
+            } catch {
+              copied = false
+            }
+            say(
+              copied
+                ? "Copied. Paste it back to Claude."
+                : "Your browser blocked copying. The block below is selected: copy it with Ctrl+C or Cmd+C."
+            )
+          }
+        }
+
+        // A click anywhere on an option chooses it, except on its links and controls.
+        form.addEventListener("click", (e) => {
+          const option = e.target.closest(".opt")
+          if (!option || e.target.closest("a, input, label, textarea, button")) return
+          const input = option.querySelector("input")
+          if (input.disabled) return
+          input.checked = input.type === "checkbox" ? !input.checked : true
+          input.dispatchEvent(new Event("change", { bubbles: true }))
+        })
+        form.addEventListener("change", update)
+        form.addEventListener("submit", (e) => e.preventDefault())
+        document.getElementById("copy").addEventListener("click", copy)
+        update()
+      })()
+    </script>
+  </body>
+</html>

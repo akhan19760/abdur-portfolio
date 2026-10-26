@@ -1,0 +1,800 @@
+{
+  "sites": {
+    "A": {
+      "id": "alder",
+      "name": "Alder (fixture)",
+      "url": "https://alder.test",
+      "study": {
+        "type": "Neue Fixture Grotesk, uppercase, 96px for the name; Fixture Text at 18px for everything else",
+        "colours": [
+          {
+            "hex": "#1f2a24",
+            "name": "forest ink"
+          },
+          {
+            "hex": "#e9efe6",
+            "name": "bone"
+          },
+          {
+            "hex": "#c8f169",
+            "name": "lime"
+          }
+        ],
+        "layout": "Name split across the first screen → facts beside a short story → uneven project grid → the email in big type → the name again as the footer",
+        "motion": "Slow staggered entrances of about 700ms, one signature split of the name on scroll, nothing bounces",
+        "more": [
+          {
+            "label": "Built with",
+            "value": "Astro, GSAP"
+          }
+        ]
+      }
+    },
+    "B": {
+      "id": "cedar",
+      "name": "Cedar (fixture)",
+      "url": "https://cedar.test",
+      "study": {
+        "type": "Fraunces at 88px for headings in mixed case; a plain sans at 17px for text",
+        "colours": [
+          {
+            "hex": "#0f1724",
+            "name": "night"
+          },
+          {
+            "hex": "#f2f4f8",
+            "name": "white"
+          },
+          {
+            "hex": "#5aa9ff",
+            "name": "sky"
+          }
+        ],
+        "layout": "A statement with a project list → one large sentence → a pinned project rail → a short form → a three-column sitemap",
+        "motion": "Sideways slides on the project rail, quick 300ms fades elsewhere",
+        "more": [
+          {
+            "label": "Built with",
+            "value": "Next.js, Lenis"
+          }
+        ]
+      }
+    }
+  },
+  "study": {
+    "principles": [
+      {
+        "title": "One loud face, used huge",
+        "text": "The display face runs at 88 to 96px; everything else is one quiet face at 16 to 18px."
+      },
+      {
+        "title": "Three colours, held to",
+        "text": "A ground, an ink and one accent. The accent marks the one action on each screen."
+      },
+      {
+        "title": "Colour in whole blocks",
+        "text": "A section or the footer turns solid accent, instead of small coloured details everywhere."
+      },
+      {
+        "title": "The work, big",
+        "text": "Each project gets most of a screen with its result in plain words, never a row of thumbnails."
+      },
+      {
+        "title": "One move per section",
+        "text": "A single choreographed moment per section; the rest of the section stays still."
+      },
+      {
+        "title": "A finale footer",
+        "text": "Both end on the name or a sign-off line, not on a list of links."
+      }
+    ],
+    "avoid": [
+      "Small labels above every heading",
+      "Gradients, glows and soft shadows behind text",
+      "Rows of identical project cards",
+      "A headline longer than two lines at phone width"
+    ]
+  },
+  "sections": ["about", "work", "contact"],
+  "rows": [
+    {
+      "id": "type",
+      "purpose": "The loud face for your name and titles, and the quiet one for sentences. Both set the same lines from your content.",
+      "look": {
+        "palette": {
+          "bg": "#0f1724",
+          "fg": "#f2f4f8",
+          "accent": "#5aa9ff",
+          "ink": "#0f1724",
+          "soft": "#1b2638"
+        }
+      },
+      "recommended": "A",
+      "reason": "A heavy grotesk carries a two-word name at full width.",
+      "options": {
+        "A": {
+          "name": "Archivo with Inter",
+          "summary": "A wide, heavy grotesk in capitals for the name, and Inter for every sentence.",
+          "twist": "Set the name at full width on the first screen, tracked tight.",
+          "feelsLike": "a product launch. Confident, technical, loud.",
+          "verdict": {
+            "passes": true
+          },
+          "font": {
+            "display": {
+              "family": "Archivo",
+              "axes": "wdth,wght@62..125,100..900",
+              "weight": 800,
+              "stretch": "112%",
+              "licence": "OFL-1.1"
+            },
+            "text": {
+              "family": "Inter",
+              "axes": "wght@100..900",
+              "weight": 400,
+              "licence": "OFL-1.1"
+            }
+          },
+          "type": {
+            "reference": {
+              "display": "Neue Fixture Grotesk",
+              "text": "Fixture Text"
+            }
+          },
+          "mock": "<div class=\"spec\">\n  <div class=\"l1 disp up\">Abdur Rahim</div>\n  <div class=\"l2 disp dim\">Frontend Developer, Karachi, Pakistan</div>\n  <p class=\"para\">Architected 9 core frontend modules for Qatar's Supreme Council of Economic Affairs: 366 hours in 6 weeks; the only bug-free modules at a national deadline.</p>\n  <div class=\"abc\">ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</div>\n</div>",
+          "shots": {
+            "desktop": "alder/section-01-1440.jpg",
+            "mobile": "alder/section-01-390.jpg"
+          }
+        },
+        "B": {
+          "name": "Fraunces with Instrument Sans",
+          "summary": "A soft, high-contrast serif for headings in mixed case, with a narrow sans for text.",
+          "twist": "Keep the serif for project titles only, so the name stays plain.",
+          "feelsLike": "an editorial magazine. Warm, considered, quieter.",
+          "verdict": {
+            "passes": true
+          },
+          "font": {
+            "display": {
+              "family": "Fraunces",
+              "axes": "wght@100..900",
+              "weight": 600,
+              "licence": "OFL-1.1"
+            },
+            "text": {
+              "family": "Instrument Sans",
+              "axes": "wght@400..700",
+              "weight": 400,
+              "licence": "OFL-1.1"
+            }
+          },
+          "type": {
+            "reference": {
+              "display": "Fraunces",
+              "text": "Fixture Sans"
+            }
+          },
+          "mock": "<div class=\"spec\">\n  <div class=\"l1 disp\">Abdur Rahim</div>\n  <div class=\"l2 disp dim\">Frontend Developer, Karachi, Pakistan</div>\n  <p class=\"para\">Architected 9 core frontend modules for Qatar's Supreme Council of Economic Affairs: 366 hours in 6 weeks; the only bug-free modules at a national deadline.</p>\n  <div class=\"abc\">ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</div>\n</div>",
+          "shots": {
+            "desktop": "cedar/section-01-1440.jpg",
+            "mobile": "cedar/section-01-390.jpg"
+          }
+        }
+      }
+    },
+    {
+      "id": "palette",
+      "purpose": "A ground, an ink, one accent and one soft tint, used as solid blocks.",
+      "look": {
+        "font": {
+          "display": {
+            "family": "Archivo",
+            "axes": "wdth,wght@62..125,100..900",
+            "weight": 800,
+            "stretch": "112%",
+            "licence": "OFL-1.1"
+          },
+          "text": {
+            "family": "Inter",
+            "axes": "wght@100..900",
+            "weight": 400,
+            "licence": "OFL-1.1"
+          }
+        }
+      },
+      "recommended": "B",
+      "reason": "A dark night ground lets the project pages carry the colour.",
+      "options": {
+        "A": {
+          "name": "Forest and lime",
+          "summary": "Deep green ground, bone text and an acid lime for the one action.",
+          "twist": "Warm the lime a little so it reads on phones outdoors.",
+          "feelsLike": "a field notebook. Fresh, outdoorsy, direct.",
+          "verdict": {
+            "passes": true
+          },
+          "palette": {
+            "bg": "#1f2a24",
+            "fg": "#e9efe6",
+            "accent": "#c8f169",
+            "ink": "#1f2a24",
+            "soft": "#2c3a32"
+          },
+          "mock": "<div class=\"pal\">\n  <div class=\"base\"><div class=\"stack\"><span class=\"hex\">Forest #1F2A24</span><div class=\"big\">AccurateSpend</div></div><div class=\"stack\"><span class=\"btn\">See the work</span><span class=\"hex\">Bone #E9EFE6 (text)</span></div></div>\n  <div class=\"acc\"><span class=\"hex\">Lime #C8F169</span><span class=\"chip\">Open to work</span></div>\n  <div class=\"soft\"><span class=\"hex\">Moss #2C3A32</span><span class=\"chip\">React · TypeScript</span></div>\n</div>",
+          "shots": {
+            "desktop": "alder/section-01-1440.jpg",
+            "mobile": "alder/section-01-390.jpg"
+          }
+        },
+        "B": {
+          "name": "Night and sky",
+          "summary": "Night-blue ground, white text and a sky blue for links and the one action.",
+          "twist": "Keep the blue off headings so it always means 'you can press this'.",
+          "feelsLike": "a control room at night. Calm, precise, cool.",
+          "verdict": {
+            "passes": true
+          },
+          "palette": {
+            "bg": "#0f1724",
+            "fg": "#f2f4f8",
+            "accent": "#5aa9ff",
+            "ink": "#0f1724",
+            "soft": "#1b2638"
+          },
+          "mock": "<div class=\"pal\">\n  <div class=\"base\"><div class=\"stack\"><span class=\"hex\">Night #0F1724</span><div class=\"big\">AccurateSpend</div></div><div class=\"stack\"><span class=\"btn\">See the work</span><span class=\"hex\">White #F2F4F8 (text)</span></div></div>\n  <div class=\"acc\"><span class=\"hex\">Sky #5AA9FF</span><span class=\"chip\">Open to work</span></div>\n  <div class=\"soft\"><span class=\"hex\">Slate #1B2638</span><span class=\"chip\">React · TypeScript</span></div>\n</div>",
+          "shots": {
+            "desktop": "cedar/section-01-1440.jpg",
+            "mobile": "cedar/section-01-390.jpg"
+          }
+        }
+      }
+    },
+    {
+      "id": "hero",
+      "purpose": "The first screen. Both are drawn in the same fonts and colours so you compare the layout only.",
+      "look": {
+        "font": {
+          "display": {
+            "family": "Archivo",
+            "axes": "wdth,wght@62..125,100..900",
+            "weight": 800,
+            "stretch": "112%",
+            "licence": "OFL-1.1"
+          },
+          "text": {
+            "family": "Inter",
+            "axes": "wght@100..900",
+            "weight": 400,
+            "licence": "OFL-1.1"
+          }
+        },
+        "palette": {
+          "bg": "#0f1724",
+          "fg": "#f2f4f8",
+          "accent": "#5aa9ff",
+          "ink": "#0f1724",
+          "soft": "#1b2638"
+        }
+      },
+      "recommended": "A",
+      "reason": "The name is the one thing only you have; it should own the first screen.",
+      "options": {
+        "A": {
+          "name": "Name split",
+          "summary": "Your name fills the screen on two lines, the second in the accent, with your role and city in the corners.",
+          "twist": "Let the two lines meet as you scroll into the next section.",
+          "feelsLike": "a poster. Bold, simple, memorable.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-hA .n{position:absolute;left:4cqw;right:4cqw;bottom:5cqw;font-size:15cqw;line-height:.84}\n.fx-hA .r{position:absolute;left:4cqw;top:5cqw;font-size:2.4cqw}\n.fx-hA .m{position:absolute;right:4cqw;top:5cqw;text-align:right}\n</style><div class=\"fx-hA\"><div class=\"r\">Frontend Developer</div><div class=\"m lbl dim\">Karachi, Pakistan<br>Open to work</div><div class=\"n disp up\">Abdur<br><span class=\"ac\">Rahim</span></div></div>",
+          "shots": {
+            "desktop": "alder/section-01-1440.jpg",
+            "mobile": "alder/section-01-390.jpg"
+          }
+        },
+        "B": {
+          "name": "Statement and list",
+          "summary": "Your name and one sentence on the left, your four projects listed on the right.",
+          "twist": "Make each project in the list a link to its section.",
+          "feelsLike": "a well-kept CV. Clear, quick to scan.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-hB{position:absolute;inset:0;display:grid;grid-template-columns:1.25fr 1fr;gap:4cqw;padding:5cqw 4cqw}\n.fx-hB .hd{font-size:7.4cqw;line-height:.95}\n.fx-hB p{margin:2cqw 0 0;font-size:2.2cqw;max-width:40cqw}\n.fx-hB ol{margin:0;padding:0;list-style:none;display:grid;gap:1.4cqw;align-content:end}\n.fx-hB li{display:grid;gap:.4cqw;padding-top:1.2cqw;border-top:1px solid color-mix(in oklab,var(--o-fg) 22%,transparent)}\n.fx-hB li b{font-size:2.3cqw}\n</style><div class=\"fx-hB\"><div><div class=\"hd disp\">Abdur Rahim</div><p class=\"dim\">Frontend Developer in Karachi, Pakistan. Three years shipping React and TypeScript for governments, industry and my own products.</p></div><ol><li><b>SCEAI Platform</b><span class=\"lbl dim\">2023 to now</span></li><li><b>AccurateSpend</b><span class=\"lbl dim\">Personal project</span></li><li><b>Protocoling Suite</b><span class=\"lbl dim\">2023 to 2024</span></li><li><b>KunARCHGPT</b><span class=\"lbl dim\">Personal project</span></li></ol></div>",
+          "shots": {
+            "desktop": "cedar/section-01-1440.jpg",
+            "mobile": "cedar/section-01-390.jpg"
+          }
+        }
+      }
+    },
+    {
+      "id": "section:about",
+      "purpose": "Who you are and what you have done, from your experience and education.",
+      "look": {
+        "font": {
+          "display": {
+            "family": "Archivo",
+            "axes": "wdth,wght@62..125,100..900",
+            "weight": 800,
+            "stretch": "112%",
+            "licence": "OFL-1.1"
+          },
+          "text": {
+            "family": "Inter",
+            "axes": "wght@100..900",
+            "weight": 400,
+            "licence": "OFL-1.1"
+          }
+        },
+        "palette": {
+          "bg": "#0f1724",
+          "fg": "#f2f4f8",
+          "accent": "#5aa9ff",
+          "ink": "#0f1724",
+          "soft": "#1b2638"
+        }
+      },
+      "recommended": "B",
+      "reason": "One sentence says more than two columns of facts.",
+      "options": {
+        "A": {
+          "name": "Facts and story",
+          "summary": "Your jobs and degree as a short timeline beside a paragraph about how you work.",
+          "twist": "Set the dates in the accent so the timeline reads at a glance.",
+          "feelsLike": "a profile page. Thorough, steady.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-aA{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1.3fr;gap:4cqw;padding:5cqw 4cqw}\n.fx-aA dl{margin:0;display:grid;gap:1.6cqw;align-content:start}\n.fx-aA dt{font-size:1.3cqw}.fx-aA dd{margin:0;font-size:2.4cqw}\n.fx-aA .hd{margin:0 0 2cqw;font-size:5.4cqw}\n.fx-aA p{margin:0;font-size:2.1cqw}\n</style><div class=\"fx-aA\"><dl><dt class=\"lbl dim\">2025 to now</dt><dd>Qatar Datamation Systems</dd><dt class=\"lbl dim\">2023 to 2025</dt><dd>Veraqor</dd><dt class=\"lbl dim\">2019 to 2023</dt><dd>IBA Karachi, BS Computer Science</dd></dl><div><div class=\"hd disp up\">About</div><p class=\"dim\">I work between design files and what people touch: motion, states, edge cases and accessibility. My first shipped work was a learning platform for Kazakhstan's Ministry of Education.</p></div></div>",
+          "shots": {
+            "desktop": "alder/section-02-1440.jpg",
+            "mobile": "alder/section-02-390.jpg"
+          }
+        },
+        "B": {
+          "name": "One sentence",
+          "summary": "A single large sentence about the parts of a product you care about.",
+          "twist": "Keep it under 25 words and put the facts in the footer.",
+          "feelsLike": "an opening line. Personal, confident.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-aB{position:absolute;inset:0;display:grid;align-content:center;padding:6cqw}\n.fx-aB p{margin:0;font-size:5cqw;line-height:1.08;max-width:84cqw}\n.fx-aB span{display:block;margin-top:3cqw}\n</style><div class=\"fx-aB\"><p class=\"disp\">I build the parts of a product people touch, and I care most about the states nobody designs for.</p><span class=\"lbl dim\">Abdur Rahim · Karachi, Pakistan</span></div>",
+          "shots": {
+            "desktop": "cedar/section-02-1440.jpg",
+            "mobile": "cedar/section-02-390.jpg"
+          }
+        }
+      }
+    },
+    {
+      "id": "section:work",
+      "purpose": "How your four projects appear: SCEAI Platform, AccurateSpend, Protocoling Suite and KunARCHGPT.",
+      "look": {
+        "font": {
+          "display": {
+            "family": "Archivo",
+            "axes": "wdth,wght@62..125,100..900",
+            "weight": 800,
+            "stretch": "112%",
+            "licence": "OFL-1.1"
+          },
+          "text": {
+            "family": "Inter",
+            "axes": "wght@100..900",
+            "weight": 400,
+            "licence": "OFL-1.1"
+          }
+        },
+        "palette": {
+          "bg": "#0f1724",
+          "fg": "#f2f4f8",
+          "accent": "#5aa9ff",
+          "ink": "#0f1724",
+          "soft": "#1b2638"
+        }
+      },
+      "recommended": "B",
+      "reason": "The rail shows one project at a time, at full size, with its result.",
+      "options": {
+        "A": {
+          "name": "Uneven grid",
+          "summary": "Projects as blocks of different sizes, the biggest for SCEAI Platform in the accent.",
+          "twist": "Size each block by the project's scale, not by a grid.",
+          "feelsLike": "a pinboard. Busy, energetic.",
+          "verdict": {
+            "passes": false,
+            "rule": "No rows of identical cards",
+            "why": "the smaller blocks share one size and read as a card row"
+          },
+          "mock": "<style>\n.fx-wA{position:absolute;inset:0;padding:4cqw;display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:1.2fr 1fr;gap:1.6cqw}\n.fx-wA div{background:var(--o-2);padding:2.4cqw;display:grid;align-content:space-between}\n.fx-wA div:first-child{grid-row:span 2;background:var(--o-ac);color:var(--o-ink)}\n.fx-wA b{font-size:3cqw}.fx-wA div:first-child b{font-size:5.4cqw}\n.fx-wA span{font-size:1.6cqw}\n</style><div class=\"fx-wA\"><div><b class=\"disp\">SCEAI Platform</b><span>9 core frontend modules, 366 hours in 6 weeks</span></div><div><b class=\"disp\">AccurateSpend</b><span>8 modules and 60+ components in about 3 weeks</span></div><div><b class=\"disp\">Protocoling Suite</b><span>Live transcripts in English, Kazakh and Russian</span></div></div>",
+          "shots": {
+            "desktop": "alder/section-03-1440.jpg",
+            "mobile": "alder/section-03-390.jpg"
+          }
+        },
+        "B": {
+          "name": "Project rail",
+          "summary": "One project per screen on a sideways rail, with its years and its result in plain words.",
+          "twist": "Move in depth between projects instead of sliding sideways.",
+          "feelsLike": "a slide show of case studies. Focused, unhurried.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-wB .h{position:absolute;left:4cqw;top:4cqw;font-size:3cqw}\n.fx-wB .rail{position:absolute;left:4cqw;top:12cqw;display:flex;gap:3cqw}\n.fx-wB .it{width:44cqw;flex:none;background:var(--o-2);padding:3cqw;display:grid;gap:1.6cqw;min-height:34cqw;align-content:end}\n.fx-wB .it b{font-size:5cqw}\n.fx-wB .track{position:absolute;left:4cqw;right:4cqw;bottom:3cqw;height:.5cqw;background:color-mix(in oklab,var(--o-fg) 18%,transparent)}\n.fx-wB .track i{display:block;width:25%;height:100%;background:var(--o-ac)}\n</style><div class=\"fx-wB\"><div class=\"h lbl dim\">Selected work · 1 of 4</div><div class=\"rail\"><div class=\"it\"><span class=\"lbl dim\">2023 to now</span><b class=\"disp\">SCEAI Platform</b><span>9 core frontend modules, 366 hours in 6 weeks</span></div><div class=\"it\"><span class=\"lbl dim\">Personal project</span><b class=\"disp\">AccurateSpend</b><span>8 modules and 60+ components in about 3 weeks</span></div></div><div class=\"track\"><i></i></div></div>",
+          "shots": {
+            "desktop": "cedar/section-03-1440.jpg",
+            "mobile": "cedar/section-03-390.jpg"
+          }
+        }
+      }
+    },
+    {
+      "id": "section:contact",
+      "purpose": "How people reach you. You are open to work, full-time or contract.",
+      "look": {
+        "font": {
+          "display": {
+            "family": "Archivo",
+            "axes": "wdth,wght@62..125,100..900",
+            "weight": 800,
+            "stretch": "112%",
+            "licence": "OFL-1.1"
+          },
+          "text": {
+            "family": "Inter",
+            "axes": "wght@100..900",
+            "weight": 400,
+            "licence": "OFL-1.1"
+          }
+        },
+        "palette": {
+          "bg": "#0f1724",
+          "fg": "#f2f4f8",
+          "accent": "#5aa9ff",
+          "ink": "#0f1724",
+          "soft": "#1b2638"
+        }
+      },
+      "recommended": "A",
+      "reason": "The address is the action; a form adds a step.",
+      "options": {
+        "A": {
+          "name": "Big email",
+          "summary": "Your email address in big type with a Copy email button and your GitHub and LinkedIn.",
+          "twist": "Copy the address on click and say so in place.",
+          "feelsLike": "a business card. Direct, no friction.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-cA{position:absolute;inset:0;padding:5cqw 4cqw;display:grid;align-content:space-between}\n.fx-cA .e{font-size:5.4cqw;line-height:1;overflow-wrap:anywhere}\n.fx-cA .row{display:flex;gap:2cqw;align-items:center}\n</style><div class=\"fx-cA\"><span class=\"lbl dim\">Open to work · full-time or contract</span><div class=\"e disp\">kabdurrahim706@gmail.com</div><div class=\"row\"><span class=\"btn\">Copy email</span><span class=\"lbl dim\">GitHub · LinkedIn</span></div></div>",
+          "shots": {
+            "desktop": "alder/section-04-1440.jpg",
+            "mobile": "alder/section-04-390.jpg"
+          }
+        },
+        "B": {
+          "name": "Short form",
+          "summary": "A heading beside three fields and a Send button.",
+          "twist": "Drop the form and keep the heading with the address.",
+          "feelsLike": "a studio's enquiry page. Formal.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-cB{position:absolute;inset:0;padding:5cqw 4cqw;display:grid;grid-template-columns:1fr 1.2fr;gap:4cqw}\n.fx-cB .hd{font-size:5.6cqw}\n.fx-cB .f{display:grid;gap:1.6cqw;align-content:start}\n.fx-cB .in{background:var(--o-2);padding:1.8cqw 2cqw;font-size:1.8cqw}\n.fx-cB .in.big{min-height:14cqw}\n</style><div class=\"fx-cB\"><div><div class=\"hd disp\">Say hello</div><p class=\"dim\" style=\"font-size:2cqw;margin:2cqw 0 0\">Remote or on-site, from Karachi, Pakistan.</p></div><div class=\"f\"><span class=\"in dim\">Your name</span><span class=\"in dim\">Your email</span><span class=\"in big dim\">What are you building?</span><span class=\"btn\">Send</span></div></div>",
+          "shots": {
+            "desktop": "cedar/section-04-1440.jpg",
+            "mobile": "cedar/section-04-390.jpg"
+          }
+        }
+      }
+    },
+    {
+      "id": "footer",
+      "purpose": "How the page ends.",
+      "look": {
+        "font": {
+          "display": {
+            "family": "Archivo",
+            "axes": "wdth,wght@62..125,100..900",
+            "weight": 800,
+            "stretch": "112%",
+            "licence": "OFL-1.1"
+          },
+          "text": {
+            "family": "Inter",
+            "axes": "wght@100..900",
+            "weight": 400,
+            "licence": "OFL-1.1"
+          }
+        },
+        "palette": {
+          "bg": "#0f1724",
+          "fg": "#f2f4f8",
+          "accent": "#5aa9ff",
+          "ink": "#0f1724",
+          "soft": "#1b2638"
+        }
+      },
+      "recommended": "A",
+      "reason": "A designed close, not a sitemap.",
+      "options": {
+        "A": {
+          "name": "Name again",
+          "summary": "A solid accent block with your name across the full width and your email above it.",
+          "twist": "Keep the block the accent colour, the page's only full block of it.",
+          "feelsLike": "a signature. Final, confident.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-fA{position:absolute;inset:0;background:var(--o-ac);color:var(--o-ink)}\n.fx-fA .cols{position:absolute;left:4cqw;right:4cqw;top:4cqw;display:flex;justify-content:space-between;font-size:1.8cqw}\n.fx-fA .g{position:absolute;left:3cqw;right:3cqw;bottom:2cqw;font-size:16cqw;line-height:.82;white-space:nowrap}\n</style><div class=\"fx-fA\"><div class=\"cols\"><span>kabdurrahim706@gmail.com</span><span>GitHub · LinkedIn</span></div><div class=\"g disp up\">Abdur Rahim</div></div>",
+          "shots": {
+            "desktop": "alder/section-05-1440.jpg",
+            "mobile": "alder/section-05-390.jpg"
+          }
+        },
+        "B": {
+          "name": "Sitemap",
+          "summary": "Three short columns of links: work, about and contact.",
+          "twist": "Cut it to your name and two links.",
+          "feelsLike": "a company website. Tidy, expected.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-fB{position:absolute;inset:0;padding:5cqw 4cqw;display:grid;grid-template-columns:repeat(3,1fr);gap:3cqw;align-content:start}\n.fx-fB b{display:block;margin-bottom:1.4cqw}\n.fx-fB span{display:block;font-size:2cqw;line-height:1.6}\n.fx-fB .base{position:absolute;left:4cqw;right:4cqw;bottom:4cqw;display:flex;justify-content:space-between}\n</style><div class=\"fx-fB\"><div><b class=\"lbl dim\">Work</b><span>SCEAI Platform</span><span>AccurateSpend</span><span>Protocoling Suite</span><span>KunARCHGPT</span></div><div><b class=\"lbl dim\">About</b><span>Experience</span><span>Education</span></div><div><b class=\"lbl dim\">Contact</b><span>Email</span><span>GitHub</span><span>LinkedIn</span></div><div class=\"base lbl dim\"><span>Abdur Rahim</span><span>Karachi, Pakistan</span></div></div>",
+          "shots": {
+            "desktop": "cedar/section-05-1440.jpg",
+            "mobile": "cedar/section-05-390.jpg"
+          }
+        }
+      }
+    },
+    {
+      "id": "motion",
+      "purpose": "These demos run live. The one you pick sets the timing for every entrance and change on the page.",
+      "look": {
+        "font": {
+          "display": {
+            "family": "Archivo",
+            "axes": "wdth,wght@62..125,100..900",
+            "weight": 800,
+            "stretch": "112%",
+            "licence": "OFL-1.1"
+          },
+          "text": {
+            "family": "Inter",
+            "axes": "wght@100..900",
+            "weight": 400,
+            "licence": "OFL-1.1"
+          }
+        },
+        "palette": {
+          "bg": "#0f1724",
+          "fg": "#f2f4f8",
+          "accent": "#5aa9ff",
+          "ink": "#0f1724",
+          "soft": "#1b2638"
+        }
+      },
+      "recommended": "A",
+      "reason": "Fewer, slower moves suit a portfolio you read.",
+      "options": {
+        "A": {
+          "name": "Staggered rise",
+          "summary": "Each line rises into place a moment after the last, about 700ms, and nothing bounces.",
+          "twist": "Run it once per section, as it arrives.",
+          "feelsLike": "a film's opening titles. Calm, deliberate.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-mA{position:absolute;inset:0;padding:6cqw;display:grid;align-content:center;gap:1.2cqw}\n.fx-mA span{display:block;overflow:hidden}\n.fx-mA i{display:block;font-style:normal;animation:fx-mA-rise 4.2s cubic-bezier(.16,1,.3,1) infinite}\n.fx-mA span:nth-child(1) i{font-size:9cqw}\n.fx-mA span:nth-child(2) i{font-size:3cqw;animation-delay:.09s}\n.fx-mA span:nth-child(3) i{font-size:2.2cqw;animation-delay:.18s}\n@keyframes fx-mA-rise{0%,6%{transform:translateY(105%);opacity:0}30%,86%{transform:none;opacity:1}100%{transform:translateY(-30%);opacity:0}}\n</style><div class=\"fx-mA\"><span><i class=\"disp up\">SCEAI Platform</i></span><span><i class=\"ac\">366 hours in 6 weeks</i></span><span><i class=\"dim\">React · TypeScript · Redux Toolkit · SignalR</i></span></div>"
+        },
+        "B": {
+          "name": "Sideways slide",
+          "summary": "Projects slide across in steps, about 600ms each, with an even ease.",
+          "twist": "Keep the slide to the work rail only.",
+          "feelsLike": "flicking through a portfolio case. Brisk.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-mB{position:absolute;inset:0;display:grid;align-content:center;overflow:hidden}\n.fx-mB .track{display:flex;gap:3cqw;padding-left:6cqw;animation:fx-mB-slide 6s cubic-bezier(.65,0,.35,1) infinite}\n.fx-mB .it{flex:none;width:40cqw;background:var(--o-2);padding:3cqw;display:grid;gap:1.4cqw;min-height:26cqw;align-content:end}\n.fx-mB .it b{font-size:4.4cqw}\n@keyframes fx-mB-slide{0%,22%{transform:none}38%,60%{transform:translateX(-43cqw)}76%,100%{transform:translateX(-86cqw)}}\n</style><div class=\"fx-mB\"><div class=\"track\"><div class=\"it\"><span class=\"lbl dim\">2023 to now</span><b class=\"disp\">SCEAI Platform</b></div><div class=\"it\"><span class=\"lbl dim\">Personal project</span><b class=\"disp\">AccurateSpend</b></div><div class=\"it\"><span class=\"lbl dim\">2023 to 2024</span><b class=\"disp\">Protocoling Suite</b></div></div></div>"
+        }
+      }
+    },
+    {
+      "id": "scenes",
+      "purpose": "Whether a part of the page holds still while you scroll through it.",
+      "look": {
+        "font": {
+          "display": {
+            "family": "Archivo",
+            "axes": "wdth,wght@62..125,100..900",
+            "weight": 800,
+            "stretch": "112%",
+            "licence": "OFL-1.1"
+          },
+          "text": {
+            "family": "Inter",
+            "axes": "wght@100..900",
+            "weight": 400,
+            "licence": "OFL-1.1"
+          }
+        },
+        "palette": {
+          "bg": "#0f1724",
+          "fg": "#f2f4f8",
+          "accent": "#5aa9ff",
+          "ink": "#0f1724",
+          "soft": "#1b2638"
+        }
+      },
+      "recommended": "B",
+      "reason": "The pinned rail is the one scene worth building.",
+      "options": {
+        "A": {
+          "name": "No scenes",
+          "summary": "Every section scrolls normally; nothing pins.",
+          "twist": "Add one at the work section if the rail is chosen.",
+          "feelsLike": "a document. Predictable, fast.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-sA{position:absolute;inset:0;padding:4cqw;display:grid;grid-template-rows:repeat(3,1fr);gap:1.6cqw}\n.fx-sA div{background:var(--o-2);padding:2cqw;display:flex;justify-content:space-between;align-items:end}\n.fx-sA b{font-size:3.4cqw}\n</style><div class=\"fx-sA\"><div><b class=\"disp\">About</b><span class=\"lbl dim\">scrolls normally</span></div><div><b class=\"disp\">Work</b><span class=\"lbl dim\">scrolls normally</span></div><div><b class=\"disp\">Contact</b><span class=\"lbl dim\">scrolls normally</span></div></div>"
+        },
+        "B": {
+          "name": "Pinned rail",
+          "summary": "The work section holds on screen while the scroll moves through the four projects.",
+          "twist": "Show the project's result as the scroll moves, not just its name.",
+          "feelsLike": "a guided tour. Focused.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-sB{position:absolute;inset:0}\n.fx-sB .pin{position:absolute;left:4cqw;right:4cqw;top:4cqw;bottom:9cqw;background:var(--o-2);display:grid;grid-template-columns:1fr 1fr;gap:3cqw;padding:3cqw}\n.fx-sB .pin b{font-size:5cqw;align-self:end}\n.fx-sB .pin span{align-self:end;font-size:1.9cqw}\n.fx-sB .bar{position:absolute;left:4cqw;right:4cqw;bottom:4cqw;display:flex;justify-content:space-between;align-items:center}\n.fx-sB .bar i{display:block;width:60cqw;height:.5cqw;background:color-mix(in oklab,var(--o-fg) 18%,transparent);position:relative}\n.fx-sB .bar i::after{content:\"\";position:absolute;inset:0 auto 0 0;width:50%;background:var(--o-ac)}\n</style><div class=\"fx-sB\"><div class=\"pin\"><b class=\"disp\">AccurateSpend</b><span class=\"dim\">Held on screen while the scroll moves through four projects, then lets go.</span></div><div class=\"bar lbl dim\"><span>Pinned · 2 of 4</span><i></i></div></div>",
+          "shots": {
+            "desktop": "cedar/section-03-1440.jpg",
+            "mobile": "cedar/section-03-390.jpg"
+          }
+        }
+      }
+    },
+    {
+      "id": "live",
+      "purpose": "One thing a visitor can do, made from your real content.",
+      "look": {
+        "font": {
+          "display": {
+            "family": "Archivo",
+            "axes": "wdth,wght@62..125,100..900",
+            "weight": 800,
+            "stretch": "112%",
+            "licence": "OFL-1.1"
+          },
+          "text": {
+            "family": "Inter",
+            "axes": "wght@100..900",
+            "weight": 400,
+            "licence": "OFL-1.1"
+          }
+        },
+        "palette": {
+          "bg": "#0f1724",
+          "fg": "#f2f4f8",
+          "accent": "#5aa9ff",
+          "ink": "#0f1724",
+          "soft": "#1b2638"
+        }
+      },
+      "recommended": "A",
+      "reason": "It uses your projects, which no other portfolio has.",
+      "options": {
+        "A": {
+          "name": "Project colours",
+          "summary": "Pick a project and the page takes on that project's colour.",
+          "twist": "Use each project's own interface colour.",
+          "feelsLike": "trying on a theme. Playful, specific.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-lA{position:absolute;inset:0;padding:4cqw;display:grid;grid-template-rows:auto 1fr;gap:3cqw}\n.fx-lA .chips{display:flex;gap:1.2cqw;flex-wrap:wrap}\n.fx-lA .chip.on{background:var(--o-ac);color:var(--o-ink);border-color:var(--o-ac)}\n.fx-lA .stage{background:var(--o-ac);color:var(--o-ink);padding:3cqw;display:grid;align-content:space-between}\n.fx-lA .stage b{font-size:6cqw}\n</style><div class=\"fx-lA\"><div class=\"chips\"><span class=\"chip\">SCEAI Platform</span><span class=\"chip on\">AccurateSpend</span><span class=\"chip\">Protocoling Suite</span><span class=\"chip\">KunARCHGPT</span></div><div class=\"stage\"><span class=\"lbl\">The page takes this project's colour</span><b class=\"disp\">AccurateSpend</b></div></div>"
+        },
+        "B": {
+          "name": "Karachi time",
+          "summary": "Your local time in Karachi and whether you are at work right now.",
+          "twist": "Say when you usually reply instead of a ticking clock.",
+          "feelsLike": "a note on the door. Human, small.",
+          "verdict": {
+            "passes": false,
+            "rule": "One live thing from the idea",
+            "why": "a clock suits every portfolio, not yours in particular"
+          },
+          "mock": "<style>\n.fx-lB{position:absolute;inset:0;padding:5cqw;display:grid;align-content:center;gap:2cqw}\n.fx-lB b{font-size:14cqw;line-height:.85}\n</style><div class=\"fx-lB\"><span class=\"lbl dim\">Karachi, now</span><b class=\"disp ac\">14:32</b><span style=\"font-size:2.4cqw\">At work right now. Replies within the day.</span></div>"
+        }
+      }
+    },
+    {
+      "id": "extras",
+      "purpose": "Finishing touches, so nowhere feels stock. Pick any number, or none.",
+      "look": {
+        "font": {
+          "display": {
+            "family": "Archivo",
+            "axes": "wdth,wght@62..125,100..900",
+            "weight": 800,
+            "stretch": "112%",
+            "licence": "OFL-1.1"
+          },
+          "text": {
+            "family": "Inter",
+            "axes": "wght@100..900",
+            "weight": 400,
+            "licence": "OFL-1.1"
+          }
+        },
+        "palette": {
+          "bg": "#0f1724",
+          "fg": "#f2f4f8",
+          "accent": "#5aa9ff",
+          "ink": "#0f1724",
+          "soft": "#1b2638"
+        }
+      },
+      "options": [
+        {
+          "id": "copy-toast",
+          "from": "A",
+          "name": "Copy toast",
+          "summary": "Pressing Copy email shows the address and a short confirmation where you pressed.",
+          "twist": "Announce it to screen readers too.",
+          "feelsLike": "a polite receipt.",
+          "verdict": {
+            "passes": true
+          },
+          "recommended": true,
+          "reason": "It closes the contact loop.",
+          "mock": "<style>\n.fx-x1{position:absolute;inset:0;display:grid;place-items:center}\n.fx-x1 .t{background:var(--o-fg);color:var(--o-bg);padding:2.4cqw 3cqw;display:grid;gap:1cqw;width:60cqw}\n.fx-x1 .t b{font-size:3.4cqw}\n</style><div class=\"fx-x1\"><div class=\"t\"><span class=\"lbl\">Copied</span><b class=\"disp\">kabdurrahim706@gmail.com</b><span style=\"font-size:1.8cqw\">Paste it into your mail app.</span></div></div>"
+        },
+        {
+          "id": "stack-filter",
+          "from": "B",
+          "name": "Stack filter",
+          "summary": "Chips for each technology filter the project list to the ones that used it.",
+          "twist": "Use your real stacks from each project.",
+          "feelsLike": "a search for recruiters.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-x2{position:absolute;inset:0;padding:4cqw;display:grid;align-content:center;gap:2cqw}\n.fx-x2 .chips{display:flex;gap:1cqw;flex-wrap:wrap}\n.fx-x2 .chip.on{background:var(--o-fg);color:var(--o-bg);border-color:var(--o-fg)}\n.fx-x2 ul{margin:0;padding:0;list-style:none;display:grid;gap:1cqw;font-size:2.6cqw}\n</style><div class=\"fx-x2\"><div class=\"chips\"><span class=\"chip on\">Zustand</span><span class=\"chip\">SignalR</span><span class=\"chip\">Stripe</span><span class=\"chip\">Whisper API</span></div><ul><li class=\"disp\">SCEAI Platform</li><li class=\"disp\">AccurateSpend</li></ul></div>"
+        },
+        {
+          "id": "shortcuts",
+          "from": "B",
+          "name": "Keyboard shortcuts",
+          "summary": "J and K move between projects, E copies the email.",
+          "twist": "List them in the footer, not in a pop-up.",
+          "feelsLike": "a tool for people who live on the keyboard.",
+          "verdict": {
+            "passes": true
+          },
+          "mock": "<style>\n.fx-x3{position:absolute;inset:0;padding:5cqw;display:grid;align-content:center;gap:1.6cqw}\n.fx-x3 div{display:flex;justify-content:space-between;padding-top:1.2cqw;border-top:1px solid color-mix(in oklab,var(--o-fg) 20%,transparent);font-size:2.2cqw}\n.fx-x3 kbd{font:inherit;background:var(--o-2);padding:.4cqw 1cqw}\n</style><div class=\"fx-x3\"><span class=\"lbl dim\">Keyboard</span><div><span>Next project</span><kbd>J</kbd></div><div><span>Previous project</span><kbd>K</kbd></div><div><span>Copy email</span><kbd>E</kbd></div></div>"
+        },
+        {
+          "id": "not-found",
+          "from": "A",
+          "name": "A designed 404",
+          "summary": "A page-not-found screen that lists your four projects.",
+          "twist": "Set it in the page's own type, not a stock layout.",
+          "feelsLike": "a wrong turn that still lands somewhere.",
+          "verdict": {
+            "passes": true
+          },
+          "recommended": true,
+          "reason": "Nowhere should feel unfinished.",
+          "mock": "<style>\n.fx-x4{position:absolute;inset:0;padding:5cqw;display:grid;align-content:center;gap:2cqw}\n.fx-x4 b{font-size:9cqw}\n</style><div class=\"fx-x4\"><span class=\"lbl dim\">Page not found</span><b class=\"disp\">This page moved.</b><span style=\"font-size:2.2cqw\">The work is still here: SCEAI Platform, AccurateSpend, Protocoling Suite and KunARCHGPT.</span></div>"
+        }
+      ]
+    }
+  ]
+}

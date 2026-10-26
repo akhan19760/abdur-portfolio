@@ -13,6 +13,7 @@
 import { execFileSync } from "node:child_process"
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs"
 import { basename, extname, join, relative, resolve } from "node:path"
+import { lineMatches } from "./lib/leak-match.mjs"
 
 const args = process.argv.slice(2)
 const target = args.find((a) => !a.startsWith("--"))
@@ -159,11 +160,9 @@ const walk = (dir) => {
     else if (TEXT.has(extname(entry)) || entry === "CLAUDE.md") {
       const lines = readFileSync(full, "utf8").split("\n")
       lines.forEach((line, i) => {
-        const low = line.toLowerCase()
         for (const [fp, kind] of fingerprints) {
-          if (!low.includes(fp)) continue
-          // Font names are often ordinary words, so only count them in font rules.
-          if (kind === "font" && !low.includes("font")) continue
+          // Font names are often ordinary words, so they count only where they name a font.
+          if (!lineMatches(line, fp, kind)) continue
           const hit = `${rel}:${i + 1}  ${kind}: ${fp}`
           ;(kind === "copy" || kind === "font" ? hits : warnings).push(hit)
         }

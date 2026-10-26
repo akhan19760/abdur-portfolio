@@ -63,7 +63,12 @@ twist and name the twist in your report. Limits that a twist does not remove:
 
 - Code: adapt only when the licence allows it, or re-implement the behaviour from
   what the page does.
-- Wording, logos and fonts: never reused.
+- Wording and logos: never reused.
+- Fonts: a reference's font may be used only when its licence allows it, for example
+  an open-licence font from Google Fonts (OFL-1.1, Apache-2.0, UFL-1.0, MIT or
+  CC0-1.0). Otherwise the type row of the direction board offers the closest
+  open-licence alternative and names it. The board shows both: the reference's font
+  and the font that would actually be used.
 - Pictures: the reference's own pictures are never reused. Real pictures of this
   subject's world from open collections are welcome, credited as taste requires.
 - The page as a whole must not be recognisable as the reference.

@@ -23,10 +23,17 @@ pnpm-debug.log*
 coverage
 
 #Static Items
-references/
+/references/
 dist
 tsconfig.app.tsbuildinfo
 tsconfig.node.tsbuildinfo
 
 # Taste skill working folder (per version; the skill itself in .claude/skills is committed)
 .taste-skill/
+
+# Reference screenshots stay local to the version folder
+workflow/refs/**/*.png
+workflow/refs/**/*.jpg
+
+# Board skill check output
+.claude/skills/board/test/out/
