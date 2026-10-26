@@ -1,5 +1,18 @@
 {
   "model": "opus",
   "effortLevel": "high",
-  "maxEffortLevel": "xhigh"
+  "maxEffortLevel": "xhigh",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/lock-approved.mjs\""
+          }
+        ]
+      }
+    ]
+  }
 }

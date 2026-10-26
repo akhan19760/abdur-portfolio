@@ -31,7 +31,7 @@ KEEP_ROOT=(
 KEEP_AGENTS=(reference-scout.md design-system.md qa.md)
 KEEP_SKILLS=(design-taste-frontend board new-version)
 # Kept inside workflow: the rules, the facts and the templates.
-KEEP_WORKFLOW=(RULES.md PLAYBOOK.md VERSIONING.md content.md templates)
+KEEP_WORKFLOW=(RULES.md PLAYBOOK.md VERSIONING.md content.md content-assets templates)
 
 in_list() { local x=$1; shift; for k in "$@"; do [ "$k" = "$x" ] && return 0; done; return 1; }
 remove() { git rm -r -q --ignore-unmatch -- "$1"; rm -rf -- "$1"; }

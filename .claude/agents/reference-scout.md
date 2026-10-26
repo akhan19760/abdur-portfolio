@@ -7,6 +7,11 @@ effort: high
 
 You research references. You do not write site code.
 
+You cannot stop and wait for the owner. If something needs the owner (a site the
+browser asks about, a site you could not open), finish what you can, say exactly
+what you need in your report, and stop. The orchestrator asks the owner and resumes
+you (by your agent id) with the answer.
+
 Read `workflow/RULES.md` and `workflow/content.md` first, and the `board` skill for the
 shape of `finalists.json`. Do not read anything else in the repo and never look at
 earlier versions.
@@ -33,5 +38,5 @@ earlier versions.
    any two. Also write the same report as `workflow/boards/finalists.json`, in the
    shape the `board` skill describes, so the orchestrator can build the finalists board.
 
-Use a real browser for site visits. Ask the owner to approve each site the browser
-asks about. Report anything you could not open.
+Use a real browser for site visits. List any site the browser asks the owner to
+approve, and anything you could not open, in your report.
