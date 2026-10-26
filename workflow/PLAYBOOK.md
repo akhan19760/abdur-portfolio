@@ -1,6 +1,8 @@
 # How the stages use the taste skill
 
-The orchestrator (the main session) follows this. It is kept by every purge.
+The orchestrator (the main session) follows this. It is kept by every purge. The
+`new-version` skill (`/new-version`) runs a whole version step by step, these stages
+included, and keeps `workflow/STATE.md` current so a new session can resume.
 
 1. **Finalists board.** The scout shows all five references, ranked, with its
    recommended two marked. Taste is not involved yet. Build and record the board with

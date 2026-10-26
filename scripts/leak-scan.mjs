@@ -141,6 +141,7 @@ for (const key of [...fingerprints.keys()])
 const SKIP_DIRS = new Set([".git", "node_modules", "dist", ".taste-skill", "coverage"])
 const SKIP_PATHS = [
   "workflow/refs",
+  "workflow/content-assets",
   ".claude/skills/design-taste-frontend",
   "scripts/leak-scan.mjs",
 ]

@@ -18,7 +18,7 @@ node scripts/leak-scan.mjs ../abdur-portfolio-vN
 configuration and the workflow kit, and commits:
 
 - a neutral `CLAUDE.md` that points at this folder's rules
-- blank `DIRECTION.md` and `STATE.md`, and empty `refs/` and `feedback/`
+- blank `DIRECTION.md` and `STATE.md`, and empty `refs/`, `feedback/` and `boards/`
 - a blank app shell that builds and passes one test
 - `.claude/settings.local.json` (not committed), which blocks reads outside the
   folder and git commands that could show old code
@@ -33,6 +33,10 @@ cd ../abdur-portfolio-vN
 pnpm install
 claude
 ```
+
+and type `/new-version`. The `new-version` skill runs the version step by step and
+keeps `workflow/STATE.md` current; in a new session, `/new-version` resumes where the
+last one stopped.
 
 ## Finish a version
 
@@ -51,7 +55,8 @@ The version folder can be deleted afterwards.
 
 Kept: `.claude/settings.json`, the kit agents (`reference-scout`, `design-system`,
 `qa`), the kit skills (`design-taste-frontend`, `board`, `new-version`), `.github/`,
-`scripts/`, `workflow/` rules, facts and templates, and the build, lint, format and
+`scripts/`, `workflow/` rules, facts (`content.md`, and the owner's screenshots in
+`content-assets/`) and templates, and the build, lint, format and
 TypeScript configuration with `package.json` and the lock file.
 
 Removed: everything else, including `src/`, `index.html`, `README.md`, the earlier
