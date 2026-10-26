@@ -141,7 +141,7 @@
               "text": "Fixture Text"
             }
           },
-          "mock": "<div class=\"spec\">\n  <div class=\"l1 disp up\">Abdur Rahim</div>\n  <div class=\"l2 disp dim\">Frontend Developer, Karachi, Pakistan</div>\n  <p class=\"para\">Architected 9 core frontend modules for Qatar's Supreme Council of Economic Affairs: 366 hours in 6 weeks, and the only bug-free modules at a national deadline.</p>\n  <div class=\"abc\">ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</div>\n</div>",
+          "mock": "<div class=\"spec\">\n  <div class=\"l1 disp up\">Abdur Rahim</div>\n  <div class=\"l2 disp dim\">Frontend Developer, Karachi, Pakistan</div>\n  <p class=\"para\">Architected 9 core frontend modules for Qatar's Supreme Council of Economic Affairs: 366 hours in 6 weeks; the only bug-free modules at a national deadline.</p>\n  <div class=\"abc\">ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</div>\n</div>",
           "shots": {
             "desktop": "alder/section-01-1440.jpg",
             "mobile": "alder/section-01-390.jpg"
@@ -175,7 +175,7 @@
               "text": "Fixture Sans"
             }
           },
-          "mock": "<div class=\"spec\">\n  <div class=\"l1 disp\">Abdur Rahim</div>\n  <div class=\"l2 disp dim\">Frontend Developer, Karachi, Pakistan</div>\n  <p class=\"para\">Architected 9 core frontend modules for Qatar's Supreme Council of Economic Affairs: 366 hours in 6 weeks, and the only bug-free modules at a national deadline.</p>\n  <div class=\"abc\">ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</div>\n</div>",
+          "mock": "<div class=\"spec\">\n  <div class=\"l1 disp\">Abdur Rahim</div>\n  <div class=\"l2 disp dim\">Frontend Developer, Karachi, Pakistan</div>\n  <p class=\"para\">Architected 9 core frontend modules for Qatar's Supreme Council of Economic Affairs: 366 hours in 6 weeks; the only bug-free modules at a national deadline.</p>\n  <div class=\"abc\">ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</div>\n</div>",
           "shots": {
             "desktop": "cedar/section-01-1440.jpg",
             "mobile": "cedar/section-01-390.jpg"

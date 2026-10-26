@@ -16,6 +16,6 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/setup-tests.ts",
     // Skills test themselves with node:test (see the test script).
-    exclude: [...configDefaults.exclude, ".claude/**"],
+    exclude: [...configDefaults.exclude, ".claude/**", "scripts/**"],
   },
 })
