@@ -72,13 +72,20 @@ is missing, as a short list:
 
 - each project without a link (a live site, a repository or a case study);
 - each project without a screenshot in `workflow/content-assets/` (a file whose name
-  starts with the project's slug, such as `sceai-platform.png`);
-- anything `content.md` itself marks as missing or still to come.
+  starts with the project's slug, named as that folder's README says);
+- anything `content.md` itself marks as missing, still to come or to confirm.
+
+**Known and accepted gaps.** When `content.md` has a "Pictures" section, missing
+project screenshots and links are known and accepted: the section says what to use
+instead (illustrations built in code from the facts, real pictures of the owner's
+world from open collections). Do not ask about them. Say in one line that the
+Pictures section covers them, and list any screenshots that have arrived in
+`content-assets/` since. Still ask about everything else on the list.
 
 Ask the owner for the missing items. **Do not continue until the owner has answered
 or said to skip.** Write the links they give into `content.md` under the project, and
-save pictures they provide into `content-assets/` with the project's slug. Then tick
-**Content check**.
+save pictures they provide into `content-assets/`, named as its README says. Then
+tick **Content check**.
 
 ## 3. Scout and the finalists board
 
